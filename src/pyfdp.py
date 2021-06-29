@@ -14,15 +14,25 @@ class PyFDP():
 
         # get config url
 
-        config_storage_loc = self.get_entry('storage_location','path=' + config)[0]['url']
+        config_storage_loc = self.get_entry(
+                                            'storage_location',
+                                            'path=' + config)[0]['url']
         config_storage_id = self.extract_id(config_storage_loc)
-        config_object_url = self.get_entry('object', 'storage_location=' + config_storage_id)[0]['url']
+        config_object_url = self.get_entry(
+                                            'object',
+                                            'storage_location=' + \
+                                            config_storage_id)[0]['url']
 
         # get script url
 
-        script_storage_loc = self.get_entry('storage_location','path=' + script)[0]['url']
+        script_storage_loc = self.get_entry(
+                                            'storage_location',
+                                            'path=' + script)[0]['url']
         script_storage_id = self.extract_id(script_storage_loc)
-        script_object_url = self.get_entry('object', 'storage_location=' + script_storage_id)[0]['url']
+        script_object_url = self.get_entry(
+                                            'object',
+                                            'storage_location=' + \
+                                            script_storage_id)[0]['url']
 
         # record run in data registry
         run_data = {
