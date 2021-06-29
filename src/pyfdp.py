@@ -5,7 +5,7 @@ import hashlib
 import urllib
 import datetime
 
-class PyFDP:
+class PyFDP():
     def initialise(config, script):
     # read config file
         with open(config, 'r') as data:
@@ -42,3 +42,40 @@ class PyFDP:
             'script_object':script_object_url
                  }
         return handle
+
+    def get_entry(endpoint, query):
+        headers = {
+        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
+        }
+
+        url = (
+            'http://localhost:8000/api/' + \
+            endpoint + \
+            '?' + query
+        )
+
+        response = requests.get(url)
+        assert(response.status_code == 200)
+
+        return response.json()['results']
+
+    def extract_id(url):
+        parse = urllib.parse.urlsplit(url).path
+        split = os.path.split(parse)
+        extract = list(filter(None,parse.split('/')))[-1]
+
+        return extract
+
+    def post_entry(endpoint, data):
+        headers = {
+        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
+        }
+
+        url = (
+            'http://localhost:8000/api/' + \
+            endpoint
+        )
+
+        response = requests.put(url, data, headers=headers)
+
+        return response
