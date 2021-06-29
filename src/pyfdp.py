@@ -76,6 +76,6 @@ class PyFDP():
             endpoint
         )
 
-        response = requests.put(url, data, headers=headers)
+        response = requests.post(url, data, headers=headers)
 
         return response
