@@ -6,7 +6,7 @@ import urllib
 import datetime
 
 class PyFDP():
-    def initialise(config, script):
+    def initialise(self, config, script):
     # read config file
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
@@ -14,15 +14,15 @@ class PyFDP():
 
         # get config url
 
-        config_storage_loc = get_entry('storage_location','path=' + config)[0]['url']
-        config_storage_id = extract_id(config_storage_loc)
-        config_object_url = get_entry('object', 'storage_location=' + config_storage_id)[0]['url']
+        config_storage_loc = self.get_entry('storage_location','path=' + config)[0]['url']
+        config_storage_id = self.extract_id(config_storage_loc)
+        config_object_url = self.get_entry('object', 'storage_location=' + config_storage_id)[0]['url']
 
         # get script url
 
-        script_storage_loc = get_entry('storage_location','path=' + script)[0]['url']
-        script_storage_id = extract_id(script_storage_loc)
-        script_object_url = get_entry('object', 'storage_location=' + script_storage_id)[0]['url']
+        script_storage_loc = self.get_entry('storage_location','path=' + script)[0]['url']
+        script_storage_id = self.extract_id(script_storage_loc)
+        script_object_url = self.get_entry('object', 'storage_location=' + script_storage_id)[0]['url']
 
         # record run in data registry
         run_data = {
@@ -43,7 +43,7 @@ class PyFDP():
                  }
         return handle
 
-    def get_entry(endpoint, query):
+    def get_entry(self,endpoint, query):
         headers = {
         'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
         }
@@ -59,14 +59,14 @@ class PyFDP():
 
         return response.json()['results']
 
-    def extract_id(url):
+    def extract_id(self, url):
         parse = urllib.parse.urlsplit(url).path
         split = os.path.split(parse)
-        extract = list(filter(None,parse.split('/')))[-1]
+        extract = list(filter(None, parse.split('/')))[-1]
 
         return extract
 
-    def post_entry(endpoint, data):
+    def post_entry(self, endpoint, data):
         headers = {
         'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
         }
