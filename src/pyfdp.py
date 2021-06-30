@@ -1,9 +1,8 @@
-import yaml
-import os
-import requests
-import hashlib
 import urllib
 import datetime
+import yaml
+import requests
+import json
 
 class PyFDP():
     def initialise(self, config, script):
@@ -46,12 +45,15 @@ class PyFDP():
             'output_urls': []
         }
 
+        code_run = self.post_entry('code_run', json.dumps(run_data))
+
         # return handle
 
         handle = {
             'yaml': config_yaml,
             'config_object': config_object_url,
-            'script_object':script_object_url
+            'script_object': script_object_url,
+            'code_run': code_run['url']
                  }
         return handle
 
@@ -79,7 +81,8 @@ class PyFDP():
 
     def post_entry(self, endpoint, data):
         headers = {
-        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
+        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69',
+        'Content-type': 'application/json'
         }
 
         url = (
@@ -89,4 +92,4 @@ class PyFDP():
 
         response = requests.post(url, data, headers=headers)
 
-        return response
+        return response.json()
