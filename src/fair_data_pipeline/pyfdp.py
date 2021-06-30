@@ -6,7 +6,15 @@ import json
 
 class PyFDP():
 
+    token = None
+
     def initialise(self, config, script):
+
+        if self.token == None:
+            raise ValueError(
+                'Registry token needs to be set before initialising'
+            )
+
         # read config file
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
@@ -79,7 +87,7 @@ class PyFDP():
 
     def post_entry(self, endpoint, data):
         headers = {
-        'Authorization': 'token 2a1bb935b843955758a6e1f1de09500baa396549',
+        'Authorization': 'token ' + self.token,
         'Content-type': 'application/json'
         }
 
