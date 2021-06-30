@@ -5,6 +5,7 @@ setup(
     version='0.0.1',
     author='SCRC',
     description='Python FAIR data pipeline API',
-    packages=find_packages(),
-    install_requires=['urllib', 'datetime', 'yaml', 'requests', 'json'],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    install_requires=['PyYAML==5.3.1', 'requests==2.23.0']
 )
