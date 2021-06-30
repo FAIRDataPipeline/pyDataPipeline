@@ -66,6 +66,14 @@ class PyFDP():
                  }
         return handle
 
+    def finalise(self, handle):
+        datastore = handle['yaml']['run_metadata']['write_data_store']
+        root_data = {
+            'root': datastore,
+            'local': True
+        }
+        self.post_entry('storage_root', json.dumps(root_data))
+
     def get_entry(self,endpoint, query):
 
         url = (
