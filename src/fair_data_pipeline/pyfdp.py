@@ -5,8 +5,9 @@ import requests
 import json
 
 class PyFDP():
+
     def initialise(self, config, script):
-    # read config file
+        # read config file
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
         run_metadata = config_yaml['run_metadata']
@@ -37,15 +38,15 @@ class PyFDP():
 
         # record run in data registry
         run_data = {
-            'run_date': datetime.datetime.now().strftime('%x %H:%M'),
+            'run_date': datetime.datetime.now().strftime('%Y-%m-%dT%XZ'),
             'description': run_metadata['description'],
-            'model_config_url': config_object_url,
-            'submission_script_url': script_object_url,
+            'model_config': config_object_url,
+            'submission_script': script_object_url,
             'input_urls': [],
             'output_urls': []
         }
 
-        code_run = self.post_entry('code_run', json.dumps(run_data))
+        code_run = self.post_entry('code_run', json.dumps(run_data)).json()
 
         # return handle
 
@@ -69,7 +70,7 @@ class PyFDP():
         )
 
         response = requests.get(url)
-        assert(response.status_code == 200)
+        assert response.status_code == 200
 
         return response.json()['results']
 
@@ -81,15 +82,16 @@ class PyFDP():
 
     def post_entry(self, endpoint, data):
         headers = {
-        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69',
+        'Authorization': 'token 2a1bb935b843955758a6e1f1de09500baa396549',
         'Content-type': 'application/json'
         }
 
         url = (
             'http://localhost:8000/api/' + \
-            endpoint
+            endpoint +'/'
         )
 
         response = requests.post(url, data, headers=headers)
+        assert response.status_code == 201
 
-        return response.json()
+        return response
