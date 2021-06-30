@@ -59,9 +59,6 @@ class PyFDP():
         return handle
 
     def get_entry(self,endpoint, query):
-        headers = {
-        'Authorization': 'token 8a0b2ea0b6f529eb455511dc7943c3cd837aab69'
-        }
 
         url = (
             'http://localhost:8000/api/' + \
