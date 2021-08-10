@@ -123,9 +123,9 @@ class PyFDP():
 
         return path
 
-    def finalise(self, handle):
+    def finalise(self):
 
-        datastore = handle['yaml']['run_metadata']['write_data_store']
+        datastore = self.handle['yaml']['run_metadata']['write_data_store']
         root_data = {
             'root': datastore,
             'local': True
