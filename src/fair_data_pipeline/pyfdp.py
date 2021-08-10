@@ -90,15 +90,16 @@ class PyFDP():
 
         run_metadata = self.handle['yaml']['run_metadata']
         datastore = run_metadata['write_data_store']
-        write = self.handle['yaml']['write']
+        write = self.handle['yaml']['write'][0]
         write_data_product = write['data_product']
-        write_version = write['version']
+        write_version = write['use']['version']
         file_type = write['file_type']
         description = write['description']
         write_namespace = run_metadata['default_output_namespace']
         write_public = run_metadata['public']
 
         filename = "dat-" + utils.random_hash() + "." + file_type
+
         path = os.path.join(
             datastore,
             write_namespace,
@@ -139,6 +140,8 @@ class PyFDP():
             'storage_root',
             json.dumps(root_data)
         )
+
+    #TODO Delete these functions if tests pass
 
     def get_entry(self, endpoint, query):
 
