@@ -9,7 +9,7 @@ import os
 class PyFDP():
 
     token = None
-    self.handle = None
+    handle = None
 
     def initialise(self, config, script):
 
