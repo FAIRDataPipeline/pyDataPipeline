@@ -3,7 +3,7 @@ import datetime
 import yaml
 import requests
 import json
-import fdp_utils as utils
+import fair_data_pipeline.fdp_utils as utils
 
 class PyFDP():
 
