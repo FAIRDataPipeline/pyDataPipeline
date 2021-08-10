@@ -4,6 +4,7 @@ import yaml
 import requests
 import json
 import fair_data_pipeline.fdp_utils as utils
+import os
 
 class PyFDP():
 
@@ -63,10 +64,10 @@ class PyFDP():
         }
 
         code_run = utils.post_entry(
-        self.token,
-        'code_run',
-        json.dumps(run_data)
-        ).json()
+            self.token,
+            'code_run',
+            json.dumps(run_data)
+            ).json()
 
         # return handle
 
@@ -77,6 +78,27 @@ class PyFDP():
             'code_run': code_run['url']
                  }
         return handle
+
+    def link_write(self, handle, data_product):
+        raise NotImplementedError
+
+        run_metadata = handle['config_yaml']['run_metadata']
+        datastore = run_metadata['write_data_store']
+        write = handle['config_yaml']['write']
+        write_data_product = write['data_product']
+        write_version = write['version']
+        file_type = write['file_type']
+        write_namespace = run_metadata['default_output_namespace']
+        write_public = run_metadata['public']
+
+        filename = "dat-" + utils.random_hash() + "." + file_type
+        path = os.path.join(
+            datastore,
+            write_namespace,
+            write_data_product,
+            filename
+        )
+
 
     def finalise(self, handle):
 

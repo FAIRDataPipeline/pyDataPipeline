@@ -1,6 +1,9 @@
 import urllib
 import requests
 import json
+from datetime import datetime
+import hashlib
+import random
 
 def get_entry(endpoint, query):
 
@@ -38,3 +41,10 @@ def post_entry(token, endpoint, data):
     assert response.status_code == 201
 
     return response
+
+def random_hash():
+    seed = datetime.now().timestamp() * random.uniform(1,1000000)
+    seed = str(seed).encode('utf-8')
+    hash = hashlib.sha1(seed)
+
+    return hash.hexdigest()
