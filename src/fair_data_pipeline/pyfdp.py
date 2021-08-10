@@ -3,6 +3,7 @@ import datetime
 import yaml
 import requests
 import json
+import fdp_utils as utils
 
 class PyFDP():
 
@@ -15,36 +16,43 @@ class PyFDP():
                 'Registry token needs to be set before initialising'
             )
 
-        # read config file
+        # read config file and extract run metadata
+
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
         run_metadata = config_yaml['run_metadata']
 
         # get config url
 
-        config_storage_loc = self.get_entry(
+        config_storage_loc = utils.get_entry(
             'storage_location',
             'path=' + config
             )[0]['url']
-        config_storage_id = self.extract_id(config_storage_loc)
-        config_object_url = self.get_entry(
+        config_storage_id = utils.extract_id(
+            config_storage_loc
+            )
+        config_object_url = utils.get_entry(
             'object',
             'storage_location=' + config_storage_id
             )[0]['url']
 
         # get script url
 
-        script_storage_loc = self.get_entry(
+        script_storage_loc = utils.get_entry(
             'storage_location',
             'path=' + script
             )[0]['url']
-        script_storage_id = self.extract_id(script_storage_loc)
-        script_object_url = self.get_entry(
+        script_storage_id = utils.extract_id(
+            script_storage_loc
+            )
+        script_object_url = utils.get_entry(
             'object',
             'storage_location=' + \
-            script_storage_id)[0]['url']
+            script_storage_id
+            )[0]['url']
 
         # record run in data registry
+
         run_data = {
             'run_date': datetime.datetime.now().strftime('%Y-%m-%dT%XZ'),
             'description': run_metadata['description'],
@@ -54,7 +62,11 @@ class PyFDP():
             'output_urls': []
         }
 
-        code_run = self.post_entry('code_run', json.dumps(run_data)).json()
+        code_run = utils.post_entry(
+        self.token,
+        'code_run',
+        json.dumps(run_data)
+        ).json()
 
         # return handle
 
@@ -67,14 +79,19 @@ class PyFDP():
         return handle
 
     def finalise(self, handle):
+
         datastore = handle['yaml']['run_metadata']['write_data_store']
         root_data = {
             'root': datastore,
             'local': True
         }
-        self.post_entry('storage_root', json.dumps(root_data))
+        utils.post_entry(
+            self.token,
+            'storage_root',
+            json.dumps(root_data)
+            )
 
-    def get_entry(self,endpoint, query):
+    def get_entry(self, endpoint, query):
 
         url = (
             'http://localhost:8000/api/' + \
@@ -88,12 +105,14 @@ class PyFDP():
         return response.json()['results']
 
     def extract_id(self, url):
+
         parse = urllib.parse.urlsplit(url).path
         extract = list(filter(None, parse.split('/')))[-1]
 
         return extract
 
     def post_entry(self, endpoint, data):
+
         headers = {
         'Authorization': 'token ' + self.token,
         'Content-type': 'application/json'
