@@ -84,9 +84,9 @@ class PyFDP():
 
         # TODO Write resolve_write functionality for multiple writes
 
-        run_metadata = self.handle['config_yaml']['run_metadata']
+        run_metadata = self.handle['yaml']['run_metadata']
         datastore = run_metadata['write_data_store']
-        write = self.handle['config_yaml']['write']
+        write = self.handle['yaml']['write']
         write_data_product = write['data_product']
         write_version = write['version']
         file_type = write['file_type']
