@@ -29,29 +29,33 @@ class PyFDP():
         config_storage_loc = utils.get_entry(
             'storage_location',
             'path=' + config
-            )[0]['url']
+        )[0]['url']
+
         config_storage_id = utils.extract_id(
             config_storage_loc
-            )
+        )
+
         config_object_url = utils.get_entry(
             'object',
             'storage_location=' + config_storage_id
-            )[0]['url']
+        )[0]['url']
 
         # get script url
 
         script_storage_loc = utils.get_entry(
             'storage_location',
             'path=' + script
-            )[0]['url']
+        )[0]['url']
+
         script_storage_id = utils.extract_id(
             script_storage_loc
-            )
+        )
+
         script_object_url = utils.get_entry(
             'object',
             'storage_location=' + \
             script_storage_id
-            )[0]['url']
+        )[0]['url']
 
         # record run in data registry
 
@@ -68,7 +72,7 @@ class PyFDP():
             self.token,
             'code_run',
             json.dumps(run_data)
-            ).json()
+        ).json()
 
         # return handle
 
@@ -77,7 +81,7 @@ class PyFDP():
             'config_object': config_object_url,
             'script_object': script_object_url,
             'code_run': code_run['url']
-                 }
+        }
 
     def link_write(self, data_product):
         raise NotImplementedError
@@ -134,7 +138,7 @@ class PyFDP():
             self.token,
             'storage_root',
             json.dumps(root_data)
-            )
+        )
 
     def get_entry(self, endpoint, query):
 

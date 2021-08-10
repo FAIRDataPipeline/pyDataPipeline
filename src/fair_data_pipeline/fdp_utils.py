@@ -43,7 +43,8 @@ def post_entry(token, endpoint, data):
     return response
 
 def random_hash():
-    seed = datetime.now().timestamp() * random.uniform(1,1000000)
+
+    seed = datetime.now().timestamp() * random.uniform(1, 1000000)
     seed = str(seed).encode('utf-8')
     hashed = hashlib.sha1(seed)
 
