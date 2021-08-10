@@ -9,6 +9,7 @@ import os
 class PyFDP():
 
     token = None
+    self.handle = None
 
     def initialise(self, config, script):
 
@@ -71,23 +72,25 @@ class PyFDP():
 
         # return handle
 
-        handle = {
+        self.handle = {
             'yaml': config_yaml,
             'config_object': config_object_url,
             'script_object': script_object_url,
             'code_run': code_run['url']
                  }
-        return handle
 
-    def link_write(self, handle, data_product):
+    def link_write(self, data_product):
         raise NotImplementedError
 
-        run_metadata = handle['config_yaml']['run_metadata']
+        # TODO Write resolve_write functionality for multiple writes
+
+        run_metadata = self.handle['config_yaml']['run_metadata']
         datastore = run_metadata['write_data_store']
-        write = handle['config_yaml']['write']
+        write = self.handle['config_yaml']['write']
         write_data_product = write['data_product']
         write_version = write['version']
         file_type = write['file_type']
+        description = write['description']
         write_namespace = run_metadata['default_output_namespace']
         write_public = run_metadata['public']
 
@@ -97,13 +100,28 @@ class PyFDP():
             write_namespace,
             write_data_product,
             filename
-        )
+        ).replace('\\', '/')
 
         directory = os.path.dirname(path)
 
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+        output = {
+            'data_product': data_product,
+            'use_data_product': write_data_product,
+            'use_component': None,
+            'use_version': write_version,
+            'use_namespace': write_namespace,
+            'path': path,
+            'data_product_description': description,
+            'component_discription': None,
+            'public': write_public
+        }
+
+        self.handle['output'] = output
+
+        return path
 
     def finalise(self, handle):
 
