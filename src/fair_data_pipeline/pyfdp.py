@@ -13,7 +13,7 @@ class PyFDP():
 
     def initialise(self, config, script):
 
-        if self.token == None:
+        if self.token is None:
             raise ValueError(
                 'Registry token needs to be set before initialising'
             )
@@ -135,6 +135,7 @@ class PyFDP():
             'root': datastore,
             'local': True
         }
+
         utils.post_entry(
             self.token,
             'storage_root',

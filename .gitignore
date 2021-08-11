@@ -130,3 +130,5 @@ dmypy.json
 
 # Notebooks
 *.ipynb
+
+test.yaml
