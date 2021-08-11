@@ -44,7 +44,38 @@ class PyFDP():
 
         config_storageroot_url = config_storageroot_response['url']
         config_storageroot_id = utils.extract_id(config_storageroot_url)
+        config_hash = utils.get_file_hash(config)
 
+        config_exists = utils.get_entry(
+            url = registry_url,
+            endpoint = 'storage_location',
+            query = {
+                'hash': config_hash,
+                'public': True,
+                'storage_root': config_storageroot_id
+            }
+        )
+
+        if config_exists:
+            assert len(config_exists) == 1
+            config_location_url = config_exists[0]['url']
+
+        else:
+            config_storage_data = {
+                'path': config,
+                'hash': config_hash,
+                'public': True,
+                'storage_root': config_storageroot_url
+            }
+
+            config_location_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'storage_location',
+                data = config_storage_data
+            )
+
+            config_location_url = config_location_response['url']
 
         config_storage_loc = utils.get_entry(
             'storage_location',

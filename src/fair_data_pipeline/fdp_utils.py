@@ -5,15 +5,15 @@ from datetime import datetime
 import hashlib
 import random
 
-def get_entry(endpoint, query):
+def get_entry(
+    url: str,
+    endpoint: str,
+    query: dict
+)-> list:
 
-    url = (
-        'http://localhost:8000/api/' + \
-        endpoint + \
-        '?' + query
-    )
+    url = url + endpoint + '/'
 
-    response = requests.get(url)
+    response = requests.get(url, query)
     assert response.status_code == 200
 
     return response.json()['results']
@@ -30,7 +30,7 @@ def post_entry(
     url: str,
     endpoint: str,
     data: dict
-) -> dict:
+)-> dict:
 
     headers = {
     'Authorization': 'token ' + token,
