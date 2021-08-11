@@ -11,6 +11,8 @@ class PyFDP():
     token = None
     handle = None
 
+
+
     def initialise(self, config, script):
 
         if self.token is None:
@@ -23,8 +25,26 @@ class PyFDP():
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
         run_metadata = config_yaml['run_metadata']
+        registry_url = run_metadata['local_data_registry_url']
+        filename = os.path.basename(config)
 
-        # get config url
+        print(f"Reading {filename} from data store")
+
+
+        # record config.yaml location in data registry
+
+        datastore_root = {'root': run_metadata['write_data_store']}
+
+        config_storageroot_response = utils.post_entry(
+            token = self.token,
+            url = registry_url,
+            endpoint = 'storage_root',
+            data = datastore_root
+        )
+
+        config_storageroot_url = config_storageroot_response['url']
+        config_storageroot_id = utils.extract_id(config_storageroot_url)
+
 
         config_storage_loc = utils.get_entry(
             'storage_location',

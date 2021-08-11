@@ -25,22 +25,25 @@ def extract_id(url):
 
     return extract
 
-def post_entry(token, endpoint, data):
+def post_entry(
+    token: str,
+    url: str,
+    endpoint: str,
+    data: dict
+) -> dict:
 
     headers = {
     'Authorization': 'token ' + token,
     'Content-type': 'application/json'
     }
 
-    url = (
-        'http://localhost:8000/api/' + \
-        endpoint +'/'
-    )
+    url = url + endpoint + '/'
+    data = json.dumps(data)
 
     response = requests.post(url, data, headers=headers)
     assert response.status_code == 201
 
-    return response
+    return response.json()
 
 def random_hash():
 
