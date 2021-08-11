@@ -52,3 +52,12 @@ def random_hash():
     hashed = hashlib.sha1(seed)
 
     return hashed.hexdigest()
+
+def get_file_hash(path):
+
+    with open(path, 'r') as data:
+        data = data.read()
+    data = data.encode('utf-8')
+    hashed = hashlib.sha1(data)
+
+    return hashed.hexdigest()
