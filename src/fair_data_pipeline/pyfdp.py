@@ -1,23 +1,43 @@
+"""
+PyFDP, a python implementation of the SCRC fair data pipeline
+"""
+
 import datetime
 import os
 import json
 import yaml
 import fair_data_pipeline.fdp_utils as utils
 
-
 class PyFDP():
+    """Python fair data pipeline
+
+    Attributes:
+        token (str): Registry access token
+        handle (dict): Pipeline handle, used to record run data and passed to
+            finalise
+    """
 
     token = None
     handle = None
 
     def initialise(self, config: str, script: str):
+        """Reads in config file and script, creates necessary registry items
+        and creates new code run.
+
+        Args:
+            config: Path to config file
+            script: Path to script file
+        """
+
+        # Token must be set by user for initialising, if installed from WSL,
+        # token is not in Windows root
 
         if self.token is None:
             raise ValueError(
                 'Registry token needs to be set before initialising'
             )
 
-        # read config file and extract run metadata
+        # Read config file and extract run metadata
 
         with open(config, 'r') as data:
             config_yaml = yaml.safe_load(data)
@@ -27,20 +47,22 @@ class PyFDP():
 
         print(f"Reading {filename} from data store")
 
-        # record config.yaml location in data registry
-
-        datastore_root = {'root': run_metadata['write_data_store']}
+        # Configure storage root for config
 
         config_storageroot_response = utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'storage_root',
-            data = datastore_root
+            data = {
+                'root': run_metadata['write_data_store']
+            }
         )
 
         config_storageroot_url = config_storageroot_response['url']
         config_storageroot_id = utils.extract_id(config_storageroot_url)
         config_hash = utils.get_file_hash(config)
+
+        # Check if storage location for file exists
 
         config_exists = utils.get_entry(
             url = registry_url,
@@ -51,6 +73,8 @@ class PyFDP():
                 'storage_root': config_storageroot_id
             }
         )
+
+        # If entry exists, extract url, otherwise create entry
 
         if config_exists:
             assert len(config_exists) == 1
@@ -73,6 +97,8 @@ class PyFDP():
 
             config_location_url = config_location_response['url']
 
+        # Check if yaml file type exists in registry
+
         config_filetype_exists = utils.get_entry(
             url = registry_url,
             endpoint = 'file_type',
@@ -80,6 +106,8 @@ class PyFDP():
                 'extension': 'yaml'
             }
         )
+
+        # If file type doesn't exist, create entry
 
         if config_filetype_exists:
             config_filetype_url = config_filetype_exists[0]['url']
@@ -96,6 +124,8 @@ class PyFDP():
             )
             config_filetype_url = config_filetype_response['url']
 
+        # Get user for registry admin account
+
         user_url = utils.get_entry(
             url = registry_url,
             endpoint = 'users',
@@ -106,6 +136,8 @@ class PyFDP():
 
         user_id = utils.extract_id(user_url)
 
+        # Get author(s)
+
         author_url = utils.get_entry(
             url = registry_url,
             endpoint = 'user_author',
@@ -113,6 +145,8 @@ class PyFDP():
                 'user': user_id
             }
         )[0]['author']
+
+        # Create new object for config file
 
         config_object_url = utils.post_entry(
             token = self.token,
@@ -128,6 +162,8 @@ class PyFDP():
 
         print(f'Writing {filename} to local registry')
 
+        # Check if script exists in storage_location
+
         script_storageroot_url = config_storageroot_url
         script_storageroot_id = config_storageroot_id
         script_hash = utils.get_file_hash(script)
@@ -141,6 +177,8 @@ class PyFDP():
                 'storage_root': script_storageroot_id
             }
         )
+
+        # If entry doesn't exist, create it
 
         if script_exists:
             assert len(script_exists) == 1
@@ -162,6 +200,8 @@ class PyFDP():
             )
 
             script_location_url = script_location_response['url']
+
+        # Check for script file type in registry, create if it doesn't exist
 
         script_filetype_exists = utils.get_entry(
             url = registry_url,
@@ -187,6 +227,8 @@ class PyFDP():
 
             script_filetype_url = script_filetype_response['url']
 
+        # Create new registry object for script
+
         script_object_url = utils.post_entry(
             token = self.token,
             url = registry_url,
@@ -200,6 +242,8 @@ class PyFDP():
         )
 
         print(f"Writing {os.path.basename(script)} to local registry")
+
+        # Create new remote storage root
 
         repo_storageroot_url = utils.post_entry(
             token = self.token,
@@ -216,6 +260,8 @@ class PyFDP():
         sha = run_metadata['latest_commit']
         repo_name = run_metadata['remote_repo']
 
+        # Check if code repo entry exists for given hash
+
         coderepo_exists = utils.get_entry(
             url = registry_url,
             endpoint = 'storage_location',
@@ -225,6 +271,8 @@ class PyFDP():
                 'storage_root': repo_storageroot_id
             }
         )
+
+        # If repo exists, check if object exists for the repo
 
         if coderepo_exists:
             coderepo_location_url = coderepo_exists[0]['url']
@@ -237,6 +285,8 @@ class PyFDP():
                     'storage_location': coderepo_location_id
                 }
             )
+
+            # If repo object doesn't exist, create it
 
             if obj_exists:
                 coderepo_object_url = obj_exists[0]['url']
@@ -253,6 +303,9 @@ class PyFDP():
                 )
 
                 coderepo_object_url = coderepo_object_response['url']
+
+        # If code repo doesn't exist, create repo and object
+
         else:
             coderepo_location_response = utils.post_entry(
                 token = self.token,
@@ -283,6 +336,8 @@ class PyFDP():
 
         print(f"Writing {repo_name} to local registry")
 
+        # Register new code run
+
         coderun_response = utils.post_entry(
             token = self.token,
             url = registry_url,
@@ -301,6 +356,8 @@ class PyFDP():
         coderun_url = coderun_response['url']
 
         print("Writing new code_run to local registry")
+
+        # Write code run and object info to handle
 
         self.handle = {
             'yaml': config_yaml,
