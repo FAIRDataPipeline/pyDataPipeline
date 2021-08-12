@@ -11,7 +11,7 @@ class PyFDP():
     token = None
     handle = None
 
-    def initialise(self, config, script):
+    def initialise(self, config: str, script: str):
 
         if self.token is None:
             raise ValueError(
@@ -83,7 +83,7 @@ class PyFDP():
         )
 
         if config_filetype_exists:
-            config_filetype_url = config_filetype_exists['url']
+            config_filetype_url = config_filetype_exists[0]['url']
 
         else:
             config_filetype_response = utils.post_entry(
@@ -173,7 +173,7 @@ class PyFDP():
         )
 
         if script_filetype_exists:
-            script_filetype_url = script_filetype_exists['url']
+            script_filetype_url = script_filetype_exists[0]['url']
 
         else:
             script_filetype_response = utils.post_entry(
@@ -201,30 +201,115 @@ class PyFDP():
         )
 
         print(f"Writing {os.path.basename(script)} to local registry")
-        # record run in data registry
 
-        run_data = {
-            'run_date': datetime.datetime.now().strftime('%Y-%m-%dT%XZ'),
-            'description': run_metadata['description'],
-            'model_config': config_object_url,
-            'submission_script': script_object_url,
-            'input_urls': [],
-            'output_urls': []
-        }
+        repo_storageroot_url = utils.post_entry(
+            token = self.token,
+            url = registry_url,
+            endpoint = 'storage_root',
+            data = {
+                'root': 'https://github.com',
+                'local': False
+            }
+        )['url']
 
-        code_run = utils.post_entry(
-            self.token,
-            'code_run',
-            json.dumps(run_data)
-        ).json()
+        repo_storageroot_id = utils.extract_id(repo_storageroot_url)
 
-        # return handle
+        sha = run_metadata['latest_commit']
+        repo_name = run_metadata['remote_repo']
+
+        coderepo_exists = utils.get_entry(
+            url = registry_url,
+            endpoint = 'storage_location',
+            query = {
+                'hash': sha,
+                'public': True,
+                'storage_root': repo_storageroot_id
+            }
+        )
+
+        if coderepo_exists:
+            coderepo_location_url = coderepo_exists[0]['url']
+            coderepo_location_id = utils.extract_id(coderepo_location_url)
+
+            obj_exists = utils.get_entry(
+                url = registry_url,
+                endpoint = 'object',
+                query = {
+                    'storage_location': coderepo_location_id
+                }
+            )
+
+            if obj_exists:
+                coderepo_object_url = obj_exists[0]['url']
+            else:
+                coderepo_object_response = utils.post_entry(
+                    token = self.token,
+                    url = registry_url,
+                    endpoint = 'object',
+                    data = {
+                        'description': 'Analysis / processing script location',
+                        'storage_location': coderepo_location_url,
+                        'authors': [author_url]
+                    }
+                )
+
+                coderepo_object_url = coderepo_object_response['url']
+        else:
+            coderepo_location_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'storage_location',
+                data = {
+                    'path': repo_name,
+                    'hash': sha,
+                    'public': True,
+                    'storage_root': repo_storageroot_url
+                }
+            )
+
+            coderepo_location_url = coderepo_location_response['url']
+
+            coderepo_object_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'object',
+                data = {
+                    'description': 'Analysis / processing script location',
+                    'storage_location': coderepo_location_url,
+                    'authors': [author_url]
+                }
+            )
+
+            coderepo_object_url = coderepo_object_response['url']
+
+        print(f"Writing {repo_name} to local registry")
+
+        coderun_response = utils.post_entry(
+            token = self.token,
+            url = registry_url,
+            endpoint = 'code_run',
+            data ={
+                'run_date': datetime.datetime.now().strftime('%Y-%m-%dT%XZ'),
+                'description': run_metadata['description'],
+                'code_repo': coderepo_object_url,
+                'model_config': config_object_url,
+                'submission_script': script_object_url,
+                'input_urls': [],
+                'output_urls': []
+            }
+        )
+
+        coderun_url = coderun_response['url']
+
+        print("Writing new code_run to local registry")
 
         self.handle = {
             'yaml': config_yaml,
-            'config_object': config_object_url,
-            'script_object': script_object_url,
-            'code_run': code_run['url']
+            'fdp_config_dir': os.path.dirname(config),
+            'model_config': config_object_url,
+            'submission_script': script_object_url,
+            'code_repo': coderepo_object_url,
+            'code_run': coderun_url
         }
 
     def link_write(self, data_product):
