@@ -103,13 +103,104 @@ class PyFDP():
             query = {
                 'username': 'admin'
             }
-        )['url']
+        )[0]['url']
 
         user_id = utils.extract_id(user_url)
 
+        author_url = utils.get_entry(
+            url = registry_url,
+            endpoint = 'user_author',
+            query = {
+                'user': user_id
+            }
+        )[0]['author']
 
+        config_object_url = utils.post_entry(
+            token = self.token,
+            url = registry_url,
+            endpoint = 'object',
+            data = {
+                'description': 'Working config.yaml location in datastore',
+                'storage_location': config_location_url,
+                'authors': [author_url],
+                'file_type': config_filetype_url
+            }
+        )
 
+        print(f'Writing {filename} to local registry')
 
+        script_storageroot_url = config_storageroot_url
+        script_storageroot_id = config_storageroot_id
+        script_hash = utils.get_file_hash(script)
+
+        script_exists = utils.get_entry(
+            url = registry_url,
+            endpoint = 'storage_location',
+            query = {
+                'hash': script_hash,
+                'public': True,
+                'storage_root': script_storageroot_id
+            }
+        )
+
+        if script_exists:
+            assert len(script_exists) == 1
+            script_location_url = script_exists[0]['url']
+
+        else:
+            script_storage_data = {
+                'path': script,
+                'hash': script_hash,
+                'public': True,
+                'storage_root': script_storageroot_url
+            }
+
+            script_location_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'storage_location',
+                data = script_storage_data
+            )
+
+            script_location_url = script_location_response['url']
+
+        script_filetype_exists = utils.get_entry(
+            url = registry_url,
+            endpoint = 'file_type',
+            query = {
+                'extension': 'py'
+            }
+        )
+
+        if script_filetype_exists:
+            script_filetype_url = script_filetype_exists['url']
+
+        else:
+            script_filetype_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'file_type',
+                data = {
+                    'name': 'py',
+                    'extension': 'py'
+                }
+            )
+
+            script_filetype_url = script_filetype_response['url']
+
+        script_object_url = utils.post_entry(
+            token = self.token,
+            url = registry_url,
+            endpoint = 'object',
+            data = {
+                'description': 'Working script location in datastore',
+                'storage_location': script_location_url,
+                'authors': [author_url],
+                'file_type': script_filetype_url
+            }
+        )
+
+        print(f"Writing {os.path.basename(script)} to local registry")
         # record run in data registry
 
         run_data = {
@@ -137,8 +228,6 @@ class PyFDP():
         }
 
     def link_write(self, data_product):
-        raise NotImplementedError
-
         # TODO Write resolve_write functionality for multiple writes
 
         run_metadata = self.handle['yaml']['run_metadata']
@@ -194,42 +283,3 @@ class PyFDP():
             'storage_root',
             json.dumps(root_data)
         )
-
-    #TODO Delete these functions if tests pass
-
-    def get_entry(self, endpoint, query):
-
-        url = (
-            'http://localhost:8000/api/' + \
-            endpoint + \
-            '?' + query
-        )
-
-        response = requests.get(url)
-        assert response.status_code == 200
-
-        return response.json()['results']
-
-    def extract_id(self, url):
-
-        parse = urllib.parse.urlsplit(url).path
-        extract = list(filter(None, parse.split('/')))[-1]
-
-        return extract
-
-    def post_entry(self, endpoint, data):
-
-        headers = {
-        'Authorization': 'token ' + self.token,
-        'Content-type': 'application/json'
-        }
-
-        url = (
-            'http://localhost:8000/api/' + \
-            endpoint +'/'
-        )
-
-        response = requests.post(url, data, headers=headers)
-        assert response.status_code == 201
-
-        return response
