@@ -1,10 +1,9 @@
-import urllib
 import datetime
-import yaml
-import requests
-import json
-import fair_data_pipeline.fdp_utils as utils
 import os
+import json
+import yaml
+import fair_data_pipeline.fdp_utils as utils
+
 
 class PyFDP():
 
