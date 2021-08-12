@@ -11,8 +11,6 @@ class PyFDP():
     token = None
     handle = None
 
-
-
     def initialise(self, config, script):
 
         if self.token is None:
@@ -29,7 +27,6 @@ class PyFDP():
         filename = os.path.basename(config)
 
         print(f"Reading {filename} from data store")
-
 
         # record config.yaml location in data registry
 
@@ -77,36 +74,41 @@ class PyFDP():
 
             config_location_url = config_location_response['url']
 
-        config_storage_loc = utils.get_entry(
-            'storage_location',
-            'path=' + config
-        )[0]['url']
-
-        config_storage_id = utils.extract_id(
-            config_storage_loc
+        config_filetype_exists = utils.get_entry(
+            url = registry_url,
+            endpoint = 'file_type',
+            query = {
+                'extension': 'yaml'
+            }
         )
 
-        config_object_url = utils.get_entry(
-            'object',
-            'storage_location=' + config_storage_id
-        )[0]['url']
+        if config_filetype_exists:
+            config_filetype_url = config_filetype_exists['url']
 
-        # get script url
+        else:
+            config_filetype_response = utils.post_entry(
+                token = self.token,
+                url = registry_url,
+                endpoint = 'file_type',
+                data = {
+                    'name': 'yaml',
+                    'extension': 'yaml'
+                }
+            )
+            config_filetype_url = config_filetype_response['url']
 
-        script_storage_loc = utils.get_entry(
-            'storage_location',
-            'path=' + script
-        )[0]['url']
+        user_url = utils.get_entry(
+            url = registry_url,
+            endpoint = 'users',
+            query = {
+                'username': 'admin'
+            }
+        )['url']
 
-        script_storage_id = utils.extract_id(
-            script_storage_loc
-        )
+        user_id = utils.extract_id(user_url)
 
-        script_object_url = utils.get_entry(
-            'object',
-            'storage_location=' + \
-            script_storage_id
-        )[0]['url']
+
+
 
         # record run in data registry
 

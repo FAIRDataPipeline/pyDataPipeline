@@ -18,7 +18,7 @@ def get_entry(
 
     return response.json()['results']
 
-def extract_id(url):
+def extract_id(url: str)-> str:
 
     parse = urllib.parse.urlsplit(url).path
     extract = list(filter(None, parse.split('/')))[-1]
@@ -45,7 +45,7 @@ def post_entry(
 
     return response.json()
 
-def random_hash():
+def random_hash()-> str:
 
     seed = datetime.now().timestamp() * random.uniform(1, 1000000)
     seed = str(seed).encode('utf-8')
@@ -53,7 +53,7 @@ def random_hash():
 
     return hashed.hexdigest()
 
-def get_file_hash(path):
+def get_file_hash(path: str)-> str:
 
     with open(path, 'r') as data:
         data = data.read()
