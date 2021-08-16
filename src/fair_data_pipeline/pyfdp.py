@@ -369,11 +369,28 @@ class PyFDP():
         }
 
     def link_write(self, data_product):
-        # TODO Write resolve_write functionality for multiple writes
+        """Reads write information in config file, updates handle with relevant
+        metadata and returns path to write data product to.
 
+        Args:
+            data_product (str): Specified name of data product in config.
+
+        Returns:
+            path (str): Path to write data product to.
+
+        """
+
+        # Get metadata from handle
         run_metadata = self.handle['yaml']['run_metadata']
         datastore = run_metadata['write_data_store']
-        write = self.handle['yaml']['write'][0]
+
+        # If multiple write blocks exist, find corresponding index for given DP
+        for i in enumerate(self.handle['yaml']['write']):
+            if i[1]['data_product'] == data_product:
+                index = i[0]
+
+        # Get metadata from config
+        write = self.handle['yaml']['write'][index]
         write_data_product = write['data_product']
         write_version = write['use']['version']
         file_type = write['file_type']
@@ -381,8 +398,10 @@ class PyFDP():
         write_namespace = run_metadata['default_output_namespace']
         write_public = run_metadata['public']
 
+        # Create filename for path
         filename = "dat-" + utils.random_hash() + "." + file_type
 
+        # Get path
         path = os.path.join(
             datastore,
             write_namespace,
@@ -390,11 +409,13 @@ class PyFDP():
             filename
         ).replace('\\', '/')
 
+        # Create directory structure if it doesn't exist
         directory = os.path.dirname(path)
 
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+        # Create metadata dict
         output = {
             'data_product': data_product,
             'use_data_product': write_data_product,
@@ -407,8 +428,12 @@ class PyFDP():
             'public': write_public
         }
 
-        self.handle['output'] = output
-
+        # If output exists in handle, append new metadata, otherwise create dict
+        if 'output' in self.handle.keys():
+            self.handle['output'].append(output)
+        else:
+            self.handle['output'] = output
+            
         return path
 
     def finalise(self):
