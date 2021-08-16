@@ -432,8 +432,8 @@ class PyFDP():
         if 'output' in self.handle.keys():
             self.handle['output'].append(output)
         else:
-            self.handle['output'] = output
-            
+            self.handle['output'] = [output]
+
         return path
 
     def finalise(self):
