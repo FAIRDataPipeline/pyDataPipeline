@@ -368,15 +368,15 @@ class PyFDP():
             'code_run': coderun_url
         }
 
-    def link_write(self, data_product):
+    def link_write(self, data_product: str)-> str:
         """Reads write information in config file, updates handle with relevant
         metadata and returns path to write data product to.
 
         Args:
-            data_product (str): Specified name of data product in config.
+            data_product: Specified name of data product in config.
 
         Returns:
-            path (str): Path to write data product to.
+            path: Path to write data product to.
 
         """
 
@@ -435,6 +435,121 @@ class PyFDP():
             self.handle['output'] = [output]
 
         return path
+
+    def link_read(self, data_product: str)-> str:
+        """Reads 'read' information in config file, updates handle with relevant
+        metadata and returns path to write data product to.
+
+        Args:
+            data_product: Specified name of data product in config.
+
+        Returns:
+            path: Path to write data product to.
+
+        """
+
+        registry_url = self.handle['yaml']['run_metadata']['local_data_registry_url']
+        namespace = self.handle['yaml']['run_metadata']['default_input_namespace']
+
+        # If data product is already in handle, return path
+        if 'input' in self.handle.keys():
+            for i in enumerate(self.handle['input']):
+                if i[1]['data_product'] == data_product:
+                    return i[1]['path']
+
+        # Check if data product is in config yaml
+        read_list = [
+            i[1]['data_product']
+            for i in enumerate(self.handle['yaml']['read'])
+        ]
+
+        if data_product not in read_list:
+            print("Read information for data product not in config")
+
+        # Get index for given data product
+        for i in enumerate(self.handle['yaml']['read']):
+            if i[1]['data_product'] == data_product:
+                index = i[0]
+
+        # Get read info from config
+        read = self.handle['yaml']['read'][index]
+
+        # Get namespace url and extract id
+        namespace_url = utils.get_entry(
+            url = registry_url,
+            endpoint = 'namespace',
+            query = {
+                'name': namespace
+            }
+        )[0]['url']
+
+        namespace_id = utils.extract_id(namespace_url)
+
+        # Get data_product metadata and extract object id
+        data_product_response = utils.get_entry(
+            url = registry_url,
+            endpoint = 'data_product',
+            query = {
+                'name': data_product,
+                'version': read['use']['version'],
+                'namespace': namespace_id
+            }
+        )
+
+        object_response = utils.get_entry(
+            url = data_product_response[0]['object'],
+            endpoint = '',
+            query = {}
+        )
+
+        object_id = utils.extract_id(object_response[0]['url'])
+
+        # Get component url and storage metadata
+        component_url = utils.get_entry(
+            url = registry_url,
+            endpoint = 'object_component',
+            query = {
+                'object': object_id,
+                'whole_object': True
+            }
+        )[0]['url']
+
+        storage_location_response = utils.get_entry(
+            url = object_response[0]['storage_location'],
+            endpoint = '',
+            query = {}
+        )
+
+        storage_root = utils.get_entry(
+            url = storage_location_response[0]['storage_root'],
+            endpoint = '',
+            query = {}
+        )[0]['root']
+
+        # Get path of data product
+        path = os.path.join(
+            storage_root,
+            storage_location_response[0]['path']
+        ).replace('\\', '/')
+
+        # Write to handle and return path
+        input_dict = {
+            'data_product': data_product,
+            'use_data_product': data_product,
+            'use_component': None,
+            'use_version': read['use']['version'],
+            'use_namespace': namespace,
+            'path': path,
+            'component_url': component_url
+        }
+
+        if 'input' in self.handle.keys():
+            self.handle['input'].append(input_dict)
+        else:
+            self.handle['input'] = [input_dict]
+
+        return path
+
 
     def finalise(self):
 
