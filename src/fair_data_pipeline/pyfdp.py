@@ -712,11 +712,11 @@ class PyFDP():
 
         if 'output' in self.handle.keys():
             for output in self.handle['output']:
-                output_components.append(self.handle['output']['component_url']
+                output_components.append(output['component_url'])
 
         if 'input' in self.handle.keys():
             for input in self.handle['input']:
-                input_components.append(self.handle['input']['component_url']
+                input_components.append(input['component_url'])
 
         utils.patch_entry(
             token = self.token,
@@ -732,7 +732,7 @@ class PyFDP():
             'coderuns.txt'
         ).replace('\\', '/')
 
-        with open('test2.txt', 'a+') as coderun_file:
+        with open(coderuns_path, 'a+') as coderun_file:
             coderun_file.seek(0)
             data = coderun_file.read(100)
             if len(data) > 0:
