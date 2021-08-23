@@ -45,6 +45,24 @@ def post_entry(
 
     return response.json()
 
+def patch_entry(
+    token: str,
+    url: str,
+    data: dict
+)-> dict:
+
+    headers = {
+    'Authorization': 'token ' + token,
+    'Content-type': 'application/json'
+    }
+
+    data = json.dumps(data)
+
+    response = requests.patch(url, data, headers=headers)
+    assert response.status_code == 200
+
+    return response.json()
+
 def random_hash()-> str:
 
     seed = datetime.now().timestamp() * random.uniform(1, 1000000)

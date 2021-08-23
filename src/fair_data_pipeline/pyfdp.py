@@ -4,6 +4,7 @@ PyFDP, a python implementation of the SCRC fair data pipeline
 
 import datetime
 import os
+import re
 import json
 import yaml
 import fair_data_pipeline.fdp_utils as utils
@@ -54,7 +55,8 @@ class PyFDP():
             url = registry_url,
             endpoint = 'storage_root',
             data = {
-                'root': run_metadata['write_data_store']
+                'root': run_metadata['write_data_store'],
+                'local': True
             }
         )
 
@@ -354,6 +356,7 @@ class PyFDP():
         )
 
         coderun_url = coderun_response['url']
+        coderun_uuid = coderun_response['uuid']
 
         print("Writing new code_run to local registry")
 
@@ -365,7 +368,9 @@ class PyFDP():
             'model_config': config_object_url,
             'submission_script': script_object_url,
             'code_repo': coderepo_object_url,
-            'code_run': coderun_url
+            'code_run': coderun_url,
+            'code_run_uuid': coderun_uuid,
+            'author': author_url
         }
 
     def link_write(self, data_product: str)-> str:
@@ -424,7 +429,7 @@ class PyFDP():
             'use_namespace': write_namespace,
             'path': path,
             'data_product_description': description,
-            'component_discription': None,
+            'component_description': None,
             'public': write_public
         }
 
@@ -509,8 +514,7 @@ class PyFDP():
             url = registry_url,
             endpoint = 'object_component',
             query = {
-                'object': object_id,
-                'whole_object': True
+                'object': object_id
             }
         )[0]['url']
 
@@ -553,14 +557,184 @@ class PyFDP():
 
     def finalise(self):
 
+        registry_url = self.handle['yaml']['run_metadata']['local_data_registry_url']
         datastore = self.handle['yaml']['run_metadata']['write_data_store']
-        root_data = {
-            'root': datastore,
-            'local': True
-        }
 
-        utils.post_entry(
-            self.token,
-            'storage_root',
-            json.dumps(root_data)
+        datastore_root_url = utils.get_entry(
+            url = registry_url,
+            endpoint = 'storage_root',
+            query = {
+                'root': datastore
+            }
+        )[0]['url']
+
+        datastore_root_id = utils.extract_id(datastore_root_url)
+
+        if 'output' in self.handle:
+            for output in self.handle['output']:
+
+                write_namespace_url = utils.post_entry(
+                    token = self.token,
+                    url = registry_url,
+                    endpoint = 'namespace',
+                    data = {
+                        'name': output['use_namespace']
+                    }
+                )['url']
+
+                write_namespace_id = utils.extract_id(write_namespace_url)
+
+                hash = utils.get_file_hash(output['path'])
+
+                storage_exists = utils.get_entry(
+                    url = registry_url,
+                    endpoint = 'storage_location',
+                    query = {
+                        'hash': hash,
+                        'public': output['public'],
+                        'storage_root': datastore_root_url
+                    }
+                )
+
+                if storage_exists:
+                    storage_location_url = storage_exists[0]['url']
+
+                    os.remove(output['path'])
+
+                    directory = os.path.dirname(output['path'])
+
+                    while True:
+                        os.rmdir(directory)
+                        directory = os.path.split(directory)[0]
+                        if directory == datastore:
+                            break
+
+                    existing_path = storage_exists[0]['path']
+
+                    existing_root = utils.get_entry(
+                        url = storage_exists[0]['storage_root'],
+                        endpoint = '',
+                        query = {}
+                    )
+
+                    new_path = os.path.join(existing_root, existing_path)
+
+                else:
+                    tmp_filename = os.path.basename(output['path'])
+                    extension = tmp_filename.split(sep='.')[-1]
+                    new_filename = '.'.join([hash, extension])
+                    new_path = os.path.join(
+                        os.path.dirname(output['path']),
+                        new_filename
+                    ).replace('\\', '/')
+                    os.rename(output['path'], new_path)
+                    new_storage_location = re.sub(
+                        rf"\b{datastore}\b",
+                        "",
+                        new_path)
+
+                    storage_location_url = utils.post_entry(
+                        token = self.token,
+                        url = registry_url,
+                        endpoint = 'storage_location',
+                        data = {
+                            'path': new_storage_location,
+                            'hash': hash,
+                            'public': output['public'],
+                            'storage_root': datastore_root_url
+                        }
+                    )['url']
+
+                file_type = os.path.basename(new_path).split('.')[-1]
+
+                file_type_exists = utils.get_entry(
+                    url = registry_url,
+                    endpoint = 'file_type',
+                    query = {
+                        'extension': file_type
+                    }
+                )
+
+                if file_type_exists:
+                    file_type_url = file_type_exists[0]['url']
+                else:
+                    file_type_url = utils.post_entry(
+                        token = self.token,
+                        url = registry_url,
+                        endpoint = 'file_type',
+                        data = {
+                            'name': file_type,
+                            'extension': file_type
+                        }
+                    )['url']
+
+                object_url = utils.post_entry(
+                    token = self.token,
+                    url = registry_url,
+                    endpoint = 'object',
+                    data = {
+                        'description': output['data_product_description'],
+                        'storage_location_url': storage_location_url,
+                        'authors': [self.handle['author']],
+                        'file_type': file_type_url
+                    }
+                )['url']
+
+                component_url = utils.post_entry(
+                    token = self.token,
+                    url = registry_url,
+                    endpoint = 'object_component',
+                    data = {
+                        'object': object_url,
+                        'name': utils.random_hash()
+                    }
+                )['url']
+
+                data_product_url = utils.post_entry(
+                    token = self.token,
+                    url = registry_url,
+                    endpoint = 'data_product',
+                    data = {
+                        'name': output['use_data_product'],
+                        'version': output['use_version'],
+                        'object': object_url,
+                        'namespace': write_namespace_url
+                    }
+                )['url']
+
+                output['component_url'] = component_url
+                output['data_product_url'] = data_product_url
+
+                print(f"Writing {output['use_data_product']} to local registry")
+
+        output_components = []
+        input_components = []
+
+        if 'output' in self.handle.keys():
+            for output in self.handle['output']:
+                output_components.append(self.handle['output']['component_url']
+
+        if 'input' in self.handle.keys():
+            for input in self.handle['input']:
+                input_components.append(self.handle['input']['component_url']
+
+        utils.patch_entry(
+            token = self.token,
+            url = self.handle['code_run'],
+            data = {
+                'inputs': input_components,
+                'outputs': output_components
+            }
         )
+
+        coderuns_path = os.path.join(
+            self.handle['fdp_config_dir'],
+            'coderuns.txt'
+        ).replace('\\', '/')
+
+        with open('test2.txt', 'a+') as coderun_file:
+            coderun_file.seek(0)
+            data = coderun_file.read(100)
+            if len(data) > 0:
+                coderun_file.write('\n')
+            coderun_file.write(self.handle['code_run_uuid'])
