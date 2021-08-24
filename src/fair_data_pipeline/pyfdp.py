@@ -5,7 +5,6 @@ PyFDP, a python implementation of the SCRC fair data pipeline
 import datetime
 import os
 import re
-import json
 import yaml
 import fair_data_pipeline.fdp_utils as utils
 
@@ -556,6 +555,9 @@ class PyFDP():
 
 
     def finalise(self):
+        """Renames files with their hash, updates data_product names and records
+        metadata in the registry
+        """
 
         registry_url = self.handle['yaml']['run_metadata']['local_data_registry_url']
         datastore = self.handle['yaml']['run_metadata']['write_data_store']
@@ -582,8 +584,6 @@ class PyFDP():
                     }
                 )['url']
 
-                write_namespace_id = utils.extract_id(write_namespace_url)
-
                 hash = utils.get_file_hash(output['path'])
 
                 storage_exists = utils.get_entry(
@@ -592,7 +592,7 @@ class PyFDP():
                     query = {
                         'hash': hash,
                         'public': output['public'],
-                        'storage_root': datastore_root_url
+                        'storage_root': datastore_root_id
                     }
                 )
 
