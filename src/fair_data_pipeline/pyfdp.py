@@ -575,6 +575,13 @@ class PyFDP():
         if 'output' in self.handle:
             for output in self.handle['output']:
 
+                if bool(re.search('\\$\\{\\{RUN_ID\\}\\}', output['use_data_product'])):
+                    output['use_data_product'] = re.sub(
+                        '\\$\\{\\{RUN_ID\\}\\}',
+                        self.handle['code_run_uuid'],
+                        output['use_data_product']
+                    )
+
                 write_namespace_url = utils.post_entry(
                     token = self.token,
                     url = registry_url,
