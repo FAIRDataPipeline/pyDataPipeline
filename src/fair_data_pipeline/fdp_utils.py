@@ -1,20 +1,32 @@
+import os
 import urllib
 import requests
 import json
 from datetime import datetime
 import hashlib
 import random
+import yaml
 
 def get_entry(
     url: str,
     endpoint: str,
-    query: dict
+    query: dict,
+    token: str = None,
 )-> list:
 
-    url = url + endpoint + '/'
-
-    response = requests.get(url, query)
-    assert response.status_code == 200
+    headers = {}
+    
+    if token is not None:
+        headers = {
+        'Authorization': 'token ' + token
+        }
+    
+    url += endpoint + '/?'
+    _query =  [f"{k}={v}" for k, v in query.items()]
+    url += "&".join(_query)
+    response = requests.get(url, headers=headers)
+    if (response.status_code != 200):
+        raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
 
     return response.json()['results']
 
@@ -37,11 +49,16 @@ def post_entry(
     'Content-type': 'application/json'
     }
 
-    url = url + endpoint + '/'
-    data = json.dumps(data)
+    _url = url + endpoint + '/'
+    _data = json.dumps(data)
 
-    response = requests.post(url, data, headers=headers)
-    assert response.status_code == 201
+    response = requests.post(_url, _data, headers=headers)
+
+    if (response.status_code == 409):
+        return get_entry(url, endpoint, data)[0]
+
+    if (response.status_code != 201):
+        raise ValueError("Server responded with: " + str(response.status_code))
 
     return response.json()
 
@@ -79,3 +96,24 @@ def get_file_hash(path: str)-> str:
     hashed = hashlib.sha1(data)
 
     return hashed.hexdigest()
+
+def read_token(token_path: str):
+    with open(token_path) as token:
+        token = token.readline().strip()
+    return token
+
+def get_token(token_path: str):
+    return read_token(token_path)
+
+def is_file(filename: str):
+    return os.path.isfile(filename)
+
+def is_yaml(filename: str):
+    try:
+        with open(filename, 'r') as data:
+            yaml.safe_load(data)
+    except: return False
+    return True
+
+def is_valid_yaml(filename: str):
+    return is_file(filename) & is_yaml(filename)
