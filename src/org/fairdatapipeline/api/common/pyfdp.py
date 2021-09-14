@@ -6,7 +6,7 @@ import datetime
 import os
 import re
 import yaml
-import fair_data_pipeline.fdp_utils as utils
+import fair_data_pipeline.fdp_utils as fdp_utils
 
 class PyFDP():
     """Python fair data pipeline
@@ -19,6 +19,11 @@ class PyFDP():
 
     token = None
     handle = None
+
+    def __init__(self, token_path = None):
+        if (token_path != None):
+            self.set_token(token_path)
+
 
     def initialise(self, config: str, script: str):
         """Reads in config file and script, creates necessary registry items
@@ -49,7 +54,7 @@ class PyFDP():
 
         # Configure storage root for config
 
-        config_storageroot_response = utils.post_entry(
+        config_storageroot_response = fdp_utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'storage_root',
@@ -60,12 +65,12 @@ class PyFDP():
         )
 
         config_storageroot_url = config_storageroot_response['url']
-        config_storageroot_id = utils.extract_id(config_storageroot_url)
-        config_hash = utils.get_file_hash(config)
+        config_storageroot_id = fdp_utils.extract_id(config_storageroot_url)
+        config_hash = fdp_utils.get_file_hash(config)
 
         # Check if storage location for file exists
 
-        config_exists = utils.get_entry(
+        config_exists = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'storage_location',
             query = {
@@ -89,7 +94,7 @@ class PyFDP():
                 'storage_root': config_storageroot_url
             }
 
-            config_location_response = utils.post_entry(
+            config_location_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'storage_location',
@@ -100,7 +105,7 @@ class PyFDP():
 
         # Check if yaml file type exists in registry
 
-        config_filetype_exists = utils.get_entry(
+        config_filetype_exists = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'file_type',
             query = {
@@ -114,7 +119,7 @@ class PyFDP():
             config_filetype_url = config_filetype_exists[0]['url']
 
         else:
-            config_filetype_response = utils.post_entry(
+            config_filetype_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'file_type',
@@ -127,7 +132,7 @@ class PyFDP():
 
         # Get user for registry admin account
 
-        user_url = utils.get_entry(
+        user_url = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'users',
             query = {
@@ -135,11 +140,11 @@ class PyFDP():
             }
         )[0]['url']
 
-        user_id = utils.extract_id(user_url)
+        user_id = fdp_utils.extract_id(user_url)
 
         # Get author(s)
 
-        author_url = utils.get_entry(
+        author_url = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'user_author',
             query = {
@@ -149,7 +154,7 @@ class PyFDP():
 
         # Create new object for config file
 
-        config_object_url = utils.post_entry(
+        config_object_url = fdp_utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'object',
@@ -167,9 +172,9 @@ class PyFDP():
 
         script_storageroot_url = config_storageroot_url
         script_storageroot_id = config_storageroot_id
-        script_hash = utils.get_file_hash(script)
+        script_hash = fdp_utils.get_file_hash(script)
 
-        script_exists = utils.get_entry(
+        script_exists = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'storage_location',
             query = {
@@ -193,7 +198,7 @@ class PyFDP():
                 'storage_root': script_storageroot_url
             }
 
-            script_location_response = utils.post_entry(
+            script_location_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'storage_location',
@@ -204,7 +209,7 @@ class PyFDP():
 
         # Check for script file type in registry, create if it doesn't exist
 
-        script_filetype_exists = utils.get_entry(
+        script_filetype_exists = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'file_type',
             query = {
@@ -216,7 +221,7 @@ class PyFDP():
             script_filetype_url = script_filetype_exists[0]['url']
 
         else:
-            script_filetype_response = utils.post_entry(
+            script_filetype_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'file_type',
@@ -230,7 +235,7 @@ class PyFDP():
 
         # Create new registry object for script
 
-        script_object_url = utils.post_entry(
+        script_object_url = fdp_utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'object',
@@ -246,7 +251,7 @@ class PyFDP():
 
         # Create new remote storage root
 
-        repo_storageroot_url = utils.post_entry(
+        repo_storageroot_url = fdp_utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'storage_root',
@@ -256,14 +261,14 @@ class PyFDP():
             }
         )['url']
 
-        repo_storageroot_id = utils.extract_id(repo_storageroot_url)
+        repo_storageroot_id = fdp_utils.extract_id(repo_storageroot_url)
 
         sha = run_metadata['latest_commit']
         repo_name = run_metadata['remote_repo']
 
         # Check if code repo entry exists for given hash
 
-        coderepo_exists = utils.get_entry(
+        coderepo_exists = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'storage_location',
             query = {
@@ -277,9 +282,9 @@ class PyFDP():
 
         if coderepo_exists:
             coderepo_location_url = coderepo_exists[0]['url']
-            coderepo_location_id = utils.extract_id(coderepo_location_url)
+            coderepo_location_id = fdp_utils.extract_id(coderepo_location_url)
 
-            obj_exists = utils.get_entry(
+            obj_exists = fdp_utils.get_entry(
                 url = registry_url,
                 endpoint = 'object',
                 query = {
@@ -292,7 +297,7 @@ class PyFDP():
             if obj_exists:
                 coderepo_object_url = obj_exists[0]['url']
             else:
-                coderepo_object_response = utils.post_entry(
+                coderepo_object_response = fdp_utils.post_entry(
                     token = self.token,
                     url = registry_url,
                     endpoint = 'object',
@@ -308,7 +313,7 @@ class PyFDP():
         # If code repo doesn't exist, create repo and object
 
         else:
-            coderepo_location_response = utils.post_entry(
+            coderepo_location_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'storage_location',
@@ -322,7 +327,7 @@ class PyFDP():
 
             coderepo_location_url = coderepo_location_response['url']
 
-            coderepo_object_response = utils.post_entry(
+            coderepo_object_response = fdp_utils.post_entry(
                 token = self.token,
                 url = registry_url,
                 endpoint = 'object',
@@ -339,7 +344,7 @@ class PyFDP():
 
         # Register new code run
 
-        coderun_response = utils.post_entry(
+        coderun_response = fdp_utils.post_entry(
             token = self.token,
             url = registry_url,
             endpoint = 'code_run',
@@ -403,7 +408,7 @@ class PyFDP():
         write_public = run_metadata['public']
 
         # Create filename for path
-        filename = "dat-" + utils.random_hash() + "." + file_type
+        filename = "dat-" + fdp_utils.random_hash() + "." + file_type
 
         # Get path
         path = os.path.join(
@@ -479,7 +484,7 @@ class PyFDP():
         read = self.handle['yaml']['read'][index]
 
         # Get namespace url and extract id
-        namespace_url = utils.get_entry(
+        namespace_url = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'namespace',
             query = {
@@ -487,10 +492,10 @@ class PyFDP():
             }
         )[0]['url']
 
-        namespace_id = utils.extract_id(namespace_url)
+        namespace_id = fdp_utils.extract_id(namespace_url)
 
         # Get data_product metadata and extract object id
-        data_product_response = utils.get_entry(
+        data_product_response = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'data_product',
             query = {
@@ -500,16 +505,16 @@ class PyFDP():
             }
         )
 
-        object_response = utils.get_entry(
+        object_response = fdp_utils.get_entry(
             url = data_product_response[0]['object'],
             endpoint = '',
             query = {}
         )
 
-        object_id = utils.extract_id(object_response[0]['url'])
+        object_id = fdp_utils.extract_id(object_response[0]['url'])
 
         # Get component url and storage metadata
-        component_url = utils.get_entry(
+        component_url = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'object_component',
             query = {
@@ -517,13 +522,13 @@ class PyFDP():
             }
         )[0]['url']
 
-        storage_location_response = utils.get_entry(
+        storage_location_response = fdp_utils.get_entry(
             url = object_response[0]['storage_location'],
             endpoint = '',
             query = {}
         )
 
-        storage_root = utils.get_entry(
+        storage_root = fdp_utils.get_entry(
             url = storage_location_response[0]['storage_root'],
             endpoint = '',
             query = {}
@@ -562,7 +567,7 @@ class PyFDP():
         registry_url = self.handle['yaml']['run_metadata']['local_data_registry_url']
         datastore = self.handle['yaml']['run_metadata']['write_data_store']
 
-        datastore_root_url = utils.get_entry(
+        datastore_root_url = fdp_utils.get_entry(
             url = registry_url,
             endpoint = 'storage_root',
             query = {
@@ -570,7 +575,7 @@ class PyFDP():
             }
         )[0]['url']
 
-        datastore_root_id = utils.extract_id(datastore_root_url)
+        datastore_root_id = fdp_utils.extract_id(datastore_root_url)
 
         if 'output' in self.handle:
             for output in self.handle['output']:
@@ -582,7 +587,7 @@ class PyFDP():
                         output['use_data_product']
                     )
 
-                write_namespace_url = utils.post_entry(
+                write_namespace_url = fdp_utils.post_entry(
                     token = self.token,
                     url = registry_url,
                     endpoint = 'namespace',
@@ -591,9 +596,9 @@ class PyFDP():
                     }
                 )['url']
 
-                hash = utils.get_file_hash(output['path'])
+                hash = fdp_utils.get_file_hash(output['path'])
 
-                storage_exists = utils.get_entry(
+                storage_exists = fdp_utils.get_entry(
                     url = registry_url,
                     endpoint = 'storage_location',
                     query = {
@@ -618,7 +623,7 @@ class PyFDP():
 
                     existing_path = storage_exists[0]['path']
 
-                    existing_root = utils.get_entry(
+                    existing_root = fdp_utils.get_entry(
                         url = storage_exists[0]['storage_root'],
                         endpoint = '',
                         query = {}
@@ -640,7 +645,7 @@ class PyFDP():
                         "",
                         new_path)
 
-                    storage_location_url = utils.post_entry(
+                    storage_location_url = fdp_utils.post_entry(
                         token = self.token,
                         url = registry_url,
                         endpoint = 'storage_location',
@@ -654,7 +659,7 @@ class PyFDP():
 
                 file_type = os.path.basename(new_path).split('.')[-1]
 
-                file_type_exists = utils.get_entry(
+                file_type_exists = fdp_utils.get_entry(
                     url = registry_url,
                     endpoint = 'file_type',
                     query = {
@@ -665,7 +670,7 @@ class PyFDP():
                 if file_type_exists:
                     file_type_url = file_type_exists[0]['url']
                 else:
-                    file_type_url = utils.post_entry(
+                    file_type_url = fdp_utils.post_entry(
                         token = self.token,
                         url = registry_url,
                         endpoint = 'file_type',
@@ -675,7 +680,7 @@ class PyFDP():
                         }
                     )['url']
 
-                object_url = utils.post_entry(
+                object_url = fdp_utils.post_entry(
                     token = self.token,
                     url = registry_url,
                     endpoint = 'object',
@@ -687,17 +692,17 @@ class PyFDP():
                     }
                 )['url']
 
-                component_url = utils.post_entry(
+                component_url = fdp_utils.post_entry(
                     token = self.token,
                     url = registry_url,
                     endpoint = 'object_component',
                     data = {
                         'object': object_url,
-                        'name': utils.random_hash()
+                        'name': fdp_utils.random_hash()
                     }
                 )['url']
 
-                data_product_url = utils.post_entry(
+                data_product_url = fdp_utils.post_entry(
                     token = self.token,
                     url = registry_url,
                     endpoint = 'data_product',
@@ -725,7 +730,7 @@ class PyFDP():
             for input in self.handle['input']:
                 input_components.append(input['component_url'])
 
-        utils.patch_entry(
+        fdp_utils.patch_entry(
             token = self.token,
             url = self.handle['code_run'],
             data = {
@@ -745,3 +750,6 @@ class PyFDP():
             if len(data) > 0:
                 coderun_file.write('\n')
             coderun_file.write(self.handle['code_run_uuid'])
+    
+    def set_token(self, token_path: str):
+        self.token = fdp_utils.read_token(token_path)

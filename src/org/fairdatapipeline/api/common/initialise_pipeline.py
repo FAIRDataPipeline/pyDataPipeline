@@ -1,9 +1,7 @@
 import datetime
 import os
-import re
 import yaml
-import fair_data_pipeline.fdp_utils as fdp_utils    
-import time
+import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
     
 def initialise(token: str, config: str, script: str):
     """Reads in config file and script, creates necessary registry items

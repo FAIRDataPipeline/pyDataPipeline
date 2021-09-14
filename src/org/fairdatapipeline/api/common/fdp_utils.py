@@ -20,6 +20,22 @@ def get_entry(
         headers = {
         'Authorization': 'token ' + token
         }
+
+    # Remove api address from query
+    for key in query:
+        if type(query[key]) == str:
+            if url in query[key]:
+                query[key] = extract_id(query[key])
+        elif type(query[key]) == dict:
+            for _key in query[key]:
+                if url in query[key][_key]:
+                    query[key][_key] = extract_id(query[key][_key])
+        elif type(query[key]) == list:
+            for i in range(len(query[key])):
+                if url in query[key][i]:
+                    query[key][i] = extract_id(query[key][i])
+
+
     
     url += endpoint + '/?'
     _query =  [f"{k}={v}" for k, v in query.items()]
@@ -29,6 +45,27 @@ def get_entry(
         raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
 
     return response.json()['results']
+
+def get_entity(
+    url: str,
+    endpoint: str,
+    id: int,
+    token: str = None,
+)-> list:
+
+    headers = {}
+    
+    if token is not None:
+        headers = {
+        'Authorization': 'token ' + token
+        }
+    
+    url += endpoint + '/' + id
+    response = requests.get(url, headers=headers)
+    if (response.status_code != 200):
+        raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
+
+    return response.json()
 
 def extract_id(url: str)-> str:
 
