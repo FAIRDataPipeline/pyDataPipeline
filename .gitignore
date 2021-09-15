@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+data_pipeline.api.egg-info
 
 # C extensions
 *.so
@@ -132,3 +133,5 @@ dmypy.json
 *.ipynb
 
 test.yaml
+
+.DS_Store
