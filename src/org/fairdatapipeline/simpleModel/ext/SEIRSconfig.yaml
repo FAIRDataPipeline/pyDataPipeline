@@ -1,0 +1,31 @@
+run_metadata:
+  default_input_namespace: rfield
+  description: SEIRS Model
+  script: python src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
+
+register:
+- namespace: PSU
+  full_name: Pennsylvania State University
+  website: https://ror.org/04p491231
+
+- external_object: SEIRS_model/parameters
+  namespace: PSU
+  root: https://raw.githubusercontent.com/
+  path: pythonFDP/dev/src/org/fairdatapipeline/simpleModel/ext/static_params_SEIRS.csv
+  title: Static parameters of the model
+  description: Static parameters of the model
+  unique_name: SEIRS model parameters - Static parameters of the model
+  alternate_identifier_type: SEIRS_model_params
+  file_type: csv
+  release_date: 2021-09-20T12:00
+  version: "1.0.0"
+  primary: True
+
+write:
+- data_product: SEIRS_model/results/model_output
+  description: SEIRS model results
+  file_type: csv
+
+- data_product: SEIRS_model/results/figure
+  description: SEIRS output plot
+  file_type: png
