@@ -29,6 +29,8 @@ def initialise(token: str, config: str, script: str):
         config_yaml = yaml.safe_load(data)
     run_metadata = config_yaml['run_metadata']
     registry_url = run_metadata['local_data_registry_url']
+    if registry_url[-1] != "/":
+        registry_url += "/"
     filename = os.path.basename(config)
 
     print(f"Reading {filename} from data store")

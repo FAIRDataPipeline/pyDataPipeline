@@ -9,7 +9,7 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'PyYAML==5.3.1',
+        'PyYAML==5.4.1',
         'requests==2.23.0',
         'scipy',
         'h5py>=3.4.0',

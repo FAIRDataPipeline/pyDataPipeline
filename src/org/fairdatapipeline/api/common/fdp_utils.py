@@ -36,7 +36,8 @@ def get_entry(
                     query[key][i] = extract_id(query[key][i])
 
 
-    
+    if url[-1] != "/":
+        url+="/"
     url += endpoint + '/?'
     _query =  [f"{k}={v}" for k, v in query.items()]
     url += "&".join(_query)
@@ -60,6 +61,8 @@ def get_entity(
         'Authorization': 'token ' + token
         }
     
+    if url[-1] != "/":
+        url+="/"
     url += endpoint + '/' + id
     response = requests.get(url, headers=headers)
     if (response.status_code != 200):
@@ -86,6 +89,8 @@ def post_entry(
     'Content-type': 'application/json'
     }
 
+    if url[-1] != "/":
+        url+="/"
     _url = url + endpoint + '/'
     _data = json.dumps(data)
 
@@ -127,9 +132,9 @@ def random_hash()-> str:
 
 def get_file_hash(path: str)-> str:
 
-    with open(path, 'r') as data:
+    with open(path, 'rb') as data:
         data = data.read()
-    data = data.encode('utf-8')
+    #data = data.encode('utf-8')
     hashed = hashlib.sha1(data)
 
     return hashed.hexdigest()

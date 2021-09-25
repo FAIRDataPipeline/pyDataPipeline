@@ -2,14 +2,14 @@ import csv
 import os
 
 def SEIRS_Model(initial_state: dict, 
-    timesteps,
-    years,
-    alpha,
-    beta,
-    inv_gamma,
-    inv_omega,
-    inv_mu,
-    inv_sigma
+    timesteps: float,
+    years: float,
+    alpha: float,
+    beta: float,
+    inv_gamma: float,
+    inv_omega: float,
+    inv_mu: float,
+    inv_sigma: float
 ):
     # Check all inital states are present
     disease_states = ['s', 'e', 'i', 'r']
@@ -28,8 +28,8 @@ def SEIRS_Model(initial_state: dict,
     time_unit_days = time_unit_years * 365.25
 
     # Convert Parameters to days
-    alpha *= time_unit_days
-    beta *= time_unit_days
+    alpha = alpha * time_unit_days
+    beta = beta * time_unit_days
     gamma = time_unit_days / inv_gamma
     omega = time_unit_days / (inv_omega * 365.25)
     mu = time_unit_days / (inv_mu *365.25)
@@ -91,5 +91,5 @@ def readInitialParameters(path = "", local = True):
     with open(path, 'r', newline='') as data:
         reader = csv.DictReader(data)
         for line in reader:
-            rtn[line['param']] = line['value']
+            rtn[line['param']] = float(line['value'])
     return rtn
