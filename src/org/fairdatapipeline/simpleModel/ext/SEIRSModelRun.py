@@ -2,7 +2,7 @@ import org.fairdatapipeline.simpleModel as simpleModel
 import org.fairdatapipeline.api as pipeline
 import os
 
-token = os.environ.get('FDP_REGISTRY_DIR') + '/token'
+token = '~/.fair/registry/token'
 script = os.environ.get('FDP_CONFIG_DIR') + '/script.sh'
 config = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
 
