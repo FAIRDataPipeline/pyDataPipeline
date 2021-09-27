@@ -45,8 +45,8 @@ jobs:
           cd ${{ github.workspace }}
           fair init --ci
           pip3 install .
-          fair pull src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yaml
-          fair run src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yam
+          fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+          fair run src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
           
 
         
