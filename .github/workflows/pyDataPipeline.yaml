@@ -44,12 +44,9 @@ jobs:
           source .venv/bin/activate
           cd ${{ github.workspace }}
           fair init --ci
-      - name: Install pyDataPipeline
-        run: |
           pip3 install .
-      - name: fair pull and run
-        run: |
           fair pull src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yaml
-          fair run src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yaml
+          fair run src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yam
+          
 
         
