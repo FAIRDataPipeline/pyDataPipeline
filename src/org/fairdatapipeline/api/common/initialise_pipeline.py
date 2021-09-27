@@ -4,13 +4,24 @@ import yaml
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
     
 def initialise(token: str, config: str, script: str):
-    """Reads in config file and script, creates necessary registry items
+    """Reads in token, config file and script, creates necessary registry items
     and creates new code run.
 
     Args:
         token: path to token file
         config: Path to config file
         script: Path to script file
+
+    Returns:
+        dict: a dictionary containing the following keys: 
+            'yaml': config_yaml path,
+            'fdp_config_dir': config dir path,
+            'model_config': model config url,
+            'submission_script': submission script object url,
+            'code_repo': code repo object url,
+            'code_run': coderun url,
+            'code_run_uuid': coderun uuid,
+            'author': author url
     """
 
     # Validate Yamls

@@ -6,8 +6,36 @@ import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 import shutil
 
 def finalise(token: str, handle: dict):
-    """Renames files with their hash, updates data_product names and records
+    """
+    Renames files with their hash, updates data_product names and records
     metadata in the registry
+
+    Args:
+        token: path to token file
+        config: Path to config file
+        script: Path to script file
+
+    Returns:
+        dict: a dictionary containing the following keys: 
+            'yaml': config_yaml path,
+            'fdp_config_dir': config dir path,
+            'model_config': model config url,
+            'submission_script': submission script object url,
+            'code_repo': code repo object url,
+            'code_run': coderun url,
+            'code_run_uuid': coderun uuid,
+            'author': author url
+            'inputs':
+                'data_product': data product,
+                'use_data_product': data product,
+                'use_component': component,
+                'use_version': version,
+                'use_namespace': namespace,
+                'path': path,
+                'component_url': component url
+            'outputs':
+                component_url: component url
+                'data_product_url: data product url
     """
     token = fdp_utils.read_token(token)
     registry_url = handle['yaml']['run_metadata']['local_data_registry_url']

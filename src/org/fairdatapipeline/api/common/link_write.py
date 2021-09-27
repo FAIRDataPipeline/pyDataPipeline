@@ -12,7 +12,6 @@ def link_write(handle, data_product: str)-> str:
 
     Returns:
         path: Path to write data product to.
-
     """
 
     # Get metadata from handle

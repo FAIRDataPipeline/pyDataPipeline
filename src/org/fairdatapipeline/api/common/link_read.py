@@ -12,7 +12,6 @@ def link_read(handle: dict, data_product: str)-> str:
 
     Returns:
         path: Path to write data product to.
-
     """
 
     # If data product is already in handle, return path
