@@ -1,0 +1,55 @@
+name: Python FAIR Data Pipeline
+on: [push]
+jobs:
+  test:
+    name: Test ${{ matrix.os }} (Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-latest] #, windows-latest]
+        python: ["3.7", "3.9"]
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: "x64"
+      - name: Install graphviz
+        run:  |
+              if [ ${{ runner.os }} == "Linux" ]; then
+                  sudo apt-get install graphviz
+              else
+                  brew install graphviz
+              fi
+      - name: Install local registry
+        run: /bin/bash -c "$(curl -fsSL https://data.scrc.uk/static/localregistry.sh)"
+      - name: Checkout FAIRDataPipeline/FAIR-CLI
+        uses: actions/checkout@v2
+        with:
+          repository: FAIRDataPipeline/FAIR-CLI
+          path: FAIR-CLI
+      - name: Move FAIR-CLI
+        run: mv FAIR-CLI ../FAIR-CLI
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Install and initialise FAIR CLI
+        run: |
+          cd ../FAIR-CLI
+          poetry install
+          source .venv/bin/activate
+          cd ${{ github.workspace }}
+          fair init --ci
+      - name: Install pyDataPipeline
+        run: |
+          pip3 install .
+      - name: fair pull and run
+        run: |
+          fair pull src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yaml
+          fair run src/org/fairdatapipeline/api/simpleModel/ext/SEIRSconfig.yaml
+
+        
