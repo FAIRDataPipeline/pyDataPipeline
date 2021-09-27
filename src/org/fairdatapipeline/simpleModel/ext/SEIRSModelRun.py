@@ -2,7 +2,7 @@ import org.fairdatapipeline.simpleModel as simpleModel
 import org.fairdatapipeline.api as pipeline
 import os
 
-token = '~/.fair/registry/token'
+token = os.path.join(os.path.expanduser('~'), '.fair/registry/token')
 script = os.environ.get('FDP_CONFIG_DIR') + '/script.sh'
 config = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
 
@@ -20,7 +20,7 @@ states = {
     'r': 0
 }
 
-init_params = simpleModel.readInitialParameters(initial_parameters, False)
+init_params = simpleModel.readInitialParameters(initial_parameters)
 
 alpha = init_params['alpha']
 beta = init_params['beta']

@@ -84,8 +84,8 @@ def write_model_to_csv(model_output: dict, path: str):
 def getResourceDirectory():
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), "ext")
 
-def readInitialParameters(path = "", local = True):
-    if local:
+def readInitialParameters(path = ""):
+    if path == "":
         path = os.path.join(getResourceDirectory(), "static_params_SEIRS.csv")
     rtn = {}
     with open(path, 'r', newline='') as data:

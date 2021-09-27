@@ -19,7 +19,7 @@ Assume FDP_CONFIG_DIR, storage_locations and objects have been set by CLI tool
 import os
 import org.fairdatapipeline.api as pipeline
 
-token_path = "/Users/ryanfield/.fair/registry/token"
+token = os.path.join(os.path.expanduser('~'), '.fair/registry/token')
 config_path = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
 script_path = os.environ.get('FDP_CONFIG_DIR') + '/script.sh'
 
