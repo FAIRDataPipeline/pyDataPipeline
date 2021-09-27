@@ -11,6 +11,33 @@ def SEIRS_Model(initial_state: dict,
     inv_mu: float,
     inv_sigma: float
 ):
+    """
+    Implementation of the SEIRS Model
+
+    Args:
+        initial_state: dict
+            's': S Parameter (Suceptible)
+            'e': E Parameter (Exposed)
+            'i': I Parameter (Infectious)
+            'r': R Parameter (Recovered)
+        timesteps: timesteps for model
+        years: model timeframe years
+        alpha: alpha parameter for model
+        beta: beta parameter for model
+        inv_gamma: inverse gamma parameter for model
+        inv_omega: inverse omega parameter for model
+        inv_mu: inverse mu parameter for model
+        inv_sigma: inverse sigma parameter for model
+
+    Returns:
+        results: dict
+            '0': dict
+                'Time': current timepoint
+                'S': S Parameter at timepoint
+                'E': E Parameter at timepoint
+                'I': I Parameter at timepoint
+                'R': R Paramerer at timepoint
+    """
     # Check all inital states are present
     disease_states = ['s', 'e', 'i', 'r']
     for state in disease_states:

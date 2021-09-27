@@ -1,6 +1,15 @@
 import matplotlib.pyplot as plt
 
 def SEIRS_Plot(results: dict, save_location: str, show = False):
+    """
+    Produces plot from results of SEIRS Model and saves the plot as a png
+        in the save_location
+
+    Args:
+        results: results from SEIRS Model
+        save_location: location to save plot
+        show: whether or not to show the plot as well as saving
+    """
     time_points = [round(results[k]['Time'] / 365.25, 3) for k in results]
     S = [results[k]['S'] * 100 for k in results]
     E = [results[k]['E'] * 100 for k in results]
