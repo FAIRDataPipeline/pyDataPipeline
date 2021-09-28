@@ -137,3 +137,5 @@ test.yaml
 .DS_Store
 
 .fair/
+
+make.bat

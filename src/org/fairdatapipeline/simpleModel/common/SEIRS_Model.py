@@ -15,28 +15,28 @@ def SEIRS_Model(initial_state: dict,
     Implementation of the SEIRS Model
 
     Args:
-        initial_state: dict
-            's': S Parameter (Suceptible)
-            'e': E Parameter (Exposed)
-            'i': I Parameter (Infectious)
-            'r': R Parameter (Recovered)
-        timesteps: timesteps for model
-        years: model timeframe years
-        alpha: alpha parameter for model
-        beta: beta parameter for model
-        inv_gamma: inverse gamma parameter for model
-        inv_omega: inverse omega parameter for model
-        inv_mu: inverse mu parameter for model
-        inv_sigma: inverse sigma parameter for model
+        |   initial_state: dict
+        |       's': S Parameter (Suceptible)
+        |       'e': E Parameter (Exposed)
+        |       'i': I Parameter (Infectious)
+        |       'r': R Parameter (Recovered)
+        |   timesteps: timesteps for model
+        |   years: model timeframe years
+        |   alpha: alpha parameter for model
+        |   beta: beta parameter for model
+        |   inv_gamma: inverse gamma parameter for model
+        |   inv_omega: inverse omega parameter for model
+        |   inv_mu: inverse mu parameter for model
+        |   inv_sigma: inverse sigma parameter for model
 
     Returns:
-        results: dict
-            '0': dict
-                'Time': current timepoint
-                'S': S Parameter at timepoint
-                'E': E Parameter at timepoint
-                'I': I Parameter at timepoint
-                'R': R Paramerer at timepoint
+        |   results: dict
+        |      '0': dict
+        |      'Time': current timepoint
+        |      'S': S Parameter at timepoint
+        |      'E': E Parameter at timepoint
+        |      'I': I Parameter at timepoint
+        |      'R': R Paramerer at timepoint
     """
     # Check all inital states are present
     disease_states = ['s', 'e', 'i', 'r']
@@ -95,6 +95,13 @@ def SEIRS_Model(initial_state: dict,
     return results
 
 def write_model_to_csv(model_output: dict, path: str):
+    """
+    Write the model results to a given csv file
+
+    Args:
+        |   model_output: dict
+        |   path: path to write csv to including .csv extension
+    """
     with open(path, 'w', newline='') as outfile:
         dictWriter = csv.DictWriter(
         outfile,
@@ -109,9 +116,24 @@ def write_model_to_csv(model_output: dict, path: str):
         print("\nSuccess File: " + path + " Written")
 
 def getResourceDirectory():
+    """
+    Returns the path of the resouce directory containing intial parameters etc.
+
+    Returns:
+        |   str: path to the resource directory
+    """
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), "ext")
 
 def readInitialParameters(path = ""):
+    """
+    Read the inital parameters from a csv into a dictionary
+
+    Args:
+        |   path: (optional) path to csv file
+
+    Returns:
+        |   dict: containing the intial parameters
+    """
     if path == "":
         path = os.path.join(getResourceDirectory(), "static_params_SEIRS.csv")
     rtn = {}
