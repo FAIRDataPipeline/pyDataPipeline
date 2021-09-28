@@ -39,7 +39,7 @@ The following commands should be run after activating a poetry shell from the CL
 ::
 
    fair init --ci
-   fair pull scr/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+   fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
 
 The :code:`--ci` flag can be used to use temporary directories. If using this flag the above code should be run from the :code:`local_repo` directory
 
