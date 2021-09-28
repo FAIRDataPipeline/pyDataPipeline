@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src'))
+sys.path.insert(0, os.path.abspath('../src'))
 sys.setrecursionlimit(1500)
 
 
@@ -33,7 +33,8 @@ release = '0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx.ext.githubpages'
 ]
 
 autosummary_generate = True
@@ -64,3 +65,5 @@ html_css_files = [
 ]
 
 add_module_names = False
+
+html_baseurl = 'https://fairdatapipeline.github.io/pyDataPipeline'

@@ -23,7 +23,7 @@ and the following outputs:
 an example config is provided within the pyDataPipeline package located in :code:`src/org/simpleModel/ext/SEIRSconfig.yaml`
 and contains the following:
 
-.. literalinclude:: /../../src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+.. literalinclude:: /../src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
    :linenos:
    :language: yaml
 
@@ -64,7 +64,7 @@ This will call :code:`fair run` which will produce a code run and the appropriat
 The following code will be executed when using the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig,yaml` config file,
 which is located in the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py` Python script
 
-.. literalinclude:: /../../src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
+.. literalinclude:: /../src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
    :linenos:
    :language: python
 
