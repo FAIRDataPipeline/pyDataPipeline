@@ -8,7 +8,7 @@ def initialise(token: str, config: str, script: str):
     and creates new code run.
 
     Args:
-        token: path to token file
+        token: registry token
         config: Path to config file
         script: Path to script file
 
@@ -33,7 +33,7 @@ def initialise(token: str, config: str, script: str):
         raise ValueError("Script does not exist")
     
     # Read the token
-    token = fdp_utils.read_token(token)
+    #token = fdp_utils.read_token(token)
 
     # Read config file and extract run metadata
     with open(config, 'r') as data:

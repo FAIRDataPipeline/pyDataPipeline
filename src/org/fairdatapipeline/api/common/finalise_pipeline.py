@@ -11,7 +11,7 @@ def finalise(token: str, handle: dict):
     metadata in the registry
 
     Args:
-        token: path to token file
+        token: registry token
         config: Path to config file
         script: Path to script file
 
@@ -37,7 +37,7 @@ def finalise(token: str, handle: dict):
                 component_url: component url
                 'data_product_url: data product url
     """
-    token = fdp_utils.read_token(token)
+    #token = fdp_utils.read_token(token)
     registry_url = handle['yaml']['run_metadata']['local_data_registry_url']
     datastore = handle['yaml']['run_metadata']['write_data_store']
 
