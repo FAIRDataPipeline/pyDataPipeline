@@ -27,8 +27,6 @@ def initialise(token: str, config: str, script: str):
     # Validate Yamls
     if not fdp_utils.is_valid_yaml(config):
         raise ValueError('Config is not a valid YAML file')
-    if not fdp_utils.is_file(token):
-        raise ValueError("Token is not a valid token")
     if not fdp_utils.is_file(script):
         raise ValueError("Script does not exist")
     
