@@ -75,7 +75,7 @@ This code run should produce the following figure in the local data store,
 this will be a temporary directory if the :code:`--ci` flag was used with :code:`fair init`
 
 .. image:: SEIRS_figure.png
-   :target: /_images/SEIRS_figure.png
+   :target: /pyDataPipeline/_images/SEIRS_figure.png
 
 As well as the above figure a CSV file from the model output will also be generated which will also be located within the local data store
 an example of the CSV file is printed below:
@@ -93,4 +93,4 @@ Provenance Report
 The following is the Provenance Report produced by the FAIR Data Pipeline Registry as a result of the above code run:
 
 .. image:: SEIRS_PR.jpeg
-   :target: /_images/SEIRS_PR.jpeg
+   :target: /pyDataPipeline/_images/SEIRS_PR.jpeg
