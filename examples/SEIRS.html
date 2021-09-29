@@ -132,8 +132,8 @@ and contains the following:</p>
 </section>
 <section id="fair-pull">
 <h2>fair pull<a class="headerlink" href="#fair-pull" title="Permalink to this headline"></a></h2>
-<p>Using the CLI tool, the command <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">pull</span></code> will indetify any data products listed in the <code class="code docutils literal notranslate"><span class="pre">register</span></code> field of the config.yaml file and
-download them to the local data store as set by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> and register the corresonding metadata to the local registry.</p>
+<p>Using the CLI tool, the command <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">pull</span></code> will indentify any data products listed in the <code class="code docutils literal notranslate"><span class="pre">register</span></code> field of the config.yaml file and
+download them to the local data store as set by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> and register the corresponding metadata to the local registry.</p>
 <p>The following commands should be run after activating a poetry shell from the CLI tool:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fair</span> <span class="n">init</span> <span class="o">--</span><span class="n">ci</span>
 <span class="n">fair</span> <span class="n">pull</span> <span class="n">src</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">fairdatapipeline</span><span class="o">/</span><span class="n">simpleModel</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">SEIRSconfig</span><span class="o">.</span><span class="n">yaml</span>
@@ -155,7 +155,7 @@ following the <a class="reference external" href="../installation.html">Installa
 </pre></div>
 </div>
 <p>This will call <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">run</span></code> which will produce a code run and the appropriate output using the script provided in the <code class="code docutils literal notranslate"><span class="pre">run_metadata</span></code> field of the config.yaml file.</p>
-<p>The following code will be executed when using the <code class="code docutils literal notranslate"><span class="pre">src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig,yaml</span></code> config file,
+<p>The following code will be executed when using the <code class="code docutils literal notranslate"><span class="pre">src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml</span></code> config file,
 which is located in the <code class="code docutils literal notranslate"><span class="pre">src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py</span></code> Python script</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">org.fairdatapipeline.simpleModel</span> <span class="k">as</span> <span class="nn">simpleModel</span>
 <span class="linenos"> 2</span><span class="kn">import</span> <span class="nn">org.fairdatapipeline.api</span> <span class="k">as</span> <span class="nn">pipeline</span>
@@ -210,9 +210,9 @@ which is located in the <code class="code docutils literal notranslate"><span cl
 <section id="output">
 <h2>Output<a class="headerlink" href="#output" title="Permalink to this headline"></a></h2>
 <p>This code run should produce the following figure in the local data store,
-this will be a tempory directory if the <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag was used with <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code></p>
+this will be a temporary directory if the <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag was used with <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code></p>
 <img alt="../_images/SEIRS_figure.png" src="../_images/SEIRS_figure.png" />
-<p>As well as the above figure a CSV file from the model output which will also be located within the local data store
+<p>As well as the above figure a CSV file from the model output will also be generated which will also be located within the local data store
 an example of the CSV file is printed below:</p>
 <table class="table-limit docutils align-left" id="id1">
 <caption><span class="caption-text">Output</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
