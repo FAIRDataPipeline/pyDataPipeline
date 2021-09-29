@@ -119,7 +119,7 @@ and contains the following:</p>
 <span class="linenos">21</span>  <span class="nt">primary</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
 <span class="linenos">22</span>
 <span class="linenos">23</span><span class="nt">write</span><span class="p">:</span>
-<span class="linenos">24</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/model_output</span>
+<span class="linenos">24</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/model_output/python</span>
 <span class="linenos">25</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS model results</span>
 <span class="linenos">26</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">csv</span>
 <span class="linenos">27</span>
@@ -162,13 +162,13 @@ which is located in the <code class="code docutils literal notranslate"><span cl
 <span class="linenos"> 3</span><span class="kn">import</span> <span class="nn">os</span>
 <span class="linenos"> 4</span>
 <span class="linenos"> 5</span><span class="n">token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FDP_LOCAL_TOKEN&#39;</span><span class="p">)</span>
-<span class="linenos"> 6</span><span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FDP_CONFIG_DIR&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/script.sh&#39;</span>
-<span class="linenos"> 7</span><span class="n">config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FDP_CONFIG_DIR&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/config.yaml&#39;</span>
+<span class="linenos"> 6</span><span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FDP_CONFIG_DIR&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;script.sh&#39;</span>
+<span class="linenos"> 7</span><span class="n">config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FDP_CONFIG_DIR&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;config.yaml&#39;</span>
 <span class="linenos"> 8</span>
 <span class="linenos"> 9</span><span class="n">handle</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">initialise</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
 <span class="linenos">10</span>
 <span class="linenos">11</span><span class="n">initial_parameters</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_read</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/parameters&#39;</span><span class="p">)</span>
-<span class="linenos">12</span><span class="n">model_output</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/model_output&#39;</span><span class="p">)</span>
+<span class="linenos">12</span><span class="n">model_output</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/model_output/python&#39;</span><span class="p">)</span>
 <span class="linenos">13</span><span class="n">model_plot</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/figure&#39;</span><span class="p">)</span>
 <span class="linenos">14</span>
 <span class="linenos">15</span><span class="c1"># Model Code</span>
