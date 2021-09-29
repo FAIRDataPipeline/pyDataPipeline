@@ -21,7 +21,7 @@ register:
   primary: True
 
 write:
-- data_product: SEIRS_model/results/model_output
+- data_product: SEIRS_model/results/model_output/python
   description: SEIRS model results
   file_type: csv
 

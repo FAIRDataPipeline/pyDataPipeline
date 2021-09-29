@@ -83,7 +83,7 @@ def initialise(token: str, config: str, script: str):
 
     else:
         config_storage_data = {
-            'path': config,
+            'path': config.replace(run_metadata['write_data_store'], ""),
             'hash': config_hash,
             'public': True,
             'storage_root': config_storageroot_url
@@ -190,7 +190,7 @@ def initialise(token: str, config: str, script: str):
 
     else:
         script_storage_data = {
-            'path': script,
+            'path': script.replace(run_metadata['write_data_store'], ""),
             'hash': script_hash,
             'public': True,
             'storage_root': script_storageroot_url

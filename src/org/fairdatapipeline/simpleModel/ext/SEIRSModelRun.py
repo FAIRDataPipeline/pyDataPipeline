@@ -3,13 +3,13 @@ import org.fairdatapipeline.api as pipeline
 import os
 
 token = os.environ.get('FDP_LOCAL_TOKEN')
-script = os.environ.get('FDP_CONFIG_DIR') + '/script.sh'
-config = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
+script = os.environ.get('FDP_CONFIG_DIR') + 'script.sh'
+config = os.environ.get('FDP_CONFIG_DIR') + 'config.yaml'
 
 handle = pipeline.initialise(token, config, script)
 
 initial_parameters = pipeline.link_read(handle, 'SEIRS_model/parameters')
-model_output = pipeline.link_write(handle, 'SEIRS_model/results/model_output')
+model_output = pipeline.link_write(handle, 'SEIRS_model/results/model_output/python')
 model_plot = pipeline.link_write(handle, 'SEIRS_model/results/figure')
 
 # Model Code

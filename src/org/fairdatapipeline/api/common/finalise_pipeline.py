@@ -119,8 +119,8 @@ def finalise(token: str, handle: dict):
 
                 directory = os.path.dirname(output['path'])
 
-                print("\ndirectory: " + os.path.normpath(directory))
-                print("\nDatastore Path: " + os.path.normpath(datastore))
+                #print("\ndirectory: " + os.path.normpath(directory))
+                #print("\nDatastore Path: " + os.path.normpath(datastore))
 
                 i = 0
                 while os.path.normpath(directory) != os.path.normpath(datastore):
@@ -148,16 +148,22 @@ def finalise(token: str, handle: dict):
                 tmp_filename = os.path.basename(output['path'])
                 extension = tmp_filename.split(sep='.')[-1]
                 new_filename = '.'.join([hash, extension])
+                data_product = output['data_product']
+                namespace = output['use_namespace']
                 new_path = os.path.join(
-                    os.path.dirname(output['path']),
+                    datastore,
+                    namespace,
+                    data_product,
                     new_filename
                 ).replace('\\', '/')
-                _datastore = datastore.replace('\\', '/')
+                
                 os.rename(output['path'], new_path)
-                new_storage_location = re.sub(
-                    rf"\b{_datastore}\b",
-                    "",
-                    new_path)
+
+                new_storage_location = os.path.join(
+                    namespace,
+                    data_product,
+                    new_filename
+                ).replace('\\', '/')
 
                 storage_location_url = fdp_utils.post_entry(
                     token = token,
