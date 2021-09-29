@@ -7,7 +7,7 @@ git clone https://github.com/FAIRDataPipeline/pythonFDP.git
 
 git checkout dev
 
-pip install -e .
+pip3 install -e .
 ```
 **NB. PyDataPipeline requires Python3.**
 

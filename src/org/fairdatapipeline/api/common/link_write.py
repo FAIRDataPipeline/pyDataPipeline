@@ -8,10 +8,10 @@ def link_write(handle, data_product: str)-> str:
     metadata and returns path to write data product to.
 
     Args:
-        data_product: Specified name of data product in config.
+        |   data_product: Specified name of data product in config.
 
     Returns:
-        path: Path to write data product to.
+        |   path: Path to write data product to.
     """
 
     # Get metadata from handle

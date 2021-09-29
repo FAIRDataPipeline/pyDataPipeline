@@ -8,20 +8,20 @@ def initialise(token: str, config: str, script: str):
     and creates new code run.
 
     Args:
-        token: registry token
-        config: Path to config file
-        script: Path to script file
+        |   token: registry token
+        |   config: Path to config file
+        |   script: Path to script file
 
     Returns:
-        dict: a dictionary containing the following keys: 
-            'yaml': config_yaml path,
-            'fdp_config_dir': config dir path,
-            'model_config': model config url,
-            'submission_script': submission script object url,
-            'code_repo': code repo object url,
-            'code_run': coderun url,
-            'code_run_uuid': coderun uuid,
-            'author': author url
+        |   dict: a dictionary containing the following keys: 
+        |       'yaml': config_yaml path,
+        |       'fdp_config_dir': config dir path,
+        |       'model_config': model config url,
+        |       'submission_script': submission script object url,
+        |       'code_repo': code repo object url,
+        |       'code_run': coderun url,
+        |       'code_run_uuid': coderun uuid,
+        |       'author': author url
     """
 
     # Validate Yamls
