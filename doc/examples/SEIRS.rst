@@ -32,8 +32,8 @@ The script specified in :code:`run_metadata` will be called by :code:`fair run`
 fair pull
 ---------
 
-Using the CLI tool, the command :code:`fair pull` will indetify any data products listed in the :code:`register` field of the config.yaml file and
-download them to the local data store as set by :code:`fair init` and register the corresonding metadata to the local registry.
+Using the CLI tool, the command :code:`fair pull` will indentify any data products listed in the :code:`register` field of the config.yaml file and
+download them to the local data store as set by :code:`fair init` and register the corresponding metadata to the local registry.
 
 The following commands should be run after activating a poetry shell from the CLI tool:
 ::
@@ -61,7 +61,7 @@ following the `Installation <../installation.html>`_ instructions.
 
 This will call :code:`fair run` which will produce a code run and the appropriate output using the script provided in the :code:`run_metadata` field of the config.yaml file.
 
-The following code will be executed when using the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig,yaml` config file,
+The following code will be executed when using the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml` config file,
 which is located in the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py` Python script
 
 .. literalinclude:: /../src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
@@ -72,11 +72,11 @@ Output
 ------
 
 This code run should produce the following figure in the local data store,
-this will be a tempory directory if the :code:`--ci` flag was used with :code:`fair init`
+this will be a temporary directory if the :code:`--ci` flag was used with :code:`fair init`
 
 .. image:: SEIRS_figure.png
 
-As well as the above figure a CSV file from the model output which will also be located within the local data store
+As well as the above figure a CSV file from the model output will also be generated which will also be located within the local data store
 an example of the CSV file is printed below:
 
 .. rst-class:: table-limit
