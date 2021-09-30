@@ -107,8 +107,7 @@ def write_model_to_csv(model_output: dict, path: str):
         outfile,
         fieldnames=model_output[0].keys(),
         delimiter=',',
-        quotechar='|',
-        quoting=csv.QUOTE_MINIMAL
+        quoting=csv.QUOTE_NONNUMERIC
         )
         dictWriter.writeheader()
         for i in model_output:
