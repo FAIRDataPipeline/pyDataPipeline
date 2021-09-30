@@ -18,7 +18,7 @@ and the following outputs:
 ::
 
    SEIRS_model/results/model_output/python
-   SEIRS_model/results/figure
+   SEIRS_model/results/figure/python
 
 an example config is provided within the pyDataPipeline package located in :code:`src/org/simpleModel/ext/SEIRSconfig.yaml`
 and contains the following:
