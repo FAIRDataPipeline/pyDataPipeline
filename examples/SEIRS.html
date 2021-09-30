@@ -98,7 +98,7 @@
 and contains the following:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">run_metadata</span><span class="p">:</span>
 <span class="linenos"> 2</span>  <span class="nt">default_input_namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rfield</span>
-<span class="linenos"> 3</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS Model</span>
+<span class="linenos"> 3</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS Model python</span>
 <span class="linenos"> 4</span>  <span class="nt">script</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">python3 src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py</span>
 <span class="linenos"> 5</span>  <span class="nt">remote_repo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://github.com/FAIRDataPipeline/pythonFDP.git</span>
 <span class="linenos"> 6</span>
@@ -123,7 +123,7 @@ and contains the following:</p>
 <span class="linenos">25</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS model results</span>
 <span class="linenos">26</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">csv</span>
 <span class="linenos">27</span>
-<span class="linenos">28</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/figure</span>
+<span class="linenos">28</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/figure/python</span>
 <span class="linenos">29</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS output plot</span>
 <span class="linenos">30</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">png</span>
 </pre></div>
@@ -169,7 +169,7 @@ which is located in the <code class="code docutils literal notranslate"><span cl
 <span class="linenos">10</span>
 <span class="linenos">11</span><span class="n">initial_parameters</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_read</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/parameters&#39;</span><span class="p">)</span>
 <span class="linenos">12</span><span class="n">model_output</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/model_output/python&#39;</span><span class="p">)</span>
-<span class="linenos">13</span><span class="n">model_plot</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/figure&#39;</span><span class="p">)</span>
+<span class="linenos">13</span><span class="n">model_plot</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">link_write</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;SEIRS_model/results/figure/python&#39;</span><span class="p">)</span>
 <span class="linenos">14</span>
 <span class="linenos">15</span><span class="c1"># Model Code</span>
 <span class="linenos">16</span><span class="n">states</span> <span class="o">=</span> <span class="p">{</span>
