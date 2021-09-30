@@ -66,7 +66,7 @@ def SEIRS_Model(initial_state: dict,
     birth = mu * N
 
     results = {}
-    results[0] = {'Time': 0, "S": S, "E": E, "I": I, "R": R}
+    results[0] = {'time': 0, "S": S, "E": E, "I": I, "R": R}
 
     for i in range(timesteps):
         infection = (beta * results[i]['I'] * results[i]['S']) / N
@@ -85,7 +85,7 @@ def SEIRS_Model(initial_state: dict,
 
         row = i + 1
         results[row] = {
-            'Time': row * time_unit_days,
+            'time': round(row * time_unit_years, 3),
             'S': results[i]['S'] + S_rate,
             'E': results[i]['E'] + E_rate,
             'I': results[i]['I'] + I_rate,

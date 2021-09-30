@@ -10,7 +10,7 @@ def SEIRS_Plot(results: dict, save_location: str, show = False):
         save_location: location to save plot
         show: whether or not to show the plot as well as saving
     """
-    time_points = [round(results[k]['Time'] / 365.25, 3) for k in results]
+    time_points = [results[k]['time'] for k in results]
     S = [results[k]['S'] * 100 for k in results]
     E = [results[k]['E'] * 100 for k in results]
     I = [results[k]['I'] * 100 for k in results]

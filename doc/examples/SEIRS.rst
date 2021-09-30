@@ -17,7 +17,7 @@ The user should supply a config.yaml file describing a code run with the followi
 and the following outputs:
 ::
 
-   SEIRS_model/results/model_output
+   SEIRS_model/results/model_output/python
    SEIRS_model/results/figure
 
 an example config is provided within the pyDataPipeline package located in :code:`src/org/simpleModel/ext/SEIRSconfig.yaml`
