@@ -10,7 +10,7 @@ handle = pipeline.initialise(token, config, script)
 
 initial_parameters = pipeline.link_read(handle, 'SEIRS_model/parameters')
 model_output = pipeline.link_write(handle, 'SEIRS_model/results/model_output/python')
-model_plot = pipeline.link_write(handle, 'SEIRS_model/results/figure')
+model_plot = pipeline.link_write(handle, 'SEIRS_model/results/figure/python')
 
 # Model Code
 states = {

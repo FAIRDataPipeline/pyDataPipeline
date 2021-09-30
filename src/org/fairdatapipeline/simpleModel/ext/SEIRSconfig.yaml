@@ -1,6 +1,6 @@
 run_metadata:
   default_input_namespace: rfield
-  description: SEIRS Model
+  description: SEIRS Model python
   script: python3 src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
   remote_repo: https://github.com/FAIRDataPipeline/pythonFDP.git
 
@@ -25,6 +25,6 @@ write:
   description: SEIRS model results
   file_type: csv
 
-- data_product: SEIRS_model/results/figure
+- data_product: SEIRS_model/results/figure/python
   description: SEIRS output plot
   file_type: png
