@@ -3,6 +3,10 @@
 [![pyDataPipeline](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml/badge.svg?branch=dev)](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml)
 [![codecov](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline/branch/dev/graph/badge.svg?token=Eax5AmrDxx)](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline)
 
+Welcome to pyDataPipeline a Python api to interact with the Fair Data Pipeline.
+
+Full documention of the pyDataPipeline is avaialable at [https://fairdatapipeline.github.io/pyDataPipeline/](https://fairdatapipeline.github.io/pyDataPipeline/)
+
 ## Installation
 
 ```
@@ -31,3 +35,7 @@ handle = pipeline.initialise(token, config_path, script_path)
 pipeline.finalise(token, handle)
 
 ```
+
+## SEIRS Model Example
+
+The SEIRS Model Example is available at: [https://www.fairdatapipeline.org/pyDataPipeline/examples/SEIRS.html](https://www.fairdatapipeline.org/pyDataPipeline/examples/SEIRS.html)
