@@ -45,8 +45,16 @@ jobs:
           cd ${{ github.workspace }}
           fair init --ci
           pip3 install .
+          pip3 install pytest
+          py.test
           fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
           fair run src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+        - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
           
 
         
