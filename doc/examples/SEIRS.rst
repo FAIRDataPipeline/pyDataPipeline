@@ -1,4 +1,4 @@
-SEIS Model example
+SEIRS Model example
 ==================
 
 .. toctree::
