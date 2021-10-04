@@ -48,6 +48,7 @@ jobs:
           pip3 install pytest
           pip3 install coverage
           coverage run -m pytest
+          coverage xml
           fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
           fair run src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
       - uses: codecov/codecov-action@v2
