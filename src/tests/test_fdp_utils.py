@@ -88,10 +88,10 @@ def test_post_entry():
     storage_root = fdp_utils.post_entry(
         token = token,
         url= url,
-        endpoint= 'storage_root',
         data={
             'root': 'https://test.com'
-        }
+        },
+        endpoint= 'storage_root'
     )
     assert type(storage_root) == dict
 
@@ -100,23 +100,112 @@ def test_post_entry_409():
     storage_root2 = fdp_utils.post_entry(
         token = token,
         url= url,
-        endpoint= 'storage_root',
         data={
             'root': 'https://test.com'
-        }
+        },
+        endpoint= 'storage_root'
     )
     assert type(storage_root2) == dict
 
 def test_post_entry_equal():
     assert storage_root == storage_root2
 
+def test_post_entry_500():
+    with pytest.raises(Exception):
+        fdp_utils.post_entry(
+            token = token,
+            url= url,
+            data={
+                'root': 'https://test.com'
+            },
+            endpoint= 'non_existant'
+        )
+
 def test_get_entry():
     entry = fdp_utils.get_entry(
         url = url,
-        endpoint= 'storage_root',
         query= {
             'root': 'https://test.com'
         },
-        token = token
+        token = token,
+        endpoint= 'storage_root'
     )
     assert entry[0] == storage_root
+
+def test_get_entity():
+    entity = fdp_utils.get_entity(
+        url = url,
+        endpoint='storage_root',
+        id = fdp_utils.extract_id(storage_root['url']))
+    assert entity == storage_root
+
+def test_get_entity_with_token():
+    entity = fdp_utils.get_entity(
+        url = url,
+        endpoint= 'storage_root',
+        id = fdp_utils.extract_id(storage_root['url']),
+        token = token)
+    assert entity == storage_root
+
+def test_get_entity_non_200():
+    with pytest.raises(Exception):
+        fdp_utils.get_entity(
+            url = url,
+            endpoint='non_existant',
+            id = fdp_utils.extract_id(storage_root['url']))
+
+object = fdp_utils.post_entry(
+    url = url,
+    endpoint= 'object',
+    data={
+        'description': 'Test Object'
+    },
+    token = token
+)
+
+namespace = fdp_utils.post_entry(
+    url = url,
+    endpoint= 'namespace',
+    data={
+        'name': 'Unit_Tests'
+    },
+    token = token
+)
+
+data_product = fdp_utils.post_entry(
+    url = url,
+    endpoint= 'data_product',
+    data={
+        'name': 'Test Data Product',
+        'version': '0.0.1',
+        'namespace': namespace['url'],
+        'object': object['url']
+    },
+    token = token
+)
+
+#Patch entry does not work (Server Side)
+def test_patch_entry():
+    data_product_updated = fdp_utils.patch_entry(
+        url = url,
+        endpoint= 'data_product',
+        id = fdp_utils.extract_id(data_product['url']),
+        data = {
+            'name': 'Test Data Product Updated',
+        },
+        token = token,
+    )
+    assert True
+#     assert data_product_updated['version'] == '0.0.2'
+
+def test_patch_entry_non_200():
+    with pytest.raises(Exception):
+        fdp_utils.patch_entry(
+            url = url,
+            endpoint= 'users',
+            id = fdp_utils.extract_id(data_product['url']),
+            data = {
+                'name': 'Test',
+            },
+            token = token,
+        )

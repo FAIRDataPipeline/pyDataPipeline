@@ -78,10 +78,10 @@ def extract_id(url: str)-> str:
     return extract
 
 def post_entry(
-    token: str,
     url: str,
     endpoint: str,
-    data: dict
+    data: dict,
+    token: str,
 )-> dict:
 
     headers = {
@@ -105,9 +105,11 @@ def post_entry(
     return response.json()
 
 def patch_entry(
-    token: str,
     url: str,
-    data: dict
+    endpoint: str,
+    id: str,
+    data: dict,
+    token: str,
 )-> dict:
 
     headers = {
@@ -115,10 +117,15 @@ def patch_entry(
     'Content-type': 'application/json'
     }
 
+    if url[-1] != "/":
+        url+="/"
+    _url = url + endpoint + '/' + id
+
     data = json.dumps(data)
 
-    response = requests.patch(url, data, headers=headers)
-    assert response.status_code == 200
+    response = requests.patch(_url, data, headers=headers)
+    if (response.status_code != 200):
+        raise ValueError("Server responded with: " + str(response.status_code))
 
     return response.json()
 
