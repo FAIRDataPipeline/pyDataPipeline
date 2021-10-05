@@ -106,10 +106,8 @@ def post_entry(
 
 def patch_entry(
     url: str,
-    endpoint: str,
-    id: str,
     data: dict,
-    token: str,
+    token: str
 )-> dict:
 
     headers = {
@@ -117,13 +115,9 @@ def patch_entry(
     'Content-type': 'application/json'
     }
 
-    if url[-1] != "/":
-        url+="/"
-    _url = url + endpoint + '/' + id
-
     data = json.dumps(data)
 
-    response = requests.patch(_url, data, headers=headers)
+    response = requests.patch(url, data, headers=headers)
     if (response.status_code != 200):
         raise ValueError("Server responded with: " + str(response.status_code))
 

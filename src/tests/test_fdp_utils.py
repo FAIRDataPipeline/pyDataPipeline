@@ -2,6 +2,7 @@
 
 import pytest
 import os
+import datetime
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 
 test_dir = os.path.join(os.path.dirname(__file__), "ext")
@@ -154,58 +155,70 @@ def test_get_entity_non_200():
             endpoint='non_existant',
             id = fdp_utils.extract_id(storage_root['url']))
 
-object = fdp_utils.post_entry(
+model_config = fdp_utils.post_entry(
     url = url,
     endpoint= 'object',
     data={
-        'description': 'Test Object'
+        'description': 'Model Config Test'
     },
     token = token
 )
 
-namespace = fdp_utils.post_entry(
+submission_script = fdp_utils.post_entry(
     url = url,
-    endpoint= 'namespace',
+    endpoint= 'object',
     data={
-        'name': 'Unit_Tests'
+        'description': 'Submission Script Test'
     },
     token = token
 )
 
-data_product = fdp_utils.post_entry(
+input_1 = fdp_utils.post_entry(
     url = url,
-    endpoint= 'data_product',
+    endpoint= 'object',
     data={
-        'name': 'Test Data Product',
-        'version': '0.0.1',
-        'namespace': namespace['url'],
-        'object': object['url']
+        'description': 'Input 1'
     },
     token = token
 )
 
-#Patch entry does not work (Server Side)
+input_1_component = input_1['components'][0]
+
+code_run = fdp_utils.post_entry(
+    url = url,
+    endpoint= 'code_run',
+    data={
+        'description': 'Test Code Run',
+        'run_date': str(datetime.datetime.now()),
+        'model_config': model_config['url'],
+        'submission_script': submission_script['url'],
+        'input_urls': [],
+        'output_urls': []
+    },
+    token = token
+)
+
 def test_patch_entry():
-    data_product_updated = fdp_utils.patch_entry(
-        url = url,
-        endpoint= 'data_product',
-        id = fdp_utils.extract_id(data_product['url']),
+    fdp_utils.patch_entry(
+        url = code_run['url'],
         data = {
-            'name': 'Test Data Product Updated',
+            'inputs': [input_1_component]
         },
         token = token,
     )
-    assert True
-#     assert data_product_updated['version'] == '0.0.2'
+    code_run_updated = fdp_utils.get_entity(
+        url= url,
+        endpoint= 'code_run',
+        id = fdp_utils.extract_id(code_run['url'])
+    )
+    assert input_1_component in code_run_updated['inputs']
 
 def test_patch_entry_non_200():
     with pytest.raises(Exception):
         fdp_utils.patch_entry(
-            url = url,
-            endpoint= 'users',
-            id = fdp_utils.extract_id(data_product['url']),
+            url = url + '/api/users/1',
             data = {
-                'name': 'Test',
+                'name': 'New Name'
             },
             token = token,
         )
