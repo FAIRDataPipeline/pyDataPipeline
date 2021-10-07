@@ -4,8 +4,8 @@ run_metadata:
   remote_data_registry_url: https://data.scrc.uk/api/
   default_input_namespace: testing
   default_output_namespace: testing
-  write_data_store: ./tmp
-  local_repo: .
+  write_data_store: tmp
+  local_repo: ./
   script: |-
         python3 py.test
   public: true

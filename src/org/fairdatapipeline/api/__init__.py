@@ -1,6 +1,20 @@
-__all__ = ['initialise', 'link_read', 'link_write', 'finalise']
+__all__ = ['initialise',
+    'link_read',
+    'link_write',
+    'finalise',
+    'raise_issue_by_data_product',
+    'raise_issue_by_index',
+    'raise_issue_with_config',
+    'raise_issue_with_submission_script',
+    'raise_issue_with_github_repo'
+    ]
 
 from .common.initialise_pipeline import initialise
 from .common.link_read import link_read
 from .common.link_write import link_write
 from .common.finalise_pipeline import finalise
+from .common.raise_issue import raise_issue_by_data_product
+from .common.raise_issue import raise_issue_by_index
+from .common.raise_issue import raise_issue_with_config
+from .common.raise_issue import raise_issue_with_submission_script
+from .common.raise_issue import raise_issue_with_github_repo
