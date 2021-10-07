@@ -125,6 +125,7 @@ def link_read(handle: dict, data_product: str)-> str:
 
     # Write to handle and return path
     input_dict = {
+        'uuid': fdp_utils.generate_uuid(),
         'data_product': data_product,
         'use_data_product': data_product,
         'use_component': component,

@@ -1,17 +1,17 @@
 from os import write
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 
-def raise_issue_by_index(handle: dict, index: str, issue: str, severity):
+def raise_issue_by_uuid(handle: dict, uuid: str, issue: str, severity):
     """
     Raises an issue for a given index and writes it to the handle
 
     Args:
         |   handle: the handle containing the index
-        |   index: a reference to an input or output in the handle, typically the path returned by link_write or link_read
+        |   uuid: a unique reference to an input or output in the handle see get_handle_uuid_from_path()
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue(handle, 'index', issue, severity, index= index)
+    return raise_issue(handle, 'uuid', issue, severity, uuid = uuid)
 
 def raise_issue_by_data_product(handle: dict,
     data_product: str,
@@ -44,7 +44,7 @@ def raise_issue_with_config(handle: dict, issue: str, severity):
     Raise an issue with config: add an issue for the config to the handle.
 
     Args:
-        |   handle: the handle containing the index
+        |   handle
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
@@ -55,7 +55,7 @@ def raise_issue_with_submission_script(handle: dict, issue: str, severity):
     Raise an issue with submission script: add an issue for the submission_script to the handle.
 
     Args:
-        |   handle: the handle containing the index
+        |   handle
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
@@ -66,7 +66,7 @@ def raise_issue_with_github_repo(handle: dict, issue: str, severity):
     Raise an issue with config add an issue for the github_repo to the handle.
 
     Args:
-        |   handle: the handle containing the index
+        |   handle
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
@@ -80,14 +80,14 @@ def raise_issue_by_type(handle: dict, type:str, issue: str, severity):
     if type not in accepted_types:
         raise ValueError('Please supply a valid type. \
         valid types: config, submission_script, github_repo')
-    return raise_issue(handle, issue, severity, type=type)
+    return raise_issue(handle, type, issue, severity)
 
     
 def raise_issue(handle: dict, 
     type,
     issue,
     severity,
-    index = None,
+    uuid = None,
     data_product = None,
     component= None,
     version = None,
@@ -96,7 +96,7 @@ def raise_issue(handle: dict,
 
     if type in ['config', 'submission_script', 'github_repo']:
         print('adding issue ' + issue + ' for ' + type + ' to handle')
-    elif index is None:
+    elif uuid is None:
         data_product_in_config = False
         reads = handle['yaml']['read']
         writes = handle['yaml']['write']
@@ -121,24 +121,24 @@ def raise_issue(handle: dict,
         tmp = None
         if 'output' in handle.keys():
             for output in handle['output']:
-                if index in output.values():
+                if output['uuid'] == uuid:
                     tmp = output
         if 'input' in handle.keys():
             for input in handle['input']:
-                if index in input.values():
+                if output['uuid'] == uuid:
                     tmp = input
         
         if tmp is None:
-            raise ValueError('Error: Index not found')
+            raise ValueError('Error: uuid not found in handle')
 
         data_product = tmp['data_product']
         component = tmp['use_component']
 
-        print('adding issue ' + issue + ' for ' + index + ' to handle')
+        print('adding issue ' + issue + ' for ' + uuid + ' to handle')
                 
     # Write to handle and return path
     issues_dict = {
-        'index': index,
+        'uuid': uuid,
         'type': type,
         'use_data_product': data_product,
         'use_component': component,
@@ -148,7 +148,7 @@ def raise_issue(handle: dict,
         'severity': severity
     }
 
-    if 'input' in handle.keys():
+    if 'issues' in handle.keys():
         handle['issues'].append(issues_dict)
     else:
         handle['issues'] = [issues_dict]

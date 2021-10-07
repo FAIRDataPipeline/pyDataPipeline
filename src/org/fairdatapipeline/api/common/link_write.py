@@ -53,6 +53,7 @@ def link_write(handle, data_product: str)-> str:
 
     # Create metadata dict
     output = {
+        'uuid': fdp_utils.generate_uuid(),
         'data_product': data_product,
         'use_data_product': write_data_product,
         'use_component': None,
