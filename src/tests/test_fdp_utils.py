@@ -222,3 +222,14 @@ def test_patch_entry_non_200():
             },
             token = token,
         )
+
+def test_post_storage_root_with_local():
+    storage_root = fdp_utils.post_storage_root(
+        token = token,
+        url= url,
+        data={
+            'root': '/test/test',
+            'local': True
+        }
+    )
+    assert storage_root['root'] == 'file:///test/test'

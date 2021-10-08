@@ -113,8 +113,7 @@ def link_read(handle: dict, data_product: str)-> str:
         sl = sl[1:]
 
     # remove file:// from storage root
-    if "file://" in storage_root:
-        storage_root = storage_root.replace("file://", "")
+    storage_root = fdp_utils.remove_local_from_root(storage_root)
 
     # Get path of data product
     path = os.path.normpath(os.path.join(storage_root, sl))

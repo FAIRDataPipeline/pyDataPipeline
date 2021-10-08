@@ -49,10 +49,9 @@ def initialise(token: str, config: str, script: str):
     # Check if storage root exists
 
 
-    config_storageroot_response = fdp_utils.post_entry(
+    config_storageroot_response = fdp_utils.post_storage_root(
         token = token,
         url = registry_url,
-        endpoint = 'storage_root',
         data = {
             'root': run_metadata['write_data_store'],
             'local': True
@@ -251,10 +250,9 @@ def initialise(token: str, config: str, script: str):
 
     # Create new remote storage root
 
-    repo_storageroot_url = fdp_utils.post_entry(
+    repo_storageroot_url = fdp_utils.post_storage_root(
         token = token,
         url = registry_url,
-        endpoint = 'storage_root',
         data = {
             'root': 'https://github.com',
             'local': False

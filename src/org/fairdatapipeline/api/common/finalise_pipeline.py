@@ -41,6 +41,8 @@ def finalise(token: str, handle: dict):
     registry_url = handle['yaml']['run_metadata']['local_data_registry_url']
     datastore = handle['yaml']['run_metadata']['write_data_store']
 
+    datastore = fdp_utils.remove_local_from_root(datastore)
+
     datastore_root = fdp_utils.get_entry(
         url = registry_url,
         endpoint = 'storage_root',
@@ -55,10 +57,9 @@ def finalise(token: str, handle: dict):
     if datastore_root:
         datastore_root_url = datastore_root[0]['url']
     else:
-        datastore_root_url = fdp_utils.post_entry(
+        datastore_root_url = fdp_utils.post_storage_root(
             token = token,
             url = registry_url,
-            endpoint = 'storage_root',
             data = {
                 'root': datastore,
                 'local' : True
@@ -137,6 +138,8 @@ def finalise(token: str, handle: dict):
                     endpoint = 'storage_root',
                     id = fdp_utils.extract_id(storage_exists[0]['storage_root'])
                 )['root']
+
+                existing_root = fdp_utils.remove_local_from_root(existing_root)
 
                 new_path = os.path.join(existing_root, existing_path)
 

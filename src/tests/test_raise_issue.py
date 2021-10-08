@@ -4,8 +4,6 @@ import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 import pytest
 test_dir = os.path.join(os.path.dirname(__file__), "ext")
 
-token = os.environ.get('FDP_LOCAL_TOKEN')
-
 token = fdp_utils.read_token(os.path.join(os.path.expanduser('~'), '.fair/registry/token'))
 script = os.path.join(test_dir, 'test_script.sh')
 config = os.path.join(test_dir, 'write_csv.yaml')
