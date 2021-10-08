@@ -128,6 +128,8 @@ def post_storage_root(url, data, token):
     if 'local' in data.keys():
         if data['local']:
             data['root'] = 'file://' + data['root']
+    if not data['root'][-1] == '/':
+        data['root'] = data['root'] + '/'
     return post_entry(url, 'storage_root', data, token)
 
 def remove_local_from_root(root: str):

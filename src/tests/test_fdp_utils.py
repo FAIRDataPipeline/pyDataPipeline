@@ -232,4 +232,4 @@ def test_post_storage_root_with_local():
             'local': True
         }
     )
-    assert storage_root['root'] == 'file:///test/test'
+    assert storage_root['root'] == 'file:///test/test/'
