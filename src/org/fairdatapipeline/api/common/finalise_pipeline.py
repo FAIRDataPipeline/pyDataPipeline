@@ -70,18 +70,14 @@ def finalise(token: str, handle: dict):
     if 'output' in handle:
         for output in handle['output']:
 
-            if bool(re.search('\\$\\{\\{RUN_ID\\}\\}', output['use_data_product'])):
-                output['use_data_product'] = re.sub(
-                    '\\$\\{\\{RUN_ID\\}\\}',
-                    handle['code_run_uuid'],
-                    output['use_data_product']
-                )
-
+            if '${RUN_ID}' in handle['output'][output]['use_data_product']:
+                handle['output'][output]['use_data_product'] = handle['output'][output]['use_data_product'].replace('${RUN_ID}', handle['code_run_uuid'])
+            
             write_namespace = fdp_utils.get_entry(
                 url = registry_url,
                 endpoint = 'namespace',
                 query = {
-                    'name': output['use_namespace']
+                    'name': handle['output'][output]['use_namespace']
                 })
             
             write_namespace_url = None
@@ -94,18 +90,18 @@ def finalise(token: str, handle: dict):
                     url = registry_url,
                     endpoint = 'namespace',
                     data = {
-                        'name': output['use_namespace']
+                        'name': handle['output'][output]['use_namespace']
                     }
                 )['url']
 
-            hash = fdp_utils.get_file_hash(output['path'])
+            hash = fdp_utils.get_file_hash(handle['output'][output]['path'])
 
             storage_exists = fdp_utils.get_entry(
                 url = registry_url,
                 endpoint = 'storage_location',
                 query = {
                     'hash': hash,
-                    'public': output['public'],
+                    'public': handle['output'][output]['public'],
                     'storage_root': datastore_root_id
                 }
             )
@@ -115,9 +111,9 @@ def finalise(token: str, handle: dict):
             if storage_exists:
                 storage_location_url = storage_exists[0]['url']
 
-                os.remove(output['path'])
+                os.remove(handle['output'][output]['path'])
 
-                directory = os.path.dirname(output['path'])
+                directory = os.path.dirname(handle['output'][output]['path'])
 
                 #print("\ndirectory: " + os.path.normpath(directory))
                 #print("\nDatastore Path: " + os.path.normpath(datastore))
@@ -145,11 +141,11 @@ def finalise(token: str, handle: dict):
                 new_path = os.path.join(existing_root, existing_path)
 
             else:
-                tmp_filename = os.path.basename(output['path'])
+                tmp_filename = os.path.basename(handle['output'][output]['path'])
                 extension = tmp_filename.split(sep='.')[-1]
                 new_filename = '.'.join([hash, extension])
-                data_product = output['data_product']
-                namespace = output['use_namespace']
+                data_product = handle['output'][output]['data_product']
+                namespace = handle['output'][output]['use_namespace']
                 new_path = os.path.join(
                     datastore,
                     namespace,
@@ -157,7 +153,7 @@ def finalise(token: str, handle: dict):
                     new_filename
                 ).replace('\\', '/')
                 
-                os.rename(output['path'], new_path)
+                os.rename(handle['output'][output]['path'], new_path)
 
                 new_storage_location = os.path.join(
                     namespace,
@@ -172,7 +168,7 @@ def finalise(token: str, handle: dict):
                     data ={
                         'path': new_storage_location,
                         'hash': hash,
-                        'public': output['public'],
+                        'public': handle['output'][output]['public'],
                         'storage_root': datastore_root_url
                     }
                 )['url']
@@ -205,7 +201,7 @@ def finalise(token: str, handle: dict):
                 url = registry_url,
                 endpoint = 'object',
                 data = {
-                    'description': output['data_product_description'],
+                    'description': handle['output'][output]['data_product_description'],
                     'storage_location': storage_location_url,
                     'authors': [handle['author']],
                     'file_type': file_type_url
@@ -214,14 +210,14 @@ def finalise(token: str, handle: dict):
 
             component_url = None
 
-            if output['use_component']:
+            if handle['output'][output]['use_component']:
                 component_url = fdp_utils.post_entry(
                     token = token,
                     url = registry_url,
                     endpoint = 'object_component',
                     data = {
                         'object': object_url,
-                        'name': output['use_component']
+                        'name': handle['output'][output]['use_component']
                     }
                 )['url']
             else:              
@@ -238,28 +234,28 @@ def finalise(token: str, handle: dict):
                 url = registry_url,
                 endpoint = 'data_product',
                 data = {
-                    'name': output['use_data_product'],
-                    'version': output['use_version'],
+                    'name': handle['output'][output]['use_data_product'],
+                    'version': handle['output'][output]['use_version'],
                     'object': object_url,
                     'namespace': write_namespace_url
                 }
             )['url']
 
-            output['component_url'] = component_url
-            output['data_product_url'] = data_product_url
+            handle['output'][output]['component_url'] = component_url
+            handle['output'][output]['data_product_url'] = data_product_url
 
-            print(f"Writing {output['use_data_product']} to local registry")
+            print(f"Writing {handle['output'][output]['use_data_product']} to local registry")
 
     output_components = []
     input_components = []
 
     if 'output' in handle.keys():
         for output in handle['output']:
-            output_components.append(output['component_url'])
+            output_components.append(handle['output'][output]['component_url'])
 
     if 'input' in handle.keys():
         for input in handle['input']:
-            input_components.append(input['component_url'])
+            input_components.append(handle['input'][input]['component_url'])
 
     fdp_utils.patch_entry(
         token = token,

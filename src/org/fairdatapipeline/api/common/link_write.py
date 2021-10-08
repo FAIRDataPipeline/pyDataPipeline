@@ -52,8 +52,7 @@ def link_write(handle, data_product: str)-> str:
         os.makedirs(directory)
 
     # Create metadata dict
-    output = {
-        'uuid': fdp_utils.generate_uuid(),
+    output_dict = {
         'data_product': data_product,
         'use_data_product': write_data_product,
         'use_component': None,
@@ -67,8 +66,10 @@ def link_write(handle, data_product: str)-> str:
 
     # If output exists in handle, append new metadata, otherwise create dict
     if 'output' in handle.keys():
-        handle['output'].append(output)
+        index = 'output_' + str(len(handle['output']))
+        handle['output'][index] = output_dict
     else:
-        handle['output'] = [output]
+        handle['output'] = {}
+        handle['output']['output_0'] = output_dict
 
     return path

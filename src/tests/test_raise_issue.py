@@ -24,12 +24,12 @@ def test_link_write():
     global link_write
     link_write = pipeline.link_write(handle, 'test/csv')
     #print(handle)
-    assert handle['output'][0]['data_product'] == 'test/csv'
+    assert handle['output']['output_0']['data_product'] == 'test/csv'
 
-def test_raise_issue_by_uuid():
+def test_raise_issue_by_index():
     global handle
-    uuid = pipeline.get_handle_uuid_from_path(handle, link_write)
-    pipeline.raise_issue_by_uuid(handle, uuid, 'Test Issue', 7)
+    index = pipeline.get_handle_index_from_path(handle, link_write)
+    pipeline.raise_issue_by_index(handle, index, 'Test Issue', 7)
     assert handle['issues'][0]['use_data_product'] == 'test/csv'
 
 def test_raise_issue_with_config():
@@ -45,4 +45,5 @@ def test_raise_issue_with_github_repo():
 def test_raise_issue_with_script():
     global handle
     pipeline.raise_issue_with_submission_script(handle, 'Test Issue with submission_script', 4)
+    print(handle)
     assert handle['issues'][3]['type'] == 'submission_script'

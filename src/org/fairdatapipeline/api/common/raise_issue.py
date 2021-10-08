@@ -1,17 +1,17 @@
 from os import write
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 
-def raise_issue_by_uuid(handle: dict, uuid: str, issue: str, severity):
+def raise_issue_by_index(handle: dict, index: str, issue: str, severity):
     """
-    Raises an issue for a given index and writes it to the handle
+    Raises an issue for a given input or output index and writes it to the handle
 
     Args:
         |   handle: the handle containing the index
-        |   uuid: a unique reference to an input or output in the handle see get_handle_uuid_from_path()
+        |   index: a unique reference to an input or output in the handle see get_handle_index_from_path()
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue(handle, 'uuid', issue, severity, uuid = uuid)
+    return raise_issue(handle, 'index', issue, severity, index = index)
 
 def raise_issue_by_data_product(handle: dict,
     data_product: str,
@@ -87,7 +87,7 @@ def raise_issue(handle: dict,
     type,
     issue,
     severity,
-    uuid = None,
+    index = None,
     data_product = None,
     component= None,
     version = None,
@@ -96,7 +96,7 @@ def raise_issue(handle: dict,
 
     if type in ['config', 'submission_script', 'github_repo']:
         print('adding issue ' + issue + ' for ' + type + ' to handle')
-    elif uuid is None:
+    elif index is None:
         data_product_in_config = False
         reads = handle['yaml']['read']
         writes = handle['yaml']['write']
@@ -121,24 +121,24 @@ def raise_issue(handle: dict,
         tmp = None
         if 'output' in handle.keys():
             for output in handle['output']:
-                if output['uuid'] == uuid:
-                    tmp = output
+                if output == index:
+                    tmp = handle['output'][output]
         if 'input' in handle.keys():
             for input in handle['input']:
-                if output['uuid'] == uuid:
-                    tmp = input
+                if input == index:
+                    tmp = handle['input'][input]
         
         if tmp is None:
-            raise ValueError('Error: uuid not found in handle')
+            raise ValueError('Error: index not found in handle')
 
         data_product = tmp['data_product']
         component = tmp['use_component']
 
-        print('adding issue ' + issue + ' for ' + uuid + ' to handle')
+        print('adding issue ' + issue + ' for ' + index + ' to handle')
                 
     # Write to handle and return path
     issues_dict = {
-        'uuid': uuid,
+        'index': index,
         'type': type,
         'use_data_product': data_product,
         'use_component': component,
