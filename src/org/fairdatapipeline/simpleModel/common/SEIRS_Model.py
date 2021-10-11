@@ -73,7 +73,7 @@ def SEIRS_Model(initial_state: dict,
         lost_immunity = omega * results[i]['R']
         death_S = mu * results[i]['S']
         death_E = mu * results[i]['E']
-        death_I = (mu * alpha) * results[i]['I']
+        death_I = (mu + alpha) * results[i]['I']
         death_R = mu * results[i]['R']
         latency = sigma * results[i]['E']
         recovery = gamma * results[i]['I']
