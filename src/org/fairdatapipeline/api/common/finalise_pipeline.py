@@ -260,6 +260,8 @@ def finalise(token: str, handle: dict):
         for input in handle['input']:
             input_components.append(handle['input'][input]['component_url'])
 
+    fdp_utils.register_issues(token, handle)
+
     fdp_utils.patch_entry(
         token = token,
         url = handle['code_run'],

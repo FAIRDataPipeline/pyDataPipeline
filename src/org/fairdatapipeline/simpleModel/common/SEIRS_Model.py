@@ -32,7 +32,7 @@ def SEIRS_Model(initial_state: dict,
     Returns:
         |   results: dict
         |      '0': dict
-        |      'Time': current timepoint
+        |      'time': current timepoint
         |      'S': S Parameter at timepoint
         |      'E': E Parameter at timepoint
         |      'I': I Parameter at timepoint

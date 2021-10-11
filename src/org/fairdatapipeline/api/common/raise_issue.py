@@ -1,7 +1,7 @@
 from os import write
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 
-def raise_issue_by_index(handle: dict, index: str, issue: str, severity):
+def raise_issue_by_index(handle: dict, index: str, issue: str, severity, group = True):
     """
     Raises an issue for a given input or output index and writes it to the handle
 
@@ -11,14 +11,15 @@ def raise_issue_by_index(handle: dict, index: str, issue: str, severity):
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue(handle, 'index', issue, severity, index = index)
+    return raise_issue(handle, 'index', issue, severity, index = index, group = group)
 
 def raise_issue_by_data_product(handle: dict,
     data_product: str,
     version: str,
     namespace: str,
     issue: str,
-    severity
+    severity,
+    group = True
 ):
     """
     Raises an issue for a given data_product and writes it to the handle
@@ -36,10 +37,11 @@ def raise_issue_by_data_product(handle: dict,
     severity,
     data_product= data_product,
     namespace = namespace,
-    version= version
+    version= version,
+    group = group
     )
 
-def raise_issue_with_config(handle: dict, issue: str, severity):
+def raise_issue_with_config(handle: dict, issue: str, severity, group = True):
     """
     Raise an issue with config: add an issue for the config to the handle.
 
@@ -48,9 +50,9 @@ def raise_issue_with_config(handle: dict, issue: str, severity):
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue_by_type(handle, 'config', issue, severity)
+    return raise_issue_by_type(handle, 'config', issue, severity, group)
 
-def raise_issue_with_submission_script(handle: dict, issue: str, severity):
+def raise_issue_with_submission_script(handle: dict, issue: str, severity, group = True):
     """
     Raise an issue with submission script: add an issue for the submission_script to the handle.
 
@@ -59,9 +61,9 @@ def raise_issue_with_submission_script(handle: dict, issue: str, severity):
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue_by_type(handle, 'submission_script', issue, severity)
+    return raise_issue_by_type(handle, 'submission_script', issue, severity, group)
 
-def raise_issue_with_github_repo(handle: dict, issue: str, severity):
+def raise_issue_with_github_repo(handle: dict, issue: str, severity, group = True):
     """
     Raise an issue with config add an issue for the github_repo to the handle.
 
@@ -70,9 +72,9 @@ def raise_issue_with_github_repo(handle: dict, issue: str, severity):
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    return raise_issue_by_type(handle, 'github_repo', issue, severity)
+    return raise_issue_by_type(handle, 'github_repo', issue, severity, group)
 
-def raise_issue_by_type(handle: dict, type:str, issue: str, severity):
+def raise_issue_by_type(handle: dict, type:str, issue: str, severity, group = True):
     """
     Raise an issue by type of issue (with config, with submission_script, with github_repo)
     """
@@ -80,7 +82,7 @@ def raise_issue_by_type(handle: dict, type:str, issue: str, severity):
     if type not in accepted_types:
         raise ValueError('Please supply a valid type. \
         valid types: config, submission_script, github_repo')
-    return raise_issue(handle, type, issue, severity)
+    return raise_issue(handle, type, issue, severity, index = False, group = group)
 
     
 def raise_issue(handle: dict, 
@@ -92,8 +94,9 @@ def raise_issue(handle: dict,
     component= None,
     version = None,
     namespace = None,
+    group = True
 ):
-
+    current_group = issue + ':' + str(severity)
     if type in ['config', 'submission_script', 'github_repo']:
         print('adding issue ' + issue + ' for ' + type + ' to handle')
     elif index is None:
@@ -106,11 +109,15 @@ def raise_issue(handle: dict,
                 if i['data_product'] == data_product and i['version'] == version:
                     data_product_in_config = True
                     data_product = i['data_product']
+                    if not group:
+                        current_group = i['data_product']
         if writes:
             for i in writes:
                 if i['data_product'] == data_product and i['version'] == version:
                     data_product_in_config = True
                     data_product = i['data_product']
+                    if not group:
+                        current_group = i['data_product']
 
         if not data_product_in_config:
             raise ValueError('Data product not in config file')
@@ -123,16 +130,22 @@ def raise_issue(handle: dict,
             for output in handle['output']:
                 if output == index:
                     tmp = handle['output'][output]
+                    if not group:
+                        current_group = handle['output'][output]
         if 'input' in handle.keys():
             for input in handle['input']:
                 if input == index:
                     tmp = handle['input'][input]
+                    if not group:
+                        current_group = handle['input'][input]
         
         if tmp is None:
             raise ValueError('Error: index not found in handle')
 
         data_product = tmp['data_product']
         component = tmp['use_component']
+        version = tmp['use_version']
+        namespace = tmp['use_namespace']
 
         print('adding issue ' + issue + ' for ' + index + ' to handle')
                 
@@ -145,11 +158,14 @@ def raise_issue(handle: dict,
         'version': version,
         'use_namespace': namespace,
         'issue': issue,
-        'severity': severity
+        'severity': severity,
+        'group': current_group
     }
 
     if 'issues' in handle.keys():
-        handle['issues'].append(issues_dict)
+        this_issue = 'issue_' + str(len(handle['issues']))
+        handle['issues'][this_issue] = issues_dict
     else:
-        handle['issues'] = [issues_dict]
+        handle['issues'] = {}
+        handle['issues']['issue_0'] = issues_dict
     
