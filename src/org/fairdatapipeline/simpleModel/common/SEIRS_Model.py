@@ -60,15 +60,14 @@ def SEIRS_Model(initial_state: dict,
     gamma = time_unit_days / inv_gamma
     omega = time_unit_days / (inv_omega * 365.25)
     mu = time_unit_days / (inv_mu *365.25)
-    sigma = 1 / inv_sigma
-
-    N = S + E + I + R
-    birth = mu * N
+    sigma = time_unit_days / inv_sigma
 
     results = {}
     results[0] = {'time': 0, "S": S, "E": E, "I": I, "R": R}
 
     for i in range(timesteps):
+        N = results[i]['S'] + results[i]['E'] + results[i]['I'] + results[i]['R']
+        birth = mu * N
         infection = (beta * results[i]['I'] * results[i]['S']) / N
         lost_immunity = omega * results[i]['R']
         death_S = mu * results[i]['S']
