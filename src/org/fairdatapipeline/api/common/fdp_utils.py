@@ -316,7 +316,7 @@ def register_issues(token: str, handle: dict):
     """
 
     api_url = handle['yaml']['run_metadata']['local_data_registry_url']
-    print(handle)
+    #print(handle)
     issues = handle['issues']
     groups = set(handle['issues'][i]['group'] for i in handle['issues'])
 
