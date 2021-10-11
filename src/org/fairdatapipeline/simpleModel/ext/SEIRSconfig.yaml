@@ -15,8 +15,7 @@ register:
   path: FAIRDataPipeline/pythonFDP/dev/src/org/fairdatapipeline/simpleModel/ext/static_params_SEIRS.csv
   title: Static parameters of the model
   description: Static parameters of the model
-  unique_name: SEIRS model parameters - Static parameters of the model
-  alternate_identifier_type: SEIRS_model_params
+  identifier: https://doi.org/10.1038/s41592-020-0856-2
   file_type: csv
   release_date: 2021-09-20T12:00
   version: "1.0.0"
