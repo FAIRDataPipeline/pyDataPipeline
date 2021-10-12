@@ -2,6 +2,7 @@ import datetime
 import os
 import yaml
 from org.fairdatapipeline.api.common import fdp_utils
+import logging
 
 def initialise(token: str, config: str, script: str):
     """Reads in token, config file and script, creates necessary registry items
@@ -41,7 +42,7 @@ def initialise(token: str, config: str, script: str):
         registry_url += "/"
     filename = os.path.basename(config)
 
-    print(f"Reading {filename} from data store")
+    logging.info(f"Reading {filename} from data store")
 
     # Configure storage root for config
 
@@ -162,7 +163,7 @@ def initialise(token: str, config: str, script: str):
 
     config_object_url = config_object['url']
 
-    print(f'Writing {filename} to local registry')
+    logging.info(f'Writing {filename} to local registry')
 
     # Check if script exists in storage_location
 
@@ -245,7 +246,7 @@ def initialise(token: str, config: str, script: str):
 
     script_object_url = script_object['url']
 
-    print(f"Writing {os.path.basename(script)} to local registry")
+    logging.info(f"Writing {os.path.basename(script)} to local registry")
 
     # Create new remote storage root
 
@@ -337,7 +338,7 @@ def initialise(token: str, config: str, script: str):
 
         coderepo_object_url = coderepo_object_response['url']
 
-    print(f"Writing {repo_name} to local registry")
+    logging.info(f"Writing {repo_name} to local registry")
 
     # Register new code run
 
@@ -359,7 +360,7 @@ def initialise(token: str, config: str, script: str):
     coderun_url = coderun_response['url']
     coderun_uuid = coderun_response['uuid']
 
-    print("Writing new code_run to local registry")
+    logging.info("Writing new code_run to local registry")
 
     # Write code run and object info to handle
 

@@ -44,7 +44,7 @@ def test_raise_issue_with_github_repo():
 def test_raise_issue_with_script():
     global handle
     pipeline.raise_issue_with_submission_script(handle, 'Test Issue with submission_script', 4)
-    print(handle)
+    #print(handle)
     assert handle['issues']['issue_3']['type'] == 'submission_script'
 
 def test_finalise():
@@ -52,4 +52,4 @@ def test_finalise():
     tmp_csv = os.path.join(test_dir, 'test.csv')
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
-    print(handle)
+    #print(handle)

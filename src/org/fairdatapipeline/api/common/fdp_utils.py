@@ -7,6 +7,7 @@ import random
 import uuid
 import yaml
 import requests
+import logging
 
 def get_entry(
     url: str,
@@ -312,7 +313,6 @@ def register_issues(token: str, handle: dict):
     """
 
     api_url = handle['yaml']['run_metadata']['local_data_registry_url']
-    #print(handle)
     issues = handle['issues']
     groups = set(handle['issues'][i]['group'] for i in handle['issues'])
 
@@ -357,14 +357,14 @@ def register_issues(token: str, handle: dict):
                                 if 'component_url' in handle['output'][ii].keys():
                                     component_url = handle['output'][ii]['component_url']
                                 else:
-                                    print('No Component Found')
+                                    logging.warning('No Component Found')
                     if 'input' in handle.keys():
                         for ii in handle['input']:
                             if handle['input'][ii] == index:
                                 if 'component_url' in handle['input'][ii].keys():
                                     component_url = handle['input'][ii]['component_url']
                                 else:
-                                    print('No Component Found')
+                                    logging.warning('No Component Found')
 
                 if data_product:
                     current_namespace = get_entry(
@@ -409,7 +409,7 @@ def register_issues(token: str, handle: dict):
                     component_list.append(component_url)
 
         # Register the issue:
-        print('Registering issue:' + group)
+        logging.info('Registering issue:' + group)
         current_issue = post_entry(
             url = api_url,
             endpoint= 'issue',

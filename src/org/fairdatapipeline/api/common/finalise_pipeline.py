@@ -1,4 +1,5 @@
 import os
+import logging
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 
 def finalise(token: str, handle: dict):
@@ -107,16 +108,12 @@ def finalise(token: str, handle: dict):
                 os.remove(handle['output'][output]['path'])
 
                 directory = os.path.dirname(handle['output'][output]['path'])
-
-                #print("\ndirectory: " + os.path.normpath(directory))
-                #print("\nDatastore Path: " + os.path.normpath(datastore))
-
                 i = 0
                 while os.path.normpath(directory) != os.path.normpath(datastore):
                     try:
                         os.rmdir(directory)
                     except Exception:
-                        print("\nIgnoring Directory: " + directory + " as it is not empty\n")
+                        logging.warning("\nIgnoring Directory: " + directory + " as it is not empty\n")
                         pass
                     directory = os.path.split(directory)[0]
                     i += 1
@@ -236,7 +233,7 @@ def finalise(token: str, handle: dict):
             handle['output'][output]['component_url'] = component_url
             handle['output'][output]['data_product_url'] = data_product_url
 
-            print(f"Writing {handle['output'][output]['use_data_product']} to local registry")
+            logging.info(f"Writing {handle['output'][output]['use_data_product']} to local registry")
 
     output_components = []
     input_components = []

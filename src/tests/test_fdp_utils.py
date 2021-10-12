@@ -10,7 +10,6 @@ test_dir = os.path.join(os.path.dirname(__file__), "ext")
 # Test is_file()
 def test_is_file_exists():
     test_file = os.path.join(test_dir, 'test.csv')
-    #print(test_dir)
     assert fdp_utils.is_file(test_file)
 
 @pytest.mark.parametrize('file_path', [

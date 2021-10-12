@@ -1,10 +1,11 @@
+import logging
 def raise_issue_by_index(handle: dict, index: str, issue: str, severity, group = True):
     """
     Raises an issue for a given input or output index and writes it to the handle
 
     Args:
         |   handle: the handle containing the index
-        |   index: a unique reference to an input or output in 
+        |   index: a unique reference to an input or output in
         |       the handle see get_handle_index_from_path()
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
@@ -95,7 +96,7 @@ def raise_issue(handle: dict,
 ):
     current_group = issue + ':' + str(severity)
     if type in ['config', 'submission_script', 'github_repo']:
-        print('adding issue ' + issue + ' for ' + type + ' to handle')
+        logging.info('adding issue ' + issue + ' for ' + type + ' to handle')
     elif index is None:
         data_product_in_config = False
         reads = handle['yaml']['read']
@@ -119,7 +120,7 @@ def raise_issue(handle: dict,
         if not data_product_in_config:
             raise ValueError('Data product not in config file')
 
-        print('adding issue ' + issue + ' for ' + data_product + '@' + version + ' to handle')
+        logging.info('adding issue ' + issue + ' for ' + data_product + '@' + version + ' to handle')
 
     else:
         tmp = None
@@ -143,7 +144,7 @@ def raise_issue(handle: dict,
         version = tmp['use_version']
         namespace = tmp['use_namespace']
 
-        print('adding issue ' + issue + ' for ' + index + ' to handle')
+        logging.info('adding issue ' + issue + ' for ' + index + ' to handle')
     # Write to handle and return path
     issues_dict = {
         'index': index,

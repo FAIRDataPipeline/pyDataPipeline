@@ -1,4 +1,5 @@
 import os
+import logging
 from org.fairdatapipeline.api.common import fdp_utils
 
 def link_read(handle: dict, data_product: str)-> str:
@@ -25,7 +26,7 @@ def link_read(handle: dict, data_product: str)-> str:
     ]
 
     if data_product not in read_list:
-        print("Read information for data product not in config")
+        logging.info("Read information for data product not in config")
 
     index = 0
     # Get index for given data product

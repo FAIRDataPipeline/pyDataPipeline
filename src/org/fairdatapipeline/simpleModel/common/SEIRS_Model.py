@@ -1,5 +1,6 @@
 import csv
 import os
+import logging
 
 def SEIRS_Model(initial_state: dict, 
     timesteps: float,
@@ -111,7 +112,7 @@ def write_model_to_csv(model_output: dict, path: str):
         dictWriter.writeheader()
         for i in model_output:
             dictWriter.writerow(model_output[i])
-        print("\nSuccess File: " + path + " Written")
+        logging.info("Success File: " + path + " Written")
 
 def getResourceDirectory():
     """

@@ -15,7 +15,6 @@ def SEIRS_Plot(results: dict, save_location: str, show = False):
     E = [results[k]['E'] * 100 for k in results]
     I = [results[k]['I'] * 100 for k in results]
     R = [results[k]['R'] * 100 for k in results]
-    #print(time_points)
     t1 = "\nR\u2080=3, 1/\u03B3=14 Days, 1/\u03C3=7 Days, 1/\u03C9=1 Year"
     plt.plot(time_points, S, label = "S")
     plt.plot(time_points, E, label = "E")
