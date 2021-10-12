@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCRC Software checklist &mdash; pyDataPipeline 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://fairdatapipeline.github.io/pyDataPipeline/software_checklist.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="org.fairdatapipeline.simpleModel" href="simpleModel/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pyDataPipeline
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/SEIRS.html">SEIRS Model example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">org.fairdatapipeline.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleModel/index.html">org.fairdatapipeline.simpleModel</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SCRC Software checklist</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#software-details">Software details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-software-name">Model / software name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#date">Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-identifier">Version identifier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#this-assessment">This assessment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#filled-in-by">Filled in by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overall-statement">Overall statement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#checklist">Checklist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only">Can a run be repeated and reproduce exactly the same results? (models only)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#are-there-appropriate-tests-and-are-they-automated">Are there appropriate tests? (And are they automated?)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only">Are the scientific results of runs robust to different ways of running the code? (models only)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#has-any-sort-of-automated-code-checking-been-applied">Has any sort of automated code checking been applied?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles">Is the code clean, generally understandable and readable and written according to good software engineering principles?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-there-sufficient-documentation">Is there sufficient documentation?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-there-suitable-collaboration-infrastructure">Is there suitable collaboration infrastructure?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#are-software-dependencies-listed-and-of-appropriate-quality">Are software dependencies listed and of appropriate quality?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-input-and-output-data-handled-carefully-models-only">Is input and output data handled carefully? (Models only)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#contributors-and-licence">Contributors and licence</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyDataPipeline</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>SCRC Software checklist</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/software_checklist.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scrc-software-checklist">
+<h1>SCRC Software checklist<a class="headerlink" href="#scrc-software-checklist" title="Permalink to this headline"></a></h1>
+<p>This checklist has been developed by the Scottish Covid-19 Response
+Consortium and has been used to assess the software engineering aspects
+of “model readiness” for our six epidemiological models. This is
+intended to be part of a broader scheme to evaluate and describe
+suitability of model results to be used in decision making so this
+checklist covers only the software implementation and assumes that other
+documents cover questions about model validation, quality of science,
+data provenance and quality and policy readiness.</p>
+<p>In order to use this checklist for the SCRC FAIR data pipeline
+components, three questions that apply only to software producing
+scientific results have been marked “models only” and for other software
+an N/A response can be given.</p>
+<section id="software-details">
+<h2>Software details<a class="headerlink" href="#software-details" title="Permalink to this headline"></a></h2>
+<section id="model-software-name">
+<h3>Model / software name<a class="headerlink" href="#model-software-name" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><p>pyDataPipeline</p>
+</div></blockquote>
+</section>
+<section id="date">
+<h3>Date<a class="headerlink" href="#date" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><p>11/10/2021</p>
+</div></blockquote>
+</section>
+<section id="version-identifier">
+<h3>Version identifier<a class="headerlink" href="#version-identifier" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><p>0.2.0</p>
+</div></blockquote>
+</section>
+</section>
+<section id="this-assessment">
+<h2>This assessment<a class="headerlink" href="#this-assessment" title="Permalink to this headline"></a></h2>
+<section id="filled-in-by">
+<h3>Filled in by<a class="headerlink" href="#filled-in-by" title="Permalink to this headline"></a></h3>
+<p>Name</p>
+<blockquote>
+<div><p>Ryan Field</p>
+</div></blockquote>
+<p>Role on project:</p>
+<blockquote>
+<div><p>RSE</p>
+</div></blockquote>
+<p>Person identifier:</p>
+<blockquote>
+<div><p>Github: RyanJField, Orcid id: 0000-0002-4424-9890</p>
+</div></blockquote>
+</section>
+<section id="overall-statement">
+<h3>Overall statement<a class="headerlink" href="#overall-statement" title="Permalink to this headline"></a></h3>
+<p>Do we have sufficient confidence in the correctness of the software to
+trust the results?</p>
+<p>This is your overall judgement on the level of confidence based on all
+the aspects of the checklist. There is no formulaic way to arrive at
+this overall assessment based on the individual checklist answers but
+please explain how the measures in place combine to reach this level of
+confidence and make clear any caveats (eg applies for certain ways of
+using the software and not others).</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Yes</p></li>
+<li><p>☐ Yes, with caveats</p></li>
+<li><p>☐ No</p></li>
+</ul>
+<p>Results are reproducable and consistant with other implimentations</p>
+</div></blockquote>
+</section>
+</section>
+<section id="checklist">
+<h2>Checklist<a class="headerlink" href="#checklist" title="Permalink to this headline"></a></h2>
+<p>Please use a statement from this list: “Sufficiently addressed”, “Some
+work remaining or caveats”, or “Needs to be addressed” to begin each
+response.</p>
+<p>Additionally, for each question please explain the situation and include
+any relevant links (eg tool dashboards, documentation). The sub bullet
+points are to make the scope of the question clear and should be covered
+if relevant but do not have to be answered individually.</p>
+<section id="can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only">
+<h3>Can a run be repeated and reproduce exactly the same results? (models only)<a class="headerlink" href="#can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>How is stochasticity handled?</p></li>
+<li><p>Is sufficient meta-data logged to enable a run to be reproduced: Is
+the exact code version recorded (and whether the repository was
+“clean”), including versions of dependent libraries (e.g. an
+environment.yml file or similar) along with all command line
+arguments and the content of any configuration files?</p></li>
+<li><p>Is there up-to-date documentation which explains precisely how to run
+the code to reproduce existing results?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+<li><p>☐ N/A</p></li>
+</ul>
+<p>Correct metadata logged, documentation is thorough and provides
+relevant information to achive reproducable results.</p>
+</div></blockquote>
+</section>
+<section id="are-there-appropriate-tests-and-are-they-automated">
+<h3>Are there appropriate tests? (And are they automated?)<a class="headerlink" href="#are-there-appropriate-tests-and-are-they-automated" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Are there unit tests? What is covered?</p></li>
+<li><p>System and integration tests? Automated model validation tests?</p></li>
+<li><p>Regression tests? (Which show whether changes to the code lead to
+changes in the output. Changes to the model will be expected to
+change the output, but many other changes, such as refactoring and
+adding new features, should not. Having these tests gives confidence
+that the code hasn’t developed bugs due to unintentional changes.)</p></li>
+<li><p>Is there CI?</p></li>
+<li><p>Is everything you need to run the tests (including documentation) in
+the repository (or the data pipeline where appropriate)?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Unit tests are implemented on functions. CI is implemented using
+Github Actions. Tests are included in the repository.</p>
+</div></blockquote>
+</section>
+<section id="are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only">
+<h3>Are the scientific results of runs robust to different ways of running the code? (models only)<a class="headerlink" href="#are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Running on a different machine?</p></li>
+<li><p>With different number of processes?</p></li>
+<li><p>With different compilers and optimisation levels?</p></li>
+<li><p>Running in debug mode?</p></li>
+</ul>
+<p>(We don’t require bitwise identical results here, but the broad
+conclusions after looking at the results of the test case should be the
+same.)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+<li><p>☐ N/A</p></li>
+</ul>
+<p>Model tested on multiple systems with reliable results.</p>
+</div></blockquote>
+</section>
+<section id="has-any-sort-of-automated-code-checking-been-applied">
+<h3>Has any sort of automated code checking been applied?<a class="headerlink" href="#has-any-sort-of-automated-code-checking-been-applied" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>For C++, this might just be the compiler output when run with “all
+warnings”. It could also be more extensive static analysis. For other
+languages, it could be e.g. pylint, StaticLint.jl, etc.</p></li>
+<li><p>If there are possible issues reported by such a tool, have they all
+been either fixed or understood to not be important?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Pylint has been run.</p>
+</div></blockquote>
+</section>
+<section id="is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles">
+<h3>Is the code clean, generally understandable and readable and written according to good software engineering principles?<a class="headerlink" href="#is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Is it modular? Are the internal implementation details of one module
+hidden from other modules?</p></li>
+<li><p>Commented where necessary?</p></li>
+<li><p>Avoiding red flags such as very long functions, global variables,
+copy and pasted code, etc.?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Code conforms to good software engineering practices.</p>
+</div></blockquote>
+</section>
+<section id="is-there-sufficient-documentation">
+<h3>Is there sufficient documentation?<a class="headerlink" href="#is-there-sufficient-documentation" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Is there a readme?</p></li>
+<li><p>Does the code have user documentation?</p></li>
+<li><p>Does the code have developer documentation?</p></li>
+<li><p>Does the code have algorithm documentation? e.g. something that
+describes how the model is actually simulated, or inference is
+performed?</p></li>
+<li><p>Is all the documentation up to date?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Documentation provided and up to date.</p>
+</div></blockquote>
+</section>
+<section id="is-there-suitable-collaboration-infrastructure">
+<h3>Is there suitable collaboration infrastructure?<a class="headerlink" href="#is-there-suitable-collaboration-infrastructure" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Is the code in a version-controlled repository?</p></li>
+<li><p>Is there a license?</p></li>
+<li><p>Is an issue tracker used?</p></li>
+<li><p>Are there contribution guidelines?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Code is in version-controlled repository, with appropriate licence
+and issue tracking.</p>
+</div></blockquote>
+</section>
+<section id="are-software-dependencies-listed-and-of-appropriate-quality">
+<h3>Are software dependencies listed and of appropriate quality?<a class="headerlink" href="#are-software-dependencies-listed-and-of-appropriate-quality" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+</ul>
+<p>Dependencies documented</p>
+</div></blockquote>
+</section>
+<section id="is-input-and-output-data-handled-carefully-models-only">
+<h3>Is input and output data handled carefully? (Models only)<a class="headerlink" href="#is-input-and-output-data-handled-carefully-models-only" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>Does the code use the data pipeline for all inputs and outputs?</p></li>
+<li><p>Is the code appropriately parameterized (i.e. have hard coded
+parameters been removed)?</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>☒ Sufficiently addressed</p></li>
+<li><p>☐ Some work remaining or caveats</p></li>
+<li><p>☐ Needs to be addressed</p></li>
+<li><p>☐ N/A</p></li>
+</ul>
+<p>Pipeline is used for model parameters.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="contributors-and-licence">
+<h2>Contributors and licence<a class="headerlink" href="#contributors-and-licence" title="Permalink to this headline"></a></h2>
+<p>Contributors: * Ryan Field * Dennis Reddyhoff</p>
+<p>Only a few points within the checklist are specific to the work of the
+SCRC collaboration or to epidemiology so the checklist could be readily
+adopted to modelling or analysis software in other domains. We welcome
+dialogue and suggestions for improvement via Github issues on this
+repository.</p>
+<p>This work is licensed under a Creative Commons Attribution 4.0
+International License.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simpleModel/index.html" class="btn btn-neutral float-left" title="org.fairdatapipeline.simpleModel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Ryan Field, Dennis Reddyhoff.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
