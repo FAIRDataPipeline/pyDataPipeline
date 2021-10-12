@@ -1,9 +1,5 @@
-import datetime
 import os
-import yaml
-import re
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
-import shutil
 
 def finalise(token: str, handle: dict):
     """
@@ -50,7 +46,6 @@ def finalise(token: str, handle: dict):
             'root': datastore
         }
     )
-       
     datastore_root_url = None
 
     # Check datastore is in registry
@@ -73,16 +68,13 @@ def finalise(token: str, handle: dict):
 
             if '${RUN_ID}' in handle['output'][output]['use_data_product']:
                 handle['output'][output]['use_data_product'] = handle['output'][output]['use_data_product'].replace('${RUN_ID}', handle['code_run_uuid'])
-            
             write_namespace = fdp_utils.get_entry(
                 url = registry_url,
                 endpoint = 'namespace',
                 query = {
                     'name': handle['output'][output]['use_namespace']
                 })
-            
             write_namespace_url = None
-            
             if write_namespace:
                 write_namespace_url = write_namespace[0]['url']
             else:
@@ -121,15 +113,15 @@ def finalise(token: str, handle: dict):
 
                 i = 0
                 while os.path.normpath(directory) != os.path.normpath(datastore):
-                        try:
-                            os.rmdir(directory)
-                        except Exception:
-                            print("\nIgnoring Directory: " + directory + " as it is not empty\n")
-                            pass
-                        directory = os.path.split(directory)[0]
-                        i += 1
-                        if i > 4:
-                            break
+                    try:
+                        os.rmdir(directory)
+                    except Exception:
+                        print("\nIgnoring Directory: " + directory + " as it is not empty\n")
+                        pass
+                    directory = os.path.split(directory)[0]
+                    i += 1
+                    if i > 4:
+                        break
 
                 existing_path = storage_exists[0]['path']
 
@@ -155,9 +147,7 @@ def finalise(token: str, handle: dict):
                     data_product,
                     new_filename
                 ).replace('\\', '/')
-                
                 os.rename(handle['output'][output]['path'], new_path)
-
                 new_storage_location = os.path.join(
                     namespace,
                     data_product,
@@ -198,7 +188,6 @@ def finalise(token: str, handle: dict):
                         'extension': file_type
                     }
                 )['url']
-            
             object_url = fdp_utils.post_entry(
                 token = token,
                 url = registry_url,
@@ -223,7 +212,7 @@ def finalise(token: str, handle: dict):
                         'name': handle['output'][output]['use_component']
                     }
                 )['url']
-            else:              
+            else:
                 component_url = fdp_utils.get_entry(
                     url= registry_url,
                     endpoint= 'object_component',

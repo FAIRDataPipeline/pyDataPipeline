@@ -1,7 +1,5 @@
-import datetime
 import os
-import yaml
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
+from org.fairdatapipeline.api.common import fdp_utils
 
 def link_write(handle, data_product: str)-> str:
     """Reads write information in config file, updates handle with relevant

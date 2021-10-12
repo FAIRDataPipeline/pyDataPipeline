@@ -1,14 +1,12 @@
 import os
 import urllib
-import requests
 import json
 from datetime import datetime
 import hashlib
 import random
-from requests import api
-from requests.models import Response
-import yaml
 import uuid
+import yaml
+import requests
 
 def get_entry(
     url: str,
@@ -27,7 +25,6 @@ def get_entry(
         |   dict: responce from registry
     """
     headers = {}
-    
     if token is not None:
         headers = {
         'Authorization': 'token ' + token
@@ -35,14 +32,14 @@ def get_entry(
 
     # Remove api address from query
     for key in query:
-        if type(query[key]) == str:
+        if isinstance(query[key], str):
             if url in query[key]:
                 query[key] = extract_id(query[key])
-        elif type(query[key]) == dict:
+        elif isinstance(query[key], dict):
             for _key in query[key]:
                 if url in query[key][_key]:
                     query[key][_key] = extract_id(query[key][_key])
-        elif type(query[key]) == list:
+        elif isinstance(query[key], list):
             for i in range(len(query[key])):
                 if url in query[key][i]:
                     query[key][i] = extract_id(query[key][i])
@@ -54,7 +51,7 @@ def get_entry(
     _query =  [f"{k}={v}" for k, v in query.items()]
     url += "&".join(_query)
     response = requests.get(url, headers=headers)
-    if (response.status_code != 200):
+    if response.status_code != 200:
         raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
 
     return response.json()['results']
@@ -76,17 +73,15 @@ def get_entity(
         |   dict: responce from registry
     """
     headers = {}
-    
     if token is not None:
         headers = {
         'Authorization': 'token ' + token
         }
-    
     if url[-1] != "/":
         url+="/"
     url += endpoint + '/' + id
     response = requests.get(url, headers=headers)
-    if (response.status_code != 200):
+    if response.status_code != 200:
         raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
 
     return response.json()
@@ -132,10 +127,10 @@ def post_entry(
 
     response = requests.post(_url, _data, headers=headers)
 
-    if (response.status_code == 409):
+    if response.status_code == 409:
         return get_entry(url, endpoint, data)[0]
 
-    if (response.status_code != 201):
+    if response.status_code != 201:
         raise ValueError("Server responded with: " + str(response.status_code))
 
     return response.json()
@@ -162,7 +157,7 @@ def patch_entry(
     data = json.dumps(data)
 
     response = requests.patch(url, data, headers=headers)
-    if (response.status_code != 200):
+    if response.status_code != 200:
         raise ValueError("Server responded with: " + str(response.status_code))
 
     return response.json()
@@ -269,7 +264,8 @@ def is_yaml(filename: str):
     try:
         with open(filename, 'r') as data:
             yaml.safe_load(data)
-    except: return False
+    except: 
+        return False
     return True
 
 def is_valid_yaml(filename: str):
@@ -361,14 +357,14 @@ def register_issues(token: str, handle: dict):
                                 if 'component_url' in handle['output'][ii].keys():
                                     component_url = handle['output'][ii]['component_url']
                                 else:
-                                    'No Component Found Please run finalise()'
+                                    print('No Component Found')
                     if 'input' in handle.keys():
                         for ii in handle['input']:
                             if handle['input'][ii] == index:
                                 if 'component_url' in handle['input'][ii].keys():
                                     component_url = handle['input'][ii]['component_url']
                                 else:
-                                    'No Component Found Please run finalise()'
+                                    print('No Component Found')
 
                 if data_product:
                     current_namespace = get_entry(
@@ -423,6 +419,4 @@ def register_issues(token: str, handle: dict):
                 'component_issues': component_list
             },
             token = token
-        )
-    
-
+        ) 

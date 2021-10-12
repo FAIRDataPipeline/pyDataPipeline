@@ -1,13 +1,11 @@
-from os import write
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
-
 def raise_issue_by_index(handle: dict, index: str, issue: str, severity, group = True):
     """
     Raises an issue for a given input or output index and writes it to the handle
 
     Args:
         |   handle: the handle containing the index
-        |   index: a unique reference to an input or output in the handle see get_handle_index_from_path()
+        |   index: a unique reference to an input or output in 
+        |       the handle see get_handle_index_from_path()
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
@@ -31,7 +29,7 @@ def raise_issue_by_data_product(handle: dict,
         |   issue: what the issue is as a string
         |   severity: How severe the issue is as an interger from 1-10
     """
-    raise_issue(handle,
+    return raise_issue(handle,
     'data_product',
     issue,
     severity,
@@ -84,8 +82,7 @@ def raise_issue_by_type(handle: dict, type:str, issue: str, severity, group = Tr
         valid types: config, submission_script, github_repo')
     return raise_issue(handle, type, issue, severity, index = False, group = group)
 
-    
-def raise_issue(handle: dict, 
+def raise_issue(handle: dict,
     type,
     issue,
     severity,
@@ -138,7 +135,6 @@ def raise_issue(handle: dict,
                     tmp = handle['input'][input]
                     if not group:
                         current_group = handle['input'][input]
-        
         if tmp is None:
             raise ValueError('Error: index not found in handle')
 
@@ -148,7 +144,6 @@ def raise_issue(handle: dict,
         namespace = tmp['use_namespace']
 
         print('adding issue ' + issue + ' for ' + index + ' to handle')
-                
     # Write to handle and return path
     issues_dict = {
         'index': index,
@@ -168,4 +163,3 @@ def raise_issue(handle: dict,
     else:
         handle['issues'] = {}
         handle['issues']['issue_0'] = issues_dict
-    

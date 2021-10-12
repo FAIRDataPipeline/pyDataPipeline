@@ -1,7 +1,5 @@
-import datetime
 import os
-import yaml
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
+from org.fairdatapipeline.api.common import fdp_utils
 
 def link_read(handle: dict, data_product: str)-> str:
     """Reads 'read' information in config file, updates handle with relevant
@@ -107,16 +105,16 @@ def link_read(handle: dict, data_product: str)-> str:
         id = fdp_utils.extract_id(storage_location_response['storage_root'])
     )['root']
 
-    sl = storage_location_response['path']
+    tmp_sl = storage_location_response['path']
     # remove leading character from path if it is eithe / or \
-    if ("\\" in sl[0]) or "/" in sl[0]:
-        sl = sl[1:]
+    if ("\\" in tmp_sl[0]) or "/" in tmp_sl[0]:
+        tmp_sl = tmp_sl[1:]
 
     # remove file:// from storage root
     storage_root = fdp_utils.remove_local_from_root(storage_root)
 
     # Get path of data product
-    path = os.path.normpath(os.path.join(storage_root, sl))
+    path = os.path.normpath(os.path.join(storage_root, tmp_sl))
 
     component = None
     if 'component' in use:
@@ -141,4 +139,3 @@ def link_read(handle: dict, data_product: str)-> str:
         handle['input']['input_0'] = input_dict
 
     return path
-

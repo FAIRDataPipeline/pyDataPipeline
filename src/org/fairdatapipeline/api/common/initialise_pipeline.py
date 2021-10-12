@@ -1,8 +1,8 @@
 import datetime
 import os
 import yaml
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
-    
+from org.fairdatapipeline.api.common import fdp_utils
+
 def initialise(token: str, config: str, script: str):
     """Reads in token, config file and script, creates necessary registry items
     and creates new code run.
@@ -13,7 +13,7 @@ def initialise(token: str, config: str, script: str):
         |   script: Path to script file
 
     Returns:
-        |   dict: a dictionary containing the following keys: 
+        |   dict: a dictionary containing the following keys:
         |       'yaml': config_yaml path,
         |       'fdp_config_dir': config dir path,
         |       'model_config': model config url,
@@ -29,7 +29,6 @@ def initialise(token: str, config: str, script: str):
         raise ValueError('Config is not a valid YAML file')
     if not fdp_utils.is_file(script):
         raise ValueError("Script does not exist")
-    
     # Read the token
     #token = fdp_utils.read_token(token)
 
