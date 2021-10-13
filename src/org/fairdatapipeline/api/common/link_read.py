@@ -18,6 +18,8 @@ def link_read(handle: dict, data_product: str)-> str:
         for i in enumerate(handle['input']):
             if i[1]['data_product'] == data_product:
                 return i[1]['path']
+    if not 'read' in handle['yaml'].keys():
+        raise ValueError('Error: Read has not been specified in the given config file')
 
     # Check if data product is in config yaml
     read_list = [

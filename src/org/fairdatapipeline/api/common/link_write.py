@@ -18,6 +18,9 @@ def link_write(handle, data_product: str)-> str:
 
     index = 0
 
+    if not 'write' in handle['yaml'].keys():
+        raise ValueError('Error: Write has not been specified in the given config file')
+
     # If multiple write blocks exist, find corresponding index for given DP
     for i in enumerate(handle['yaml']['write']):
         if i[1]['data_product'] == data_product:

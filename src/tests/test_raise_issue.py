@@ -1,8 +1,11 @@
+import logging
 import org.fairdatapipeline.api as pipeline
 import os
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 import pytest
 import shutil
+
+from org.fairdatapipeline.api.common.raise_issue import raise_issue_by_data_product
 test_dir = os.path.join(os.path.dirname(__file__), "ext")
 
 token = fdp_utils.read_token(os.path.join(os.path.expanduser('~'), '.fair/registry/token'))
@@ -53,3 +56,20 @@ def test_finalise():
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
     #print(handle)
+
+def test_raise_issue_data_product():
+    handle = pipeline.initialise(token, config, script)
+    pipeline.raise_issue_by_data_product(handle,
+    'test/csv',
+    '0.0.1',
+    'testing',
+    'Problem with csv File : Test Issue # 2',
+    5)
+    pipeline.finalise(token, handle)
+
+def test_link_read():
+    config = os.path.join(test_dir, 'read_csv.yaml')
+    handle = pipeline.initialise(token, config, script)
+    link_read = pipeline.link_read(handle, 'test/csv')
+    #logging.info('link_read: {}'.format(link_read))
+    assert type(link_read) == str

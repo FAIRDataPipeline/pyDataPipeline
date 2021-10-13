@@ -95,7 +95,7 @@ def raise_issue(handle: dict,
     group = True
 ):
     current_group = issue + ':' + str(severity)
-    if type in ['config', 'submission_script', 'github_repo']:
+    if type in ['config', 'submission_script', 'github_repo', 'data_product']:
         logging.info('Adding issue {} for {} to handle'.format(issue, type))
     elif index is None:
         data_product_in_config = False
@@ -120,7 +120,7 @@ def raise_issue(handle: dict,
         if not data_product_in_config:
             raise ValueError('Data product not in config file')
 
-        logging.info('Assing issue {} for {}@{} to handle'.format(issue, data_product, version))
+        logging.info('Raising issue {} for {}@{} to handle'.format(issue, data_product, version))
 
     else:
         tmp = None
