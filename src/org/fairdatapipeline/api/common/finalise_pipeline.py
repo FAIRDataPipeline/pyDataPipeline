@@ -113,7 +113,7 @@ def finalise(token: str, handle: dict):
                     try:
                         os.rmdir(directory)
                     except Exception:
-                        logging.warning("\nIgnoring Directory: " + directory + " as it is not empty\n")
+                        logging.warning('Ignoring Directory: {} as it is not empty'.format(directory))
                         pass
                     directory = os.path.split(directory)[0]
                     i += 1
@@ -233,7 +233,7 @@ def finalise(token: str, handle: dict):
             handle['output'][output]['component_url'] = component_url
             handle['output'][output]['data_product_url'] = data_product_url
 
-            logging.info(f"Writing {handle['output'][output]['use_data_product']} to local registry")
+            logging.info('Writing {} to local registry'.format(handle['output'][output]['use_data_product']))
 
     output_components = []
     input_components = []

@@ -409,7 +409,7 @@ def register_issues(token: str, handle: dict):
                     component_list.append(component_url)
 
         # Register the issue:
-        logging.info('Registering issue:' + group)
+        logging.info('Registering issue: {}'.format(group))
         current_issue = post_entry(
             url = api_url,
             endpoint= 'issue',

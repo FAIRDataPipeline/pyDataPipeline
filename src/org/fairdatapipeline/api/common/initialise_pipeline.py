@@ -42,7 +42,7 @@ def initialise(token: str, config: str, script: str):
         registry_url += "/"
     filename = os.path.basename(config)
 
-    logging.info(f"Reading {filename} from data store")
+    logging.info('Reading {} from local filestore'.format(filename))
 
     # Configure storage root for config
 
@@ -163,7 +163,7 @@ def initialise(token: str, config: str, script: str):
 
     config_object_url = config_object['url']
 
-    logging.info(f'Writing {filename} to local registry')
+    logging.info('Writing {} to local registry'.format(filename))
 
     # Check if script exists in storage_location
 
@@ -246,7 +246,7 @@ def initialise(token: str, config: str, script: str):
 
     script_object_url = script_object['url']
 
-    logging.info(f"Writing {os.path.basename(script)} to local registry")
+    logging.info('Writing {} to local registry'.format(script))
 
     # Create new remote storage root
 
@@ -338,7 +338,7 @@ def initialise(token: str, config: str, script: str):
 
         coderepo_object_url = coderepo_object_response['url']
 
-    logging.info(f"Writing {repo_name} to local registry")
+    logging.info('Writing {} to local registry'.format(repo_name))
 
     # Register new code run
 

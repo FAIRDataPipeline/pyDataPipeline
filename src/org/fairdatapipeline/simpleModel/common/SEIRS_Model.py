@@ -112,7 +112,7 @@ def write_model_to_csv(model_output: dict, path: str):
         dictWriter.writeheader()
         for i in model_output:
             dictWriter.writerow(model_output[i])
-        logging.info("Success File: " + path + " Written")
+        logging.info('Success file: {} written'.format(path))
 
 def getResourceDirectory():
     """
