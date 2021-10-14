@@ -79,7 +79,6 @@ def get_entity(
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError("Server responded with: " + str(response.status_code) + " Query = " + url)
-
     return response.json()
 
 def extract_id(url: str)-> str:
@@ -120,6 +119,8 @@ def post_entry(
     _data = json.dumps(data)
 
     response = requests.post(_url, _data, headers=headers)
+
+    #print(response.request.headers)
 
     if response.status_code == 409:
         return get_entry(url, endpoint, data)[0]
@@ -164,11 +165,11 @@ def get_headers(request_type:str = 'get', token:str = None, api_version:str = '1
     Returns:
         |   dict: a dictionary of appropriate headers to be added to a request
     """
-    headers = {'version' : api_version}
+    headers = {'Accept': 'application/json; version=' + api_version}
     if token:
         headers['Authorization'] = 'token ' + token
     if request_type == 'post':
-        headers['Content-type'] = 'application/json'
+        headers['Content-Type'] = 'application/json'
     return headers
 
 

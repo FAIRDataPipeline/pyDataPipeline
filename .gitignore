@@ -138,3 +138,5 @@ test.yaml
 
 .fair/
 
+tmp/
+src/tests/ext/coderuns.txt

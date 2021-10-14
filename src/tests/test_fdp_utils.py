@@ -88,11 +88,11 @@ def test_get_headers_with_token():
 
 def test_get_headers_post():
     headers = fdp_utils.get_headers(request_type= 'post')
-    assert headers['Content-type'] == 'application/json'
+    assert headers['Content-Type'] == 'application/json'
 
 def test_get_headers_api_version():
     headers = fdp_utils.get_headers(api_version= '0.0.1')
-    assert headers['version'] == '0.0.1'
+    assert headers['Accept'] == 'application/json; version=0.0.1'
 
 storage_root = None
 storage_root2 = None
@@ -153,6 +153,30 @@ def test_get_entity():
         endpoint='storage_root',
         id = fdp_utils.extract_id(storage_root['url']))
     assert entity == storage_root
+
+def test_wrong_api_version():
+    with pytest.raises(Exception):
+        fdp_utils.post_entry(
+        token = token,
+        url= url,
+        data={
+            'root': 'https://test.com'
+        },
+        endpoint= 'storage_root',
+        api_version= '2.2.2'
+        )
+
+def test_wrong_api_version_get():
+    with pytest.raises(Exception):
+        fdp_utils.get_entry(
+        token = token,
+        url= url,
+        query={
+            'root': 'https://test.com'
+        },
+        endpoint= 'storage_root',
+        api_version= '3.0.0'
+        )
 
 def test_get_entity_with_token():
     entity = fdp_utils.get_entity(
