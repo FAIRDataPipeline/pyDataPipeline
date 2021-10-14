@@ -42,6 +42,12 @@ def initialise(token: str, config: str, script: str):
         registry_url += "/"
     filename = os.path.basename(config)
 
+    #@todo to be set from config
+    if not 'api_version' in config_yaml['run_metadata'].keys():
+        config_yaml['run_metadata']['api_version'] = '1.0.0'
+
+    api_version = config_yaml['run_metadata']['api_version']
+
     logging.info('Reading {} from local filestore'.format(filename))
 
     # Configure storage root for config
@@ -55,7 +61,8 @@ def initialise(token: str, config: str, script: str):
         data = {
             'root': run_metadata['write_data_store'],
             'local': True
-        }
+        },
+        api_version = api_version
     )
 
     config_storageroot_url = config_storageroot_response['url']
@@ -71,7 +78,8 @@ def initialise(token: str, config: str, script: str):
             'hash': config_hash,
             'public': True,
             'storage_root': config_storageroot_id
-        }
+        },
+        api_version = api_version
     )
 
     # If entry exists, extract url, otherwise create entry
@@ -92,7 +100,8 @@ def initialise(token: str, config: str, script: str):
             token = token,
             url = registry_url,
             endpoint = 'storage_location',
-            data = config_storage_data
+            data = config_storage_data,
+            api_version = api_version
         )
 
         config_location_url = config_location_response['url']
@@ -104,7 +113,8 @@ def initialise(token: str, config: str, script: str):
         endpoint = 'file_type',
         query = {
             'extension': 'yaml'
-        }
+        },
+        api_version = api_version
     )
 
     # If file type doesn't exist, create entry
@@ -120,7 +130,8 @@ def initialise(token: str, config: str, script: str):
             data = {
                 'name': 'yaml',
                 'extension': 'yaml'
-            }
+            },
+            api_version = api_version
         )
         config_filetype_url = config_filetype_response['url']
 
@@ -132,7 +143,8 @@ def initialise(token: str, config: str, script: str):
         query = {
             'username': 'admin'
         },
-        token = token
+        token = token,
+        api_version = api_version
     )[0]['url']
 
     user_id = fdp_utils.extract_id(user_url)
@@ -144,7 +156,8 @@ def initialise(token: str, config: str, script: str):
         endpoint = 'user_author',
         query = {
             'user': user_id
-        }
+        },
+        api_version = api_version
     )[0]['author']
 
     # Create new object for config file
@@ -158,7 +171,8 @@ def initialise(token: str, config: str, script: str):
             'storage_location': config_location_url,
             'authors': [author_url],
             'file_type': config_filetype_url
-        }
+        },
+        api_version = api_version
     )
 
     config_object_url = config_object['url']
@@ -178,7 +192,8 @@ def initialise(token: str, config: str, script: str):
             'hash': script_hash,
             'public': True,
             'storage_root': script_storageroot_id
-        }
+        },
+        api_version = api_version
     )
 
     # If entry doesn't exist, create it
@@ -199,7 +214,8 @@ def initialise(token: str, config: str, script: str):
             token = token,
             url = registry_url,
             endpoint = 'storage_location',
-            data = script_storage_data
+            data = script_storage_data,
+            api_version = api_version
         )
 
         script_location_url = script_location_response['url']
@@ -211,7 +227,8 @@ def initialise(token: str, config: str, script: str):
         endpoint = 'file_type',
         query = {
             'extension': 'py'
-        }
+        },
+        api_version = api_version
     )
 
     if script_filetype_exists:
@@ -225,7 +242,8 @@ def initialise(token: str, config: str, script: str):
             data = {
                 'name': 'py',
                 'extension': 'py'
-            }
+            },
+            api_version = api_version
         )
 
         script_filetype_url = script_filetype_response['url']
@@ -241,7 +259,8 @@ def initialise(token: str, config: str, script: str):
             'storage_location': script_location_url,
             'authors': [author_url],
             'file_type': script_filetype_url
-        }
+        },
+        api_version = api_version
     )
 
     script_object_url = script_object['url']
@@ -256,7 +275,8 @@ def initialise(token: str, config: str, script: str):
         data = {
             'root': 'https://github.com',
             'local': False
-        }
+        },
+        api_version = api_version
     )['url']
 
     repo_storageroot_id = fdp_utils.extract_id(repo_storageroot_url)
@@ -273,7 +293,8 @@ def initialise(token: str, config: str, script: str):
             'hash': sha,
             'public': True,
             'storage_root': repo_storageroot_id
-        }
+        },
+        api_version = api_version
     )
 
     # If repo exists, check if object exists for the repo
@@ -287,7 +308,8 @@ def initialise(token: str, config: str, script: str):
             endpoint = 'object',
             query = {
                 'storage_location': coderepo_location_id
-            }
+            },
+            api_version = api_version
         )
 
         # If repo object doesn't exist, create it
@@ -303,7 +325,8 @@ def initialise(token: str, config: str, script: str):
                     'description': 'Analysis / processing script location',
                     'storage_location': coderepo_location_url,
                     'authors': [author_url]
-                }
+                },
+                api_version = api_version
             )
 
             coderepo_object_url = coderepo_object_response['url']
@@ -320,7 +343,8 @@ def initialise(token: str, config: str, script: str):
                 'hash': sha,
                 'public': True,
                 'storage_root': repo_storageroot_url
-            }
+            },
+            api_version = api_version
         )
 
         coderepo_location_url = coderepo_location_response['url']
@@ -333,7 +357,8 @@ def initialise(token: str, config: str, script: str):
                 'description': 'Analysis / processing script location',
                 'storage_location': coderepo_location_url,
                 'authors': [author_url]
-            }
+            },
+            api_version = api_version
         )
 
         coderepo_object_url = coderepo_object_response['url']
@@ -354,7 +379,8 @@ def initialise(token: str, config: str, script: str):
             'submission_script': script_object_url,
             'input_urls': [],
             'output_urls': []
-        }
+        },
+        api_version = api_version
     )
 
     coderun_url = coderun_response['url']

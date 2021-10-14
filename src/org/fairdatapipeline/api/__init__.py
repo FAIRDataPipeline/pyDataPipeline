@@ -15,6 +15,7 @@ from .common.link_read import link_read
 from .common.link_write import link_write
 from .common.finalise_pipeline import finalise
 from .common.raise_issue import raise_issue_by_data_product
+from .common.raise_issue import raise_issue_by_existing_data_product
 from .common.raise_issue import raise_issue_by_index
 from .common.raise_issue import raise_issue_with_config
 from .common.raise_issue import raise_issue_with_submission_script

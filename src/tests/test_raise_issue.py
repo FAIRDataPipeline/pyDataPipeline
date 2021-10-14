@@ -57,13 +57,24 @@ def test_finalise():
     pipeline.finalise(token, handle)
     #print(handle)
 
-def test_raise_issue_data_product():
+def test_raise_issue_existing_data_product():
+    handle = pipeline.initialise(token, config, script)
+    pipeline.raise_issue_by_existing_data_product(handle,
+    'test/csv',
+    '0.0.1',
+    'testing',
+    'Problem with csv File : Test Issue # 2',
+    5)
+    pipeline.finalise(token, handle)
+
+def test_raise_issue_data_product_from_reads():
+    config = os.path.join(test_dir, 'read_csv.yaml')
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_by_data_product(handle,
     'test/csv',
     '0.0.1',
     'testing',
-    'Problem with csv File : Test Issue # 2',
+    'Problem with csv File : Test Issue # 3',
     5)
     pipeline.finalise(token, handle)
 

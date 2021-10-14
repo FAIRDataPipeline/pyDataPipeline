@@ -37,6 +37,7 @@ def finalise(token: str, handle: dict):
     #token = fdp_utils.read_token(token)
     registry_url = handle['yaml']['run_metadata']['local_data_registry_url']
     datastore = handle['yaml']['run_metadata']['write_data_store']
+    api_version = handle['yaml']['run_metadata']['api_version']
 
     datastore = fdp_utils.remove_local_from_root(datastore)
 
@@ -45,7 +46,8 @@ def finalise(token: str, handle: dict):
         endpoint = 'storage_root',
         query = {
             'root': datastore
-        }
+        },
+        api_version = api_version
     )
     datastore_root_url = None
 
@@ -59,7 +61,8 @@ def finalise(token: str, handle: dict):
             data = {
                 'root': datastore,
                 'local' : True
-            }
+            },
+            api_version = api_version
         )['url']
 
     datastore_root_id = fdp_utils.extract_id(datastore_root_url)
@@ -74,7 +77,8 @@ def finalise(token: str, handle: dict):
                 endpoint = 'namespace',
                 query = {
                     'name': handle['output'][output]['use_namespace']
-                })
+                },
+                api_version = api_version)
             write_namespace_url = None
             if write_namespace:
                 write_namespace_url = write_namespace[0]['url']
@@ -85,7 +89,8 @@ def finalise(token: str, handle: dict):
                     endpoint = 'namespace',
                     data = {
                         'name': handle['output'][output]['use_namespace']
-                    }
+                    },
+                    api_version = api_version
                 )['url']
 
             hash = fdp_utils.get_file_hash(handle['output'][output]['path'])
@@ -97,7 +102,8 @@ def finalise(token: str, handle: dict):
                     'hash': hash,
                     'public': handle['output'][output]['public'],
                     'storage_root': datastore_root_id
-                }
+                },
+                api_version = api_version
             )
 
             storage_location_url = None
@@ -125,7 +131,8 @@ def finalise(token: str, handle: dict):
                 existing_root = fdp_utils.get_entity(
                     url = registry_url,
                     endpoint = 'storage_root',
-                    id = fdp_utils.extract_id(storage_exists[0]['storage_root'])
+                    id = fdp_utils.extract_id(storage_exists[0]['storage_root']),
+                    api_version = api_version
                 )['root']
 
                 existing_root = fdp_utils.remove_local_from_root(existing_root)
@@ -160,7 +167,8 @@ def finalise(token: str, handle: dict):
                         'hash': hash,
                         'public': handle['output'][output]['public'],
                         'storage_root': datastore_root_url
-                    }
+                    },
+                    api_version = api_version
                 )['url']
 
             file_type = os.path.basename(new_path).split('.')[-1]
@@ -170,7 +178,8 @@ def finalise(token: str, handle: dict):
                 endpoint = 'file_type',
                 query = {
                     'extension': file_type
-                }
+                },
+                api_version = api_version
             )
 
             if file_type_exists:
@@ -183,7 +192,8 @@ def finalise(token: str, handle: dict):
                     data = {
                         'name': file_type,
                         'extension': file_type
-                    }
+                    },
+                    api_version = api_version
                 )['url']
             object_url = fdp_utils.post_entry(
                 token = token,
@@ -194,7 +204,8 @@ def finalise(token: str, handle: dict):
                     'storage_location': storage_location_url,
                     'authors': [handle['author']],
                     'file_type': file_type_url
-                }
+                },
+                api_version = api_version
             )['url']
 
             component_url = None
@@ -207,7 +218,8 @@ def finalise(token: str, handle: dict):
                     data = {
                         'object': object_url,
                         'name': handle['output'][output]['use_component']
-                    }
+                    },
+                    api_version = api_version
                 )['url']
             else:
                 component_url = fdp_utils.get_entry(
@@ -215,7 +227,8 @@ def finalise(token: str, handle: dict):
                     endpoint= 'object_component',
                     query= {
                         'object': fdp_utils.extract_id(object_url),
-                    }
+                    },
+                    api_version = api_version
                 )[0]['url']
 
             data_product_url = fdp_utils.post_entry(
@@ -227,7 +240,8 @@ def finalise(token: str, handle: dict):
                     'version': handle['output'][output]['use_version'],
                     'object': object_url,
                     'namespace': write_namespace_url
-                }
+                },
+                api_version = api_version
             )['url']
 
             handle['output'][output]['component_url'] = component_url
@@ -255,7 +269,8 @@ def finalise(token: str, handle: dict):
         data = {
             'inputs': input_components,
             'outputs': output_components
-        }
+        },
+        api_version = api_version
     )
 
     coderuns_path = os.path.join(

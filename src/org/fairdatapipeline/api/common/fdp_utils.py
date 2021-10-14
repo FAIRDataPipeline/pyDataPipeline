@@ -14,6 +14,7 @@ def get_entry(
     endpoint: str,
     query: dict,
     token: str = None,
+    api_version = '1.0.0',
 )-> list:
     """
     Internal function to retreive and item from the registy using a query
@@ -25,11 +26,7 @@ def get_entry(
     Returns:
         |   dict: responce from registry
     """
-    headers = {}
-    if token is not None:
-        headers = {
-        'Authorization': 'token ' + token
-        }
+    headers = get_headers(token = token, api_version= api_version)
 
     # Remove api address from query
     for key in query:
@@ -62,6 +59,7 @@ def get_entity(
     endpoint: str,
     id: int,
     token: str = None,
+    api_version = '1.0.0'
 )-> list:
     """
     Internal function to get an item from the registry using it's id
@@ -73,11 +71,8 @@ def get_entity(
     Returns:
         |   dict: responce from registry
     """
-    headers = {}
-    if token is not None:
-        headers = {
-        'Authorization': 'token ' + token
-        }
+    headers = get_headers(token = token, api_version= api_version)
+
     if url[-1] != "/":
         url+="/"
     url += endpoint + '/' + id
@@ -105,6 +100,7 @@ def post_entry(
     endpoint: str,
     data: dict,
     token: str,
+    api_version = '1.0.0'
 )-> dict:
     """
     Internal function to post and entry on the registry
@@ -116,10 +112,7 @@ def post_entry(
     Returns:
         |   dict: responce from registry
     """
-    headers = {
-    'Authorization': 'token ' + token,
-    'Content-type': 'application/json'
-    }
+    headers = get_headers(request_type = 'post', token = token, api_version= api_version)
 
     if url[-1] != "/":
         url+="/"
@@ -139,7 +132,8 @@ def post_entry(
 def patch_entry(
     url: str,
     data: dict,
-    token: str
+    token: str,
+    api_version = '1.0.0'
 )-> dict:
     """
     Internal function to patch and entry on the registry
@@ -150,10 +144,7 @@ def patch_entry(
     Returns:
         |   dict: responce from registry
     """
-    headers = {
-    'Authorization': 'token ' + token,
-    'Content-type': 'application/json'
-    }
+    headers = get_headers(request_type = 'post', token = token, api_version= api_version)
 
     data = json.dumps(data)
 
@@ -163,7 +154,25 @@ def patch_entry(
 
     return response.json()
 
-def post_storage_root(url, data, token):
+def get_headers(request_type:str = 'get', token:str = None, api_version:str = '1.0.0'):
+    """
+    Internal function to return headers to be added to a request
+    Args:
+        |   request_type: (optional) type of request e.g. 'post' or 'get' defaults to 'get'
+        |   token: (optional) token, if a token is supplied this will be added to the headers
+        |   api_version: (optional) the version of the data registy to interact with, defaults to '1.0.0'
+    Returns:
+        |   dict: a dictionary of appropriate headers to be added to a request
+    """
+    headers = {'version' : api_version}
+    if token:
+        headers['Authorization'] = 'token ' + token
+    if request_type == 'post':
+        headers['Content-type'] = 'application/json'
+    return headers
+
+
+def post_storage_root(url, data, token, api_version = '1.0.0'):
     """
     Internal function to post a storage root to the registry
     the function first adds file:// if the root is local
@@ -177,7 +186,7 @@ def post_storage_root(url, data, token):
             data['root'] = 'file://' + data['root']
     if not data['root'][-1] == '/':
         data['root'] = data['root'] + '/'
-    return post_entry(url, 'storage_root', data, token)
+    return post_entry(url, 'storage_root', data, token, api_version)
 
 def remove_local_from_root(root: str):
     """
@@ -315,6 +324,7 @@ def register_issues(token: str, handle: dict):
     api_url = handle['yaml']['run_metadata']['local_data_registry_url']
     issues = handle['issues']
     groups = set(handle['issues'][i]['group'] for i in handle['issues'])
+    api_version = handle['yaml']['run_metadata']['api_version']
 
     for group in groups:
         component_list = []
@@ -347,7 +357,8 @@ def register_issues(token: str, handle: dict):
                         query= {
                             'object' : extract_id(object_id),
                             'whole_object': True
-                        }
+                        },
+                        api_version = api_version
                     )[0]['url']
 
                 if index:
@@ -372,7 +383,8 @@ def register_issues(token: str, handle: dict):
                         endpoint= 'namespace',
                         query= {
                             'name': namespace
-                        }
+                        },
+                        api_version = api_version
                     )[0]['url']
 
                     object = get_entry(
@@ -382,7 +394,8 @@ def register_issues(token: str, handle: dict):
                             'name': data_product,
                             'version': version,
                             'namespace': extract_id(current_namespace)
-                        }
+                        },
+                        api_version = api_version
                     )[0]['object']
                     object_id = extract_id(object)
                     if component:
@@ -392,7 +405,8 @@ def register_issues(token: str, handle: dict):
                             query= {
                                 'name': component,
                                 'object': object_id
-                            }
+                            },
+                            api_version = api_version
                         )
                     else:
                         component_obj = get_entry(
@@ -401,7 +415,8 @@ def register_issues(token: str, handle: dict):
                             query= {
                                 'object': object_id,
                                 'whole_object': True
-                            }
+                            },
+                            api_version = api_version
                         )
                         component_url = component_obj[0]['url']
 
@@ -418,5 +433,6 @@ def register_issues(token: str, handle: dict):
                 'description': issue,
                 'component_issues': component_list
             },
-            token = token
+            token = token,
+            api_version = api_version
         ) 

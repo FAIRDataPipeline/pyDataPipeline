@@ -12,7 +12,7 @@ def raise_issue_by_index(handle: dict, index: str, issue: str, severity, group =
     """
     return raise_issue(handle, 'index', issue, severity, index = index, group = group)
 
-def raise_issue_by_data_product(handle: dict,
+def raise_issue_by_existing_data_product(handle: dict,
     data_product: str,
     version: str,
     namespace: str,
@@ -22,6 +22,34 @@ def raise_issue_by_data_product(handle: dict,
 ):
     """
     Raises an issue for a given data_product and writes it to the handle
+
+    Args:
+        |   data_product: the data_product name as a string
+        |   version: version of the data_product as a string
+        |   namespace: namespace of the date_product as a string
+        |   issue: what the issue is as a string
+        |   severity: How severe the issue is as an interger from 1-10
+    """
+    return raise_issue(handle,
+    'existing_data_product',
+    issue,
+    severity,
+    data_product= data_product,
+    namespace = namespace,
+    version= version,
+    group = group
+    )
+
+def raise_issue_by_data_product(handle: dict,
+    data_product: str,
+    version: str,
+    namespace: str,
+    issue: str,
+    severity,
+    group = True
+):
+    """
+    Raises an issue for a given data_product in the run_metadata and writes it to the handle
 
     Args:
         |   data_product: the data_product name as a string
@@ -95,24 +123,36 @@ def raise_issue(handle: dict,
     group = True
 ):
     current_group = issue + ':' + str(severity)
-    if type in ['config', 'submission_script', 'github_repo', 'data_product']:
+    if type in ['config', 'submission_script', 'github_repo', 'existing_data_product']:
         logging.info('Adding issue {} for {} to handle'.format(issue, type))
     elif index is None:
         data_product_in_config = False
-        reads = handle['yaml']['read']
-        writes = handle['yaml']['write']
+        reads = None
+        writes = None
+        if 'read' in handle['yaml'].keys():
+            reads = handle['yaml']['read']
+        if 'write' in handle['yaml'].keys():
+            writes = handle['yaml']['write']
 
         if reads:
             for i in reads:
-                if i['data_product'] == data_product and i['version'] == version:
+                if i['data_product'] == data_product:                    
                     data_product_in_config = True
+                    if 'use' in i.keys():
+                        if 'use_version' in i['use'].keys():
+                            if not i['use']['version'] == version:
+                                data_product_in_config = False
                     data_product = i['data_product']
                     if not group:
                         current_group = i['data_product']
         if writes:
             for i in writes:
-                if i['data_product'] == data_product and i['version'] == version:
+                if i['data_product'] == data_product:
                     data_product_in_config = True
+                    if 'use' in i.keys():
+                        if 'use_version' in i['use'].keys():
+                            if not i['use']['version'] == version:
+                                data_product_in_config = False
                     data_product = i['data_product']
                     if not group:
                         current_group = i['data_product']

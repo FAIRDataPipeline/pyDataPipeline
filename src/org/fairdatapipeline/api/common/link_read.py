@@ -46,6 +46,7 @@ def link_read(handle: dict, data_product: str)-> str:
 
     registry_url = handle['yaml']['run_metadata']['local_data_registry_url']
     namespace = handle['yaml']['run_metadata']['default_input_namespace']
+    api_version = handle['yaml']['run_metadata']['api_version']
 
     if 'namespace' in use:
         namespace = use['namespace']
@@ -56,7 +57,8 @@ def link_read(handle: dict, data_product: str)-> str:
         endpoint = 'namespace',
         query = {
             'name': namespace
-        }
+        },
+        api_version = api_version
     )[0]['url']
 
     namespace_id = fdp_utils.extract_id(namespace_url)
@@ -76,7 +78,8 @@ def link_read(handle: dict, data_product: str)-> str:
             'name': data_product,
             'version': version,
             'namespace': namespace_id
-        }
+        },
+        api_version= api_version
     )
 
     object_response = fdp_utils.get_entity(
@@ -93,19 +96,22 @@ def link_read(handle: dict, data_product: str)-> str:
         endpoint = 'object_component',
         query = {
             'object': object_id
-        }
+        },
+        api_version= api_version
     )[0]['url']
 
     storage_location_response = fdp_utils.get_entity(
         url = registry_url,
         endpoint = 'storage_location',
-        id = fdp_utils.extract_id(object_response['storage_location'])
+        id = fdp_utils.extract_id(object_response['storage_location']),
+        api_version= api_version
     )
 
     storage_root = fdp_utils.get_entity(
         url = registry_url,
         endpoint = 'storage_root',
-        id = fdp_utils.extract_id(storage_location_response['storage_root'])
+        id = fdp_utils.extract_id(storage_location_response['storage_root']),
+        api_version= api_version
     )['root']
 
     tmp_sl = storage_location_response['path']

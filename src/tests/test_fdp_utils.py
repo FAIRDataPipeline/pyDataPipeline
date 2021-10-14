@@ -79,6 +79,21 @@ def test_random_hash_length():
 def test_extract_id():
     assert fdp_utils.extract_id('http://localhost:8000/api/object/85') == '85'
 
+def test_get_headers():
+    assert type(fdp_utils.get_headers()) == dict
+
+def test_get_headers_with_token():
+    headers = fdp_utils.get_headers(token = token)
+    assert headers['Authorization'] == 'token ' + token
+
+def test_get_headers_post():
+    headers = fdp_utils.get_headers(request_type= 'post')
+    assert headers['Content-type'] == 'application/json'
+
+def test_get_headers_api_version():
+    headers = fdp_utils.get_headers(api_version= '0.0.1')
+    assert headers['version'] == '0.0.1'
+
 storage_root = None
 storage_root2 = None
 url = 'http://localhost:8000/api'
