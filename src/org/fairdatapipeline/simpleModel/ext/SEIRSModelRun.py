@@ -3,8 +3,8 @@ import org.fairdatapipeline.api as pipeline
 import os
 
 token = os.environ.get('FDP_LOCAL_TOKEN')
-script = os.environ.get('FDP_CONFIG_DIR') + 'script.sh'
-config = os.environ.get('FDP_CONFIG_DIR') + 'config.yaml'
+script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.sh')
+config = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'config.yaml')
 
 handle = pipeline.initialise(token, config, script)
 
