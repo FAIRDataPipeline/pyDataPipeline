@@ -44,6 +44,7 @@ jobs:
           source .venv/bin/activate
           cd ${{ github.workspace }}
           fair init --ci
+          fair registry start
           pip3 install .
           pip3 install pytest
           pip3 install coverage
