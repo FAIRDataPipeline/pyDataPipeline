@@ -1,9 +1,12 @@
 import org.fairdatapipeline.simpleModel as simpleModel
 import org.fairdatapipeline.api as pipeline
 import os
+import platform
 
 token = os.environ.get('FDP_LOCAL_TOKEN')
 script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.sh')
+if platform.system() == "Windows":
+    script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.ps1')
 config = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'config.yaml')
 
 handle = pipeline.initialise(token, config, script)
