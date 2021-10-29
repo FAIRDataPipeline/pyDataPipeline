@@ -6,9 +6,8 @@ import platform
 token = os.environ.get('FDP_LOCAL_TOKEN')
 script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.sh')
 if platform.system() == "Windows":
-    script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.ps1')
+    script = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'script.bat')
 config = os.path.join(os.environ.get('FDP_CONFIG_DIR'), 'config.yaml')
-
 handle = pipeline.initialise(token, config, script)
 
 initial_parameters = pipeline.link_read(handle, 'SEIRS_model/parameters')
