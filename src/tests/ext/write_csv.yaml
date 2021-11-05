@@ -1,6 +1,6 @@
 run_metadata:
   description: Write csv file
-  local_data_registry_url: http://localhost:8000/api/
+  local_data_registry_url: http://127.0.0.1:8000/api/
   remote_data_registry_url: https://data.scrc.uk/api/
   default_input_namespace: testing
   default_output_namespace: testing

@@ -140,3 +140,4 @@ test.yaml
 
 tmp/
 src/tests/ext/coderuns.txt
+data_store
