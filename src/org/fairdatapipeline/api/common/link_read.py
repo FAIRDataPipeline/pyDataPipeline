@@ -15,9 +15,9 @@ def link_read(handle: dict, data_product: str)-> str:
 
     # If data product is already in handle, return path
     if 'input' in handle.keys():
-        for i in enumerate(handle['input']):
-            if i[1]['data_product'] == data_product:
-                return i[1]['path']
+        for index in handle['input'].keys():
+            if handle['input'][index]['data_product'] == data_product:
+                return handle['input'][index]['path']
     if not 'read' in handle['yaml'].keys():
         raise ValueError('Error: Read has not been specified in the given config file')
 
