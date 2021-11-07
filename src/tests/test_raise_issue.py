@@ -1,12 +1,10 @@
-import logging
 import org.fairdatapipeline.api as pipeline
 import os
 import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
 import pytest
 import shutil
-import platform
 
-from org.fairdatapipeline.api.common.raise_issue import raise_issue_by_data_product
+from org.fairdatapipeline.api.common.link_read import link_read
 
 @pytest.fixture
 def test_dir():
@@ -65,7 +63,8 @@ def test_link_read(token, config, script, test_dir):
     config = os.path.join(test_dir, 'read_csv.yaml')    
     handle = pipeline.initialise(token, config, script)
     link_read = pipeline.link_read(handle, 'test/csv')
-    assert type(link_read) == str
+    link_read_2 = pipeline.link_read(handle, 'test/csv')
+    assert type(link_read) == str and type(link_read_2) == str
 
 def test_raise_issue_existing_data_product(token, config, script):
     handle = pipeline.initialise(token, config, script)
