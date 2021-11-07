@@ -30,8 +30,6 @@ def initialise(token: str, config: str, script: str):
         raise ValueError('Config is not a valid YAML file')
     if not fdp_utils.is_file(script):
         raise ValueError("Script does not exist")
-    # Read the token
-    #token = fdp_utils.read_token(token)
 
     # Read config file and extract run metadata
     with open(config, 'r') as data:
@@ -51,10 +49,6 @@ def initialise(token: str, config: str, script: str):
     logging.info('Reading {} from local filestore'.format(filename))
 
     # Configure storage root for config
-
-    # Check if storage root exists
-
-
     config_storageroot_response = fdp_utils.post_storage_root(
         token = token,
         url = registry_url,
@@ -69,75 +63,39 @@ def initialise(token: str, config: str, script: str):
     config_storageroot_id = fdp_utils.extract_id(config_storageroot_url)
     config_hash = fdp_utils.get_file_hash(config)
 
-    # Check if storage location for file exists
+    # Configure Storage Location for config    
+    config_storage_data = {
+        'path': config.replace(run_metadata['write_data_store'], ""),
+        'hash': config_hash,
+        'public': True,
+        'storage_root': config_storageroot_url
+    }
 
-    config_exists = fdp_utils.get_entry(
+    config_location_response = fdp_utils.post_entry(
+        token = token,
         url = registry_url,
         endpoint = 'storage_location',
-        query = {
-            'hash': config_hash,
-            'public': True,
-            'storage_root': config_storageroot_id
-        },
+        data = config_storage_data,
         api_version = api_version
     )
 
-    # If entry exists, extract url, otherwise create entry
+    config_location_url = config_location_response['url']
 
-    if config_exists:
-        assert len(config_exists) == 1
-        config_location_url = config_exists[0]['url']
-
-    else:
-        config_storage_data = {
-            'path': config.replace(run_metadata['write_data_store'], ""),
-            'hash': config_hash,
-            'public': True,
-            'storage_root': config_storageroot_url
-        }
-
-        config_location_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'storage_location',
-            data = config_storage_data,
-            api_version = api_version
-        )
-
-        config_location_url = config_location_response['url']
-
-    # Check if yaml file type exists in registry
-
-    config_filetype_exists = fdp_utils.get_entry(
+    # Configure Yaml File Type  
+    config_filetype_response = fdp_utils.post_entry(
+        token = token,
         url = registry_url,
         endpoint = 'file_type',
-        query = {
+        data = {
+            'name': 'yaml',
             'extension': 'yaml'
         },
         api_version = api_version
     )
-
-    # If file type doesn't exist, create entry
-
-    if config_filetype_exists:
-        config_filetype_url = config_filetype_exists[0]['url']
-
-    else:
-        config_filetype_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'file_type',
-            data = {
-                'name': 'yaml',
-                'extension': 'yaml'
-            },
-            api_version = api_version
-        )
-        config_filetype_url = config_filetype_response['url']
+    config_filetype_url = config_filetype_response['url']
 
     # Get user for registry admin account
-
-    user_url = fdp_utils.get_entry(
+    user = fdp_utils.get_entry(
         url = registry_url,
         endpoint = 'users',
         query = {
@@ -145,20 +103,32 @@ def initialise(token: str, config: str, script: str):
         },
         token = token,
         api_version = api_version
-    )[0]['url']
+    )[0]
 
+    # Check users exists
+    if not user:
+        raise ValueError("Error: Admin user not found\
+        \nDid you run fair init?")
+
+    user_url = user['url']
     user_id = fdp_utils.extract_id(user_url)
 
     # Get author(s)
-
-    author_url = fdp_utils.get_entry(
+    author = fdp_utils.get_entry(
         url = registry_url,
         endpoint = 'user_author',
         query = {
             'user': user_id
         },
         api_version = api_version
-    )[0]['author']
+    )[0]
+
+    # Check user author exists
+    if not author:
+            raise ValueError("Error: user_author not found\
+            \nDid you run fair init?")
+
+    author_url = author['author']
 
     # Create new object for config file
 
@@ -180,76 +150,44 @@ def initialise(token: str, config: str, script: str):
     logging.info('Writing {} to local registry'.format(filename))
 
     # Check if script exists in storage_location
-
     script_storageroot_url = config_storageroot_url
     script_storageroot_id = config_storageroot_id
     script_hash = fdp_utils.get_file_hash(script)
 
-    script_exists = fdp_utils.get_entry(
+    # Create Script Storage Location
+    script_storage_data = {
+        'path': script.replace(run_metadata['write_data_store'], ""),
+        'hash': script_hash,
+        'public': True,
+        'storage_root': script_storageroot_url
+    }
+
+    script_location_response = fdp_utils.post_entry(
+        token = token,
         url = registry_url,
         endpoint = 'storage_location',
-        query = {
-            'hash': script_hash,
-            'public': True,
-            'storage_root': script_storageroot_id
-        },
+        data = script_storage_data,
         api_version = api_version
     )
 
-    # If entry doesn't exist, create it
+    script_location_url = script_location_response['url']
 
-    if script_exists:
-        assert len(script_exists) == 1
-        script_location_url = script_exists[0]['url']
-
-    else:
-        script_storage_data = {
-            'path': script.replace(run_metadata['write_data_store'], ""),
-            'hash': script_hash,
-            'public': True,
-            'storage_root': script_storageroot_url
-        }
-
-        script_location_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'storage_location',
-            data = script_storage_data,
-            api_version = api_version
-        )
-
-        script_location_url = script_location_response['url']
-
-    # Check for script file type in registry, create if it doesn't exist
-
-    script_filetype_exists = fdp_utils.get_entry(
+    # TODO: Change to Batch?
+    # Create Script File Type    
+    script_filetype_response = fdp_utils.post_entry(
+        token = token,
         url = registry_url,
         endpoint = 'file_type',
-        query = {
+        data = {
+            'name': 'py',
             'extension': 'py'
         },
         api_version = api_version
     )
 
-    if script_filetype_exists:
-        script_filetype_url = script_filetype_exists[0]['url']
-
-    else:
-        script_filetype_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'file_type',
-            data = {
-                'name': 'py',
-                'extension': 'py'
-            },
-            api_version = api_version
-        )
-
-        script_filetype_url = script_filetype_response['url']
+    script_filetype_url = script_filetype_response['url']
 
     # Create new registry object for script
-
     script_object = fdp_utils.post_entry(
         token = token,
         url = registry_url,
@@ -268,7 +206,6 @@ def initialise(token: str, config: str, script: str):
     logging.info('Writing {} to local registry'.format(script))
 
     # Create new remote storage root
-
     repo_storageroot_url = fdp_utils.post_storage_root(
         token = token,
         url = registry_url,
@@ -297,71 +234,36 @@ def initialise(token: str, config: str, script: str):
         api_version = api_version
     )
 
-    # If repo exists, check if object exists for the repo
+    # Configure Code Repo Location
+    coderepo_location_response = fdp_utils.post_entry(
+        token = token,
+        url = registry_url,
+        endpoint = 'storage_location',
+        data = {
+            'path': repo_name,
+            'hash': sha,
+            'public': True,
+            'storage_root': repo_storageroot_url
+        },
+        api_version = api_version
+    )
 
-    if coderepo_exists:
-        coderepo_location_url = coderepo_exists[0]['url']
-        coderepo_location_id = fdp_utils.extract_id(coderepo_location_url)
+    coderepo_location_url = coderepo_location_response['url']
 
-        obj_exists = fdp_utils.get_entry(
-            url = registry_url,
-            endpoint = 'object',
-            query = {
-                'storage_location': coderepo_location_id
-            },
-            api_version = api_version
-        )
+    # Configure Code Repo Object
+    coderepo_object_response = fdp_utils.post_entry(
+        token = token,
+        url = registry_url,
+        endpoint = 'object',
+        data = {
+            'description': 'Analysis / processing script location',
+            'storage_location': coderepo_location_url,
+            'authors': [author_url]
+        },
+        api_version = api_version
+    )
 
-        # If repo object doesn't exist, create it
-
-        if obj_exists:
-            coderepo_object_url = obj_exists[0]['url']
-        else:
-            coderepo_object_response = fdp_utils.post_entry(
-                token = token,
-                url = registry_url,
-                endpoint = 'object',
-                data = {
-                    'description': 'Analysis / processing script location',
-                    'storage_location': coderepo_location_url,
-                    'authors': [author_url]
-                },
-                api_version = api_version
-            )
-
-            coderepo_object_url = coderepo_object_response['url']
-
-    # If code repo doesn't exist, create repo and object
-
-    else:
-        coderepo_location_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'storage_location',
-            data = {
-                'path': repo_name,
-                'hash': sha,
-                'public': True,
-                'storage_root': repo_storageroot_url
-            },
-            api_version = api_version
-        )
-
-        coderepo_location_url = coderepo_location_response['url']
-
-        coderepo_object_response = fdp_utils.post_entry(
-            token = token,
-            url = registry_url,
-            endpoint = 'object',
-            data = {
-                'description': 'Analysis / processing script location',
-                'storage_location': coderepo_location_url,
-                'authors': [author_url]
-            },
-            api_version = api_version
-        )
-
-        coderepo_object_url = coderepo_object_response['url']
+    coderepo_object_url = coderepo_object_response['url']
 
     logging.info('Writing {} to local registry'.format(repo_name))
 

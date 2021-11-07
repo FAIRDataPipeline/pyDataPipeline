@@ -141,3 +141,5 @@ test.yaml
 tmp/
 src/tests/ext/coderuns.txt
 data_store
+
+src/org/fairdatapipeline/simpleModel/ext/test.py
