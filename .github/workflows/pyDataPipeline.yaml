@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04] #, macos-latest] #, windows-latest]
+        os: [ubuntu-20.04, macos-latest] #, windows-latest]
         python: ["3.7", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
           files: ./coverage.xml
           fail_ci_if_error: false
           verbose: true
-        if: matrix.python == '3.9'
+        if: matrix.python == '3.9' && matrix.os == 'ubuntu-20.04'
           
 
         
