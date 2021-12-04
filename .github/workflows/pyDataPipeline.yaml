@@ -59,6 +59,3 @@ jobs:
           fail_ci_if_error: false
           verbose: true
         if: matrix.python == '3.9' && matrix.os == 'ubuntu-20.04'
-          
-
-        

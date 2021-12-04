@@ -16,5 +16,5 @@ write:
 - data_product: test/csv
   description: test csv file with simple data
   file_type: csv
-  use:    
+  use:
     version: 0.0.1

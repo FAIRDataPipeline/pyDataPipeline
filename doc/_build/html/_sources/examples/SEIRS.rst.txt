@@ -50,7 +50,7 @@ Once the :code:`fair pull` command has been run the following data product shoul
 fair run
 --------
 
-In order to run the script specified in :code:`run_metadata['script']` field of the config.yaml the command :code:`fair run` from the CLI Tools should be used, 
+In order to run the script specified in :code:`run_metadata['script']` field of the config.yaml the command :code:`fair run` from the CLI Tools should be used,
 Once again if the :code:`--ci` flag was used with the :code:`fair init` command then this must be from the :code:`local_repo` directory.
 This should also only be run after activating a poetry shell from the command line and installing the :code:`pyDataPipeline` package within the poetry virtual environment
 following the `Installation <../installation.html>`_ instructions.
