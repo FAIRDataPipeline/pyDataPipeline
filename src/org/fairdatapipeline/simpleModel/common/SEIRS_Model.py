@@ -1,8 +1,10 @@
 import csv
-import os
 import logging
+import os
 
-def SEIRS_Model(initial_state: dict, 
+
+def SEIRS_Model(
+    initial_state: dict,
     timesteps: float,
     years: float,
     alpha: float,
@@ -10,7 +12,7 @@ def SEIRS_Model(initial_state: dict,
     inv_gamma: float,
     inv_omega: float,
     inv_mu: float,
-    inv_sigma: float
+    inv_sigma: float,
 ):
     """
     Implementation of the SEIRS Model
@@ -40,16 +42,16 @@ def SEIRS_Model(initial_state: dict,
         |      'R': R Paramerer at timepoint
     """
     # Check all inital states are present
-    disease_states = ['s', 'e', 'i', 'r']
+    disease_states = ["s", "e", "i", "r"]
     for state in disease_states:
-        if not state in initial_state:
+        if state not in initial_state:
             raise ValueError("Please supply " + state + " disease state")
 
     # Initialise SEIR
-    S = initial_state['s']
-    E = initial_state['e']
-    I = initial_state['i']
-    R = initial_state['r']
+    S_data = initial_state["s"]
+    E_data = initial_state["e"]
+    I_data = initial_state["i"]
+    R_data = initial_state["r"]
 
     # Prepare Time Units
     time_unit_years = years / timesteps
@@ -60,23 +62,34 @@ def SEIRS_Model(initial_state: dict,
     beta = beta * time_unit_days
     gamma = time_unit_days / inv_gamma
     omega = time_unit_days / (inv_omega * 365.25)
-    mu = time_unit_days / (inv_mu *365.25)
+    mu = time_unit_days / (inv_mu * 365.25)
     sigma = time_unit_days / inv_sigma
 
     results = {}
-    results[0] = {'time': 0, "S": S, "E": E, "I": I, "R": R}
+    results[0] = {
+        "time": 0,
+        "S": S_data,
+        "E": E_data,
+        "I": I_data,
+        "R": R_data,
+    }
 
     for i in range(timesteps):
-        N = results[i]['S'] + results[i]['E'] + results[i]['I'] + results[i]['R']
+        N = (
+            results[i]["S"]
+            + results[i]["E"]
+            + results[i]["I"]
+            + results[i]["R"]
+        )
         birth = mu * N
-        infection = (beta * results[i]['I'] * results[i]['S']) / N
-        lost_immunity = omega * results[i]['R']
-        death_S = mu * results[i]['S']
-        death_E = mu * results[i]['E']
-        death_I = (mu + alpha) * results[i]['I']
-        death_R = mu * results[i]['R']
-        latency = sigma * results[i]['E']
-        recovery = gamma * results[i]['I']
+        infection = (beta * results[i]["I"] * results[i]["S"]) / N
+        lost_immunity = omega * results[i]["R"]
+        death_S = mu * results[i]["S"]
+        death_E = mu * results[i]["E"]
+        death_I = (mu + alpha) * results[i]["I"]
+        death_R = mu * results[i]["R"]
+        latency = sigma * results[i]["E"]
+        recovery = gamma * results[i]["I"]
 
         S_rate = birth - infection + lost_immunity - death_S
         E_rate = infection - latency - death_E
@@ -85,14 +98,15 @@ def SEIRS_Model(initial_state: dict,
 
         row = i + 1
         results[row] = {
-            'time': round(row * time_unit_years, 3),
-            'S': results[i]['S'] + S_rate,
-            'E': results[i]['E'] + E_rate,
-            'I': results[i]['I'] + I_rate,
-            'R': results[i]['R'] + R_rate,
+            "time": round(row * time_unit_years, 3),
+            "S": results[i]["S"] + S_rate,
+            "E": results[i]["E"] + E_rate,
+            "I": results[i]["I"] + I_rate,
+            "R": results[i]["R"] + R_rate,
         }
 
     return results
+
 
 def write_model_to_csv(model_output: dict, path: str):
     """
@@ -102,17 +116,18 @@ def write_model_to_csv(model_output: dict, path: str):
         |   model_output: dict
         |   path: path to write csv to including .csv extension
     """
-    with open(path, 'w', newline='') as outfile:
+    with open(path, "w", newline="") as outfile:
         dictWriter = csv.DictWriter(
-        outfile,
-        fieldnames=model_output[0].keys(),
-        delimiter=',',
-        quoting=csv.QUOTE_NONNUMERIC
+            outfile,
+            fieldnames=model_output[0].keys(),
+            delimiter=",",
+            quoting=csv.QUOTE_NONNUMERIC,
         )
         dictWriter.writeheader()
         for i in model_output:
             dictWriter.writerow(model_output[i])
-        logging.info('Success file: {} written'.format(path))
+        logging.info("Success file: {} written".format(path))
+
 
 def getResourceDirectory():
     """
@@ -123,7 +138,8 @@ def getResourceDirectory():
     """
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), "ext")
 
-def readInitialParameters(path = ""):
+
+def readInitialParameters(path=""):
     """
     Read the inital parameters from a csv into a dictionary
 
@@ -136,8 +152,8 @@ def readInitialParameters(path = ""):
     if path == "":
         path = os.path.join(getResourceDirectory(), "static_params_SEIRS.csv")
     rtn = {}
-    with open(path, 'r', newline='') as data:
+    with open(path, "r", newline="") as data:
         reader = csv.DictReader(data)
         for line in reader:
-            rtn[line['param']] = float(line['value'])
+            rtn[line["param"]] = float(line["value"])
     return rtn

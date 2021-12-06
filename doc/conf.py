@@ -12,18 +12,19 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../'))
+
+sys.path.insert(0, os.path.abspath("../"))
 sys.setrecursionlimit(1500)
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'pyDataPipeline'
-copyright = '2021, Ryan Field, Dennis Reddyhoff'
-author = 'Ryan Field, Dennis Reddyhoff'
+project = "pyDataPipeline"
+copyright = "2021, Ryan Field, Dennis Reddyhoff"
+author = "Ryan Field, Dennis Reddyhoff"
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = "0.1"
 
 
 # -- General configuration ---------------------------------------------------
@@ -32,15 +33,15 @@ release = '0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.githubpages'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.githubpages",
 ]
 
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -58,12 +59,12 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 html_css_files = [
-    'css/custom.css',
+    "css/custom.css",
 ]
 
 add_module_names = False
 
-html_baseurl = 'https://fairdatapipeline.github.io/pyDataPipeline'
+html_baseurl = "https://fairdatapipeline.github.io/pyDataPipeline"
