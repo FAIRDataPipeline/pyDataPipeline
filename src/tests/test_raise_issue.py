@@ -85,6 +85,13 @@ def test_link_read(token, config, script, test_dir):
     link_read_2 = pipeline.link_read(handle, "test/csv")
     assert type(link_read_1) == str and type(link_read_2) == str
 
+def test_link_read_data_product_exists(token, config, script, test_dir):
+    handle = pipeline.initialise(token, config, script)
+    tmp_csv = os.path.join(test_dir, "test.csv")
+    link_write = pipeline.link_write(handle, "test/csv")
+    shutil.copy(tmp_csv, link_write)
+    pipeline.finalise(token, handle)
+
 
 def test_raise_issue_existing_data_product(token, config, script):
     handle = pipeline.initialise(token, config, script)
