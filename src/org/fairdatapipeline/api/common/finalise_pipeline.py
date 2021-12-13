@@ -204,12 +204,12 @@ def finalise(token: str, handle: dict):
             if data_product_exists:
                 data_product_url = data_product_exists[0]["url"]
                 object_url = data_product_exists[0]["object"]
-                object = fdp_utils.get_entity(
+                obj = fdp_utils.get_entity(
                     url = registry_url,
                     endpoint= "object",
                     id = fdp_utils.extract_id(object_url),
                     api_version = api_version)
-                component_url = object["components"][0]
+                component_url = obj["components"][0]
 
             else:
                 object_url = fdp_utils.post_entry(
