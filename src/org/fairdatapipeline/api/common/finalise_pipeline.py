@@ -192,7 +192,27 @@ def finalise(token: str, handle: dict):
                     data={"name": file_type, "extension": file_type},
                     api_version=api_version,
                 )["url"]
-            object_url = fdp_utils.post_entry(
+
+            data_product_exists = fdp_utils.get_entry(
+                url = registry_url,
+                endpoint = "data_product",
+                query={"name": handle["output"][output]["use_data_product"],
+                    "version": handle["output"][output]["use_version"],
+                    "namespace": write_namespace_url },
+                    api_version=api_version)
+            
+            if data_product_exists:
+                data_product_url = data_product_exists[0]["url"]
+                object_url = data_product_exists[0]["object"]
+                object = fdp_utils.get_entity(
+                    url = registry_url,
+                    endpoint= "object",
+                    id = fdp_utils.extract_id(object_url),
+                    api_version = api_version)
+                component_url = object["components"][0]
+
+            else:
+                object_url = fdp_utils.post_entry(
                 token=token,
                 url=registry_url,
                 endpoint="object",
@@ -205,43 +225,44 @@ def finalise(token: str, handle: dict):
                     "file_type": file_type_url,
                 },
                 api_version=api_version,
-            )["url"]
+                )["url"]
 
-            component_url = None
+                component_url = None
 
-            if handle["output"][output]["use_component"]:
-                component_url = fdp_utils.post_entry(
+                if handle["output"][output]["use_component"]:
+                    component_url = fdp_utils.post_entry(
+                        token=token,
+                        url=registry_url,
+                        endpoint="object_component",
+                        data={
+                            "object": object_url,
+                            "name": handle["output"][output]["use_component"],
+                        },
+                        api_version=api_version,
+                    )["url"]
+                else:
+                    component_url = fdp_utils.get_entry(
+                        url=registry_url,
+                        endpoint="object_component",
+                        query={
+                            "object": fdp_utils.extract_id(object_url),
+                        },
+                        api_version=api_version,
+                    )[0]["url"]
+
+                data_product_url = fdp_utils.post_entry(
                     token=token,
                     url=registry_url,
-                    endpoint="object_component",
+                    endpoint="data_product",
                     data={
+                        "name": handle["output"][output]["use_data_product"],
+                        "version": handle["output"][output]["use_version"],
                         "object": object_url,
-                        "name": handle["output"][output]["use_component"],
+                        "namespace": write_namespace_url,
                     },
                     api_version=api_version,
                 )["url"]
-            else:
-                component_url = fdp_utils.get_entry(
-                    url=registry_url,
-                    endpoint="object_component",
-                    query={
-                        "object": fdp_utils.extract_id(object_url),
-                    },
-                    api_version=api_version,
-                )[0]["url"]
-
-            data_product_url = fdp_utils.post_entry(
-                token=token,
-                url=registry_url,
-                endpoint="data_product",
-                data={
-                    "name": handle["output"][output]["use_data_product"],
-                    "version": handle["output"][output]["use_version"],
-                    "object": object_url,
-                    "namespace": write_namespace_url,
-                },
-                api_version=api_version,
-            )["url"]
+            
 
             handle["output"][output]["component_url"] = component_url
             handle["output"][output]["data_product_url"] = data_product_url
