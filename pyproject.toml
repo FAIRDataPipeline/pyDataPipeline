@@ -31,7 +31,8 @@ requests = "^2.26.0"
 matplotlib = "^3.5.1"
 scipy = "^1.7.3"
 h5py = "^3.6.0"
-PyYAML = "^6.0"
+PyYAML = "^5.4.1"
+fair-cli = "^0.2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
