@@ -1,8 +1,10 @@
 import os
 import platform
+import sys
 
-import pyDataPipeline.fairdatapipeline.api as pipeline
-import pyDataPipeline.fairdatapipeline.simpleModel as simpleModel
+sys.path.append(os.getcwd())
+import fairdatapipeline.api as pipeline  # noqa: E402
+import simpleModel as simpleModel  # noqa: E402
 
 token = os.environ.get("FDP_LOCAL_TOKEN")
 script = os.path.join(os.environ.get("FDP_CONFIG_DIR"), "script.sh")
