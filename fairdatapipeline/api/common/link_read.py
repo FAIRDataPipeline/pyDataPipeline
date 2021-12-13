@@ -1,7 +1,7 @@
 import logging
 import os
 
-from org.fairdatapipeline.api.common import fdp_utils
+from fairdatapipeline.api.common import fdp_utils
 
 
 def link_read(handle: dict, data_product: str) -> str:

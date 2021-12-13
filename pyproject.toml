@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "pydatapipeline"
+version = "0.4.0"
+description = "Python api to interact with the Fair Data Pipeline"
+authors = [
+    "Richard Reeve <richard.reeve@glasgow.ac.uk>",
+    "Nathan Cummings <nathan.cummings@ukaea.uk>",
+    "Dennis Reddyhoff <d.reddyhoff@sheffield.ac.uk>",
+    "Kristian Zarebski <kristian.zarebski@ukaea.uk>",
+    "Bruno Viola <bruno.viola@ukaea.uk>"]
+
+
+homepage = "https://www.fairdatapipeline.org/"
+
+repository = "https://github.com/FAIRDataPipeline/pyDataPipeline"
+
+license = "GNU General Public License v3.0"
+
+readme = "README.md"
+
+keywords = [
+    "FAIR Data Pipeline",
+    "FAIR",
+    "Data Management",
+    "Provenance"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7.1,<3.11"
+requests = "^2.26.0"
+matplotlib = "^3.5.1"
+scipy = "^1.7.3"
+h5py = "^3.6.0"
+PyYAML = "^6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+black = "^21.5b1"
+mypy = "^0.812"
+flake8 = "^3.9.2"
+poetry = "^1.1.6"
+pytest-mock = "^3.6.1"
+pytest-dependency = "^0.5.1"
+pytest-cov = "^2.12.1"
+pre-commit = "^2.16.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/FAIRDataPipeline/pyDataPipeline/issues"

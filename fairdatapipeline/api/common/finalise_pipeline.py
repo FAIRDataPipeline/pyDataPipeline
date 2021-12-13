@@ -1,7 +1,7 @@
 import logging
 import os
 
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
+import fairdatapipeline.api.common.fdp_utils as fdp_utils
 
 
 # flake8: noqa C901
@@ -194,37 +194,41 @@ def finalise(token: str, handle: dict):
                 )["url"]
 
             data_product_exists = fdp_utils.get_entry(
-                url = registry_url,
-                endpoint = "data_product",
-                query={"name": handle["output"][output]["use_data_product"],
+                url=registry_url,
+                endpoint="data_product",
+                query={
+                    "name": handle["output"][output]["use_data_product"],
                     "version": handle["output"][output]["use_version"],
-                    "namespace": write_namespace_url },
-                    api_version=api_version)
-            
+                    "namespace": write_namespace_url,
+                },
+                api_version=api_version,
+            )
+
             if data_product_exists:
                 data_product_url = data_product_exists[0]["url"]
                 object_url = data_product_exists[0]["object"]
                 obj = fdp_utils.get_entity(
-                    url = registry_url,
-                    endpoint= "object",
-                    id = fdp_utils.extract_id(object_url),
-                    api_version = api_version)
+                    url=registry_url,
+                    endpoint="object",
+                    id=fdp_utils.extract_id(object_url),
+                    api_version=api_version,
+                )
                 component_url = obj["components"][0]
 
             else:
                 object_url = fdp_utils.post_entry(
-                token=token,
-                url=registry_url,
-                endpoint="object",
-                data={
-                    "description": handle["output"][output][
-                        "data_product_description"
-                    ],
-                    "storage_location": storage_location_url,
-                    "authors": [handle["author"]],
-                    "file_type": file_type_url,
-                },
-                api_version=api_version,
+                    token=token,
+                    url=registry_url,
+                    endpoint="object",
+                    data={
+                        "description": handle["output"][output][
+                            "data_product_description"
+                        ],
+                        "storage_location": storage_location_url,
+                        "authors": [handle["author"]],
+                        "file_type": file_type_url,
+                    },
+                    api_version=api_version,
                 )["url"]
 
                 component_url = None
@@ -262,7 +266,6 @@ def finalise(token: str, handle: dict):
                     },
                     api_version=api_version,
                 )["url"]
-            
 
             handle["output"][output]["component_url"] = component_url
             handle["output"][output]["data_product_url"] = data_product_url

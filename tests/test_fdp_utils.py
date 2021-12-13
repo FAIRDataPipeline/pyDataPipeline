@@ -6,7 +6,7 @@ import platform
 
 import pytest
 
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
+import fairdatapipeline.api.common.fdp_utils as fdp_utils
 
 
 @pytest.fixture

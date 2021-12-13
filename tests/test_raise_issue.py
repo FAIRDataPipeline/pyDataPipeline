@@ -3,8 +3,8 @@ import shutil
 
 import pytest
 
-import org.fairdatapipeline.api as pipeline
-import org.fairdatapipeline.api.common.fdp_utils as fdp_utils
+import fairdatapipeline.api as pipeline
+import fairdatapipeline.api.common.fdp_utils as fdp_utils
 
 # from org.fairdatapipeline.api.common.link_read import link_read
 
@@ -84,6 +84,7 @@ def test_link_read(token, config, script, test_dir):
     link_read_1 = pipeline.link_read(handle, "test/csv")
     link_read_2 = pipeline.link_read(handle, "test/csv")
     assert type(link_read_1) == str and type(link_read_2) == str
+
 
 def test_link_read_data_product_exists(token, config, script, test_dir):
     handle = pipeline.initialise(token, config, script)

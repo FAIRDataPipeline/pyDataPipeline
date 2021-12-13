@@ -1,6 +1,6 @@
 import os
 
-from org.fairdatapipeline.api.common import fdp_utils
+from fairdatapipeline.api.common import fdp_utils
 
 
 def link_write(handle, data_product: str) -> str:
