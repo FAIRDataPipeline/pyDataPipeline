@@ -1,9 +1,8 @@
 import os
 import platform
 
-import org.fairdatapipeline.simpleModel as simpleModel
-
-import org.fairdatapipeline.api as pipeline
+import pyDataPipeline.fairdatapipeline.api as pipeline
+import pyDataPipeline.fairdatapipeline.simpleModel as simpleModel
 
 token = os.environ.get("FDP_LOCAL_TOKEN")
 script = os.path.join(os.environ.get("FDP_CONFIG_DIR"), "script.sh")
