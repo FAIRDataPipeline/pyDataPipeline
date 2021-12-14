@@ -10,39 +10,39 @@ import fairdatapipeline.fdp_utils as fdp_utils
 
 
 @pytest.fixture
-def test_dir():
+def test_dir() -> str:
     return os.path.join(os.path.dirname(__file__), "ext")
 
 
 @pytest.fixture
-def token():
+def token() -> str:
     return fdp_utils.read_token(
         os.path.join(os.path.expanduser("~"), ".fair/registry/token")
     )
 
 
 @pytest.fixture
-def script(test_dir):
+def script(test_dir: str) -> str:
     return os.path.join(test_dir, "test_script.sh")
 
 
 @pytest.fixture
-def config(test_dir):
+def config(test_dir: str) -> str:
     return os.path.join(test_dir, "write_csv.yaml")
 
 
-def test_initialise(token, config, script):
+def test_initialise(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     assert type(handle) == dict
 
 
-def test_link_write(token, config, script):
+def test_link_write(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.link_write(handle, "test/csv")
     assert handle["output"]["output_0"]["data_product"] == "test/csv"
 
 
-def test_raise_issue_by_index(token, config, script):
+def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     link_write = pipeline.link_write(handle, "test/csv")
     index = pipeline.get_handle_index_from_path(handle, link_write)
@@ -50,13 +50,15 @@ def test_raise_issue_by_index(token, config, script):
     assert handle["issues"]["issue_0"]["use_data_product"] == "test/csv"
 
 
-def test_raise_issue_with_config(token, config, script):
+def test_raise_issue_with_config(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_config(handle, "Test Issue with config", 4)
     assert handle["issues"]["issue_0"]["type"] == "config"
 
 
-def test_raise_issue_with_github_repo(token, config, script):
+def test_raise_issue_with_github_repo(
+    token: str, config: str, script: str
+) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_github_repo(
         handle, "Test Issue with github_repo", 4
@@ -64,7 +66,7 @@ def test_raise_issue_with_github_repo(token, config, script):
     assert handle["issues"]["issue_0"]["type"] == "github_repo"
 
 
-def test_raise_issue_with_script(token, config, script):
+def test_raise_issue_with_script(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_submission_script(
         handle, "Test Issue with submission_script", 4
@@ -72,7 +74,9 @@ def test_raise_issue_with_script(token, config, script):
     assert handle["issues"]["issue_0"]["type"] == "submission_script"
 
 
-def test_link_read(token, config, script, test_dir):
+def test_link_read(
+    token: str, config: str, script: str, test_dir: str
+) -> None:
     handle = pipeline.initialise(token, config, script)
     tmp_csv = os.path.join(test_dir, "test.csv")
     link_write = pipeline.link_write(handle, "test/csv")
@@ -86,7 +90,9 @@ def test_link_read(token, config, script, test_dir):
     assert type(link_read_1) == str and type(link_read_2) == str
 
 
-def test_link_read_data_product_exists(token, config, script, test_dir):
+def test_link_read_data_product_exists(
+    token: str, config: str, script: str, test_dir: str
+) -> None:
     handle = pipeline.initialise(token, config, script)
     tmp_csv = os.path.join(test_dir, "test.csv")
     link_write = pipeline.link_write(handle, "test/csv")
@@ -94,7 +100,9 @@ def test_link_read_data_product_exists(token, config, script, test_dir):
     pipeline.finalise(token, handle)
 
 
-def test_raise_issue_existing_data_product(token, config, script):
+def test_raise_issue_existing_data_product(
+    token: str, config: str, script: str
+) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_by_existing_data_product(
         handle,
@@ -107,7 +115,9 @@ def test_raise_issue_existing_data_product(token, config, script):
     pipeline.finalise(token, handle)
 
 
-def test_raise_issue_data_product_from_reads(token, script, test_dir):
+def test_raise_issue_data_product_from_reads(
+    token: str, script: str, test_dir: str
+) -> None:
     config = os.path.join(test_dir, "read_csv.yaml")
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_by_data_product(

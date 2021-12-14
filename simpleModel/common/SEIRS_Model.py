@@ -13,7 +13,7 @@ def SEIRS_Model(
     inv_omega: float,
     inv_mu: float,
     inv_sigma: float,
-):
+) -> dict:
     """
     Implementation of the SEIRS Model
 
@@ -74,7 +74,7 @@ def SEIRS_Model(
         "R": R_data,
     }
 
-    for i in range(timesteps):
+    for i in range(int(timesteps)):
         N = (
             results[i]["S"]
             + results[i]["E"]
@@ -108,7 +108,7 @@ def SEIRS_Model(
     return results
 
 
-def write_model_to_csv(model_output: dict, path: str):
+def write_model_to_csv(model_output: dict, path: str) -> None:
     """
     Write the model results to a given csv file
 
@@ -129,7 +129,7 @@ def write_model_to_csv(model_output: dict, path: str):
         logging.info("Success file: {} written".format(path))
 
 
-def getResourceDirectory():
+def getResourceDirectory() -> str:
     """
     Returns the path of the resouce directory containing intial parameters etc.
 
@@ -139,7 +139,7 @@ def getResourceDirectory():
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), "ext")
 
 
-def readInitialParameters(path=""):
+def readInitialParameters(path: str = "") -> dict:
     """
     Read the inital parameters from a csv into a dictionary
 

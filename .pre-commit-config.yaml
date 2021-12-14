@@ -43,5 +43,5 @@ repos:
     hooks:
     -   id: mypy
         exclude: ^doc
-        args: ["--ignore-missing-imports", "--disallow-untyped-defs", "--disallow-untyped-calls", "fairdatapipeline"]
+        args: ["--ignore-missing-imports", "--disallow-untyped-defs", "--disallow-untyped-calls", "."]
         pass_filenames: false

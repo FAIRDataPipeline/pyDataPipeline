@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def SEIRS_Plot(results: dict, save_location: str, show=False):
+def SEIRS_Plot(results: dict, save_location: str, show: bool = False) -> None:
     """
     Produces plot from results of SEIRS Model and saves the plot as a png
         in the save_location
