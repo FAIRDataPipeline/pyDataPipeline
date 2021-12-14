@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04, macos-latest] #, windows-latest]
-        python: ["3.7", "3.9"]
+        python: ["3.7","3.8", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -25,33 +25,24 @@ jobs:
               fi
       - name: Install local registry
         run: curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
-      - name: Checkout FAIRDataPipeline/FAIR-CLI
-        uses: actions/checkout@v2
-        with:
-          repository: FAIRDataPipeline/FAIR-CLI
-          path: FAIR-CLI
-      - name: Move FAIR-CLI
-        run: mv FAIR-CLI ../FAIR-CLI
+      - name: Install Required
+        run: brew install memcached
+        if: matrix.os == 'macos-latest'
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-      - name: Install and initialise FAIR CLI
+      - name: Run Tests
         run: |
-          cd ../FAIR-CLI
           poetry install
           source .venv/bin/activate
-          cd ${{ github.workspace }}
           fair init --ci
           fair registry start
-          pip3 install .
-          pip3 install pytest
-          pip3 install coverage
-          coverage run --source=org.fairdatapipeline.api -m pytest
-          coverage xml
-          fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
-          fair run src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+          fair pull simpleModel/ext/SEIRSconfig.yaml
+          fair run simpleModel/ext/SEIRSconfig.yaml
+
+          python3 -m poetry run pytest --cov=fairdatapipeline.api  --cov-report=xml --cov-report=term -s tests/
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
