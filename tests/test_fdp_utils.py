@@ -190,7 +190,7 @@ def test_post_entry_409(token, url):
     assert type(storage_root) == dict
 
 
-def test_post_entry_equal(token, url):
+def test_post_entry_equal(token, url) -> None:
     storage_root = fdp_utils.post_entry(
         token=token,
         url=url,
@@ -206,7 +206,7 @@ def test_post_entry_equal(token, url):
     assert storage_root == storage_root_2
 
 
-def test_post_entry_500(token, url):
+def test_post_entry_500(token, url) -> None:
     with pytest.raises(Exception):
         fdp_utils.post_entry(
             token=token,
@@ -216,7 +216,7 @@ def test_post_entry_500(token, url):
         )
 
 
-def test_get_entry(url, token, storage_root_test):
+def test_get_entry(url, token, storage_root_test) -> None:
     entry = fdp_utils.get_entry(
         url=url,
         query={"root": "https://storage-root-test.com"},
@@ -226,7 +226,7 @@ def test_get_entry(url, token, storage_root_test):
     assert entry[0] == storage_root_test
 
 
-def test_get_entity(url, storage_root_test):
+def test_get_entity(url, storage_root_test) -> None:
     entity = fdp_utils.get_entity(
         url=url,
         endpoint="storage_root",
@@ -246,7 +246,7 @@ def test_wrong_api_version(token, url):
         )
 
 
-def test_wrong_api_version_get(token, url):
+def test_wrong_api_version_get(token, url) -> None:
     with pytest.raises(Exception):
         fdp_utils.get_entry(
             token=token,
@@ -257,7 +257,7 @@ def test_wrong_api_version_get(token, url):
         )
 
 
-def test_get_entity_with_token(url, storage_root_test, token):
+def test_get_entity_with_token(url, storage_root_test, token) -> None:
     entity = fdp_utils.get_entity(
         url=url,
         endpoint="storage_root",
@@ -267,7 +267,7 @@ def test_get_entity_with_token(url, storage_root_test, token):
     assert entity == storage_root_test
 
 
-def test_get_entity_non_200(url, storage_root_test):
+def test_get_entity_non_200(url, storage_root_test) -> None:
     with pytest.raises(Exception):
         fdp_utils.get_entity(
             url=url,
@@ -277,7 +277,7 @@ def test_get_entity_non_200(url, storage_root_test):
 
 
 @pytest.fixture
-def model_config(url, token, scope="module"):
+def model_config(url, token, scope="module") -> None:
     return fdp_utils.post_entry(
         url=url,
         endpoint="object",
@@ -287,7 +287,7 @@ def model_config(url, token, scope="module"):
 
 
 @pytest.fixture
-def submission_script(url, token, scope="module"):
+def submission_script(url, token, scope="module") -> None:
     return fdp_utils.post_entry(
         url=url,
         endpoint="object",
@@ -297,7 +297,7 @@ def submission_script(url, token, scope="module"):
 
 
 @pytest.fixture
-def input_1(url, token, scope="module"):
+def input_1(url, token, scope="module") -> None:
     return fdp_utils.post_entry(
         url=url,
         endpoint="object",
@@ -312,7 +312,9 @@ def input_1_component(input_1):
 
 
 @pytest.fixture
-def code_run(url, model_config, submission_script, token, scope="module"):
+def code_run(
+    url, model_config, submission_script, token, scope="module"
+) -> None:
     return fdp_utils.post_entry(
         url=url,
         endpoint="code_run",
@@ -328,7 +330,7 @@ def code_run(url, model_config, submission_script, token, scope="module"):
     )
 
 
-def test_patch_entry(code_run, input_1_component, token, url):
+def test_patch_entry(code_run, input_1_component, token, url) -> None:
     fdp_utils.patch_entry(
         url=code_run["url"],
         data={"inputs": [input_1_component]},
@@ -340,7 +342,7 @@ def test_patch_entry(code_run, input_1_component, token, url):
     assert input_1_component in code_run_updated["inputs"]
 
 
-def test_patch_entry_non_200(url, token):
+def test_patch_entry_non_200(url: str, token: str) -> None:
     with pytest.raises(Exception):
         fdp_utils.patch_entry(
             url=url + "/api/users/1",
@@ -349,7 +351,7 @@ def test_patch_entry_non_200(url, token):
         )
 
 
-def test_post_storage_root_with_local(url, token):
+def test_post_storage_root_with_local(url: str, token: str) -> None:
     storage_root = fdp_utils.post_storage_root(
         token=token, url=url, data={"root": "/test/test", "local": True}
     )

@@ -68,8 +68,8 @@ def link_write(handle, data_product: str) -> str:
 
     # If output exists in handle, append new metadata, otherwise create dict
     if "output" in handle.keys():
-        index = "output_" + str(len(handle["output"]))
-        handle["output"][index] = output_dict
+        key = "output_" + str(len(handle["output"]))
+        handle["output"][key] = output_dict
     else:
         handle["output"] = {}
         handle["output"]["output_0"] = output_dict

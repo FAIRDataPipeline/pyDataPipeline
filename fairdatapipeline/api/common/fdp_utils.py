@@ -153,9 +153,9 @@ def patch_entry(url: str, data: dict, token: str, api_version="1.0.0") -> dict:
         request_type="post", token=token, api_version=api_version
     )
 
-    data = json.dumps(data)
+    data_json = json.dumps(data)
 
-    response = requests.patch(url, data, headers=headers)
+    response = requests.patch(url, data_json, headers=headers)
     if response.status_code != 200:
         raise ValueError("Server responded with: " + str(response.status_code))
 
@@ -164,7 +164,7 @@ def patch_entry(url: str, data: dict, token: str, api_version="1.0.0") -> dict:
 
 def get_headers(
     request_type: str = "get", token: str = None, api_version: str = "1.0.0"
-):
+) -> dict:
     """
     Internal function to return headers to be added to a request
     Args:
@@ -182,7 +182,9 @@ def get_headers(
     return headers
 
 
-def post_storage_root(url, data, token, api_version="1.0.0"):
+def post_storage_root(
+    url: str, data, token: str, api_version: str = "1.0.0"
+) -> dict:
     """
     Internal function to post a storage root to the registry
     the function first adds file:// if the root is local
@@ -221,8 +223,8 @@ def random_hash() -> str:
         |   str: 40 character randomly generated hash.
     """
     seed = datetime.now().timestamp() * random.uniform(1, 1000000)
-    seed = str(seed).encode("utf-8")
-    hashed = hashlib.sha1(seed)
+    seed_encoded = str(seed).encode("utf-8")
+    hashed = hashlib.sha1(seed_encoded)
 
     return hashed.hexdigest()
 

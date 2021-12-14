@@ -2,15 +2,15 @@ import os
 import platform
 import sys
 
-sys.path.append(os.getcwd())
+sys.path.append(str(os.getcwd()))
 import fairdatapipeline.api as pipeline  # noqa: E402
 import simpleModel as simpleModel  # noqa: E402
 
-token = os.environ.get("FDP_LOCAL_TOKEN")
-script = os.path.join(os.environ.get("FDP_CONFIG_DIR"), "script.sh")
+token = str(os.environ.get("FDP_LOCAL_TOKEN"))
+script = os.path.join(str(os.environ.get("FDP_CONFIG_DIR")), "script.sh")
 if platform.system() == "Windows":
-    script = os.path.join(os.environ.get("FDP_CONFIG_DIR"), "script.bat")
-config = os.path.join(os.environ.get("FDP_CONFIG_DIR"), "config.yaml")
+    script = os.path.join(str(os.environ.get("FDP_CONFIG_DIR")), "script.bat")
+config = os.path.join(str(os.environ.get("FDP_CONFIG_DIR")), "config.yaml")
 handle = pipeline.initialise(token, config, script)
 
 initial_parameters = pipeline.link_read(handle, "SEIRS_model/parameters")
