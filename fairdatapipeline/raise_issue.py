@@ -1,9 +1,14 @@
 import logging
+from typing import Optional
 
 
 def raise_issue_by_index(
-    handle: dict, index: str, issue: str, severity, group=True
-):
+    handle: dict,
+    index: Optional[bool],
+    issue: str,
+    severity: int,
+    group: bool = True,
+) -> None:
     """
     Raises an issue for a given input or output index and writes it to the handle
 
@@ -25,9 +30,9 @@ def raise_issue_by_existing_data_product(
     version: str,
     namespace: str,
     issue: str,
-    severity,
-    group=True,
-):
+    severity: int,
+    group: bool = True,
+) -> None:
     """
     Raises an issue for a given data_product and writes it to the handle
 
@@ -56,9 +61,9 @@ def raise_issue_by_data_product(
     version: str,
     namespace: str,
     issue: str,
-    severity,
-    group=True,
-):
+    severity: int,
+    group: bool = True,
+) -> None:
     """
     Raises an issue for a given data_product in the run_metadata and writes it to the handle
 
@@ -81,7 +86,9 @@ def raise_issue_by_data_product(
     )
 
 
-def raise_issue_with_config(handle: dict, issue: str, severity, group=True):
+def raise_issue_with_config(
+    handle: dict, issue: str, severity: int, group: bool = True
+) -> None:
     """
     Raise an issue with config: add an issue for the config to the handle.
 
@@ -94,8 +101,8 @@ def raise_issue_with_config(handle: dict, issue: str, severity, group=True):
 
 
 def raise_issue_with_submission_script(
-    handle: dict, issue: str, severity, group=True
-):
+    handle: dict, issue: str, severity: int, group: bool = True
+) -> None:
     """
     Raise an issue with submission script: add an issue for the submission_script to the handle.
 
@@ -110,8 +117,8 @@ def raise_issue_with_submission_script(
 
 
 def raise_issue_with_github_repo(
-    handle: dict, issue: str, severity, group=True
-):
+    handle: dict, issue: str, severity: int, group: bool = True
+) -> None:
     """
     Raise an issue with config add an issue for the github_repo to the handle.
 
@@ -124,8 +131,8 @@ def raise_issue_with_github_repo(
 
 
 def raise_issue_by_type(
-    handle: dict, type: str, issue: str, severity, group=True
-):
+    handle: dict, type: str, issue: str, severity: int, group: bool = True
+) -> None:
     """
     Raise an issue by type of issue (with config, with submission_script, with github_repo)
     """
@@ -141,16 +148,16 @@ def raise_issue_by_type(
 # flake8: noqa C901
 def raise_issue(
     handle: dict,
-    type,
-    issue,
-    severity,
-    index=None,
-    data_product=None,
-    component=None,
-    version=None,
-    namespace=None,
-    group=True,
-):
+    type: str,
+    issue: str,
+    severity: int,
+    index: bool = None,
+    data_product: str = None,
+    component: str = None,
+    version: str = None,
+    namespace: str = None,
+    group: bool = True,
+) -> None:
     current_group = issue + ":" + str(severity)
     if type in [
         "config",

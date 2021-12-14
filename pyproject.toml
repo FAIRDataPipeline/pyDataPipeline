@@ -45,6 +45,8 @@ pytest-dependency = "^0.5.1"
 pytest-cov = "^2.12.1"
 pre-commit = "^2.16.0"
 isort = "^5.10.1"
+Sphinx = "^4.3.1"
+sphinx-rtd-theme = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -70,7 +72,7 @@ line_length = 79
 [tool.black]
 line-length = 79
 
-[tool.pytest]
+[tool.pytest.ini_options]
 addopts = '-s -v'
 
 [tool.mypy]
@@ -83,6 +85,3 @@ ignore =  'E501, W503'
 max-line-length = 79
 max-complexity = 18
 select = 'B,C,E,F,W,T4,B9,N'
-
-
-

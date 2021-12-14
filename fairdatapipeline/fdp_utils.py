@@ -3,9 +3,12 @@ import json
 import logging
 import os
 import random
-import urllib
 import uuid
 from datetime import datetime
+from typing import Any, Optional
+
+# from typing import BinaryIO, Union
+from urllib.parse import urlsplit
 
 import requests
 import yaml
@@ -16,13 +19,13 @@ def get_entry(
     endpoint: str,
     query: dict,
     token: str = None,
-    api_version="1.0.0",
+    api_version: str = "1.0.0",
 ) -> list:
     """
-    Internal function to retreive and item from the registy using a query
+    Internal function to retreive and item from the registry using a query
     Args:
         |   url: str of the registry url
-        |   enpoint: enpoint (table)
+        |   endpoint: endpoint (table)
         |   query: dict forming a query
         |   token: (optional) str of the registry token
     Returns:
@@ -62,8 +65,12 @@ def get_entry(
 
 
 def get_entity(
-    url: str, endpoint: str, id: int, token: str = None, api_version="1.0.0"
-) -> list:
+    url: str,
+    endpoint: str,
+    id: int,
+    token: str = None,
+    api_version: str = "1.0.0",
+) -> dict:
     """
     Internal function to get an item from the registry using it's id
     Args:
@@ -78,7 +85,7 @@ def get_entity(
 
     if url[-1] != "/":
         url += "/"
-    url += endpoint + "/" + id
+    url += endpoint + "/" + str(id)
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError(
@@ -98,14 +105,11 @@ def extract_id(url: str) -> str:
     Returns:
         |   str: id derrived from the url
     """
-    parse = urllib.parse.urlsplit(url).path
-    extract = list(filter(None, parse.split("/")))[-1]
-
-    return extract
+    return list(filter(None, urlsplit(url).path.split("/")))[-1]
 
 
 def post_entry(
-    url: str, endpoint: str, data: dict, token: str, api_version="1.0.0"
+    url: str, endpoint: str, data: dict, token: str, api_version: str = "1.0.0"
 ) -> dict:
     """
     Internal function to post and entry on the registry
@@ -139,7 +143,9 @@ def post_entry(
     return response.json()
 
 
-def patch_entry(url: str, data: dict, token: str, api_version="1.0.0") -> dict:
+def patch_entry(
+    url: str, data: dict, token: str, api_version: str = "1.0.0"
+) -> dict:
     """
     Internal function to patch and entry on the registry
     Args:
@@ -183,7 +189,7 @@ def get_headers(
 
 
 def post_storage_root(
-    url: str, data, token: str, api_version: str = "1.0.0"
+    url: str, data: dict, token: str, api_version: str = "1.0.0"
 ) -> dict:
     """
     Internal function to post a storage root to the registry
@@ -201,7 +207,7 @@ def post_storage_root(
     return post_entry(url, "storage_root", data, token, api_version)
 
 
-def remove_local_from_root(root: str):
+def remove_local_from_root(root: str) -> str:
     """
     Internal function to remove prepending file:// from a given root
     Args:
@@ -229,7 +235,9 @@ def random_hash() -> str:
     return hashed.hexdigest()
 
 
-def get_file_hash(path: str) -> str:
+def get_file_hash(
+    path: str,
+) -> str:
     """
     Internal function to return a files sha1 hash
     Args:
@@ -238,14 +246,14 @@ def get_file_hash(path: str) -> str:
         |   str: sha1 hash
     """
     with open(path, "rb") as data:
-        data = data.read()
+        _data = data.read()
     # data = data.encode('utf-8')
-    hashed = hashlib.sha1(data)
+    hashed = hashlib.sha1(_data)
 
     return hashed.hexdigest()
 
 
-def read_token(token_path: str):
+def read_token(token_path: str) -> str:
     """
     Internal function read a token from a given file
     Args:
@@ -254,11 +262,11 @@ def read_token(token_path: str):
         |   str: token
     """
     with open(token_path) as token:
-        token = token.readline().strip()
-    return token
+        _token = token.readline().strip()
+    return _token
 
 
-def get_token(token_path: str):
+def get_token(token_path: str) -> str:
     """
     Internal function alias for read_token()
     Args:
@@ -269,7 +277,7 @@ def get_token(token_path: str):
     return read_token(token_path)
 
 
-def is_file(filename: str):
+def is_file(filename: str) -> bool:
     """
     Internal function to check whether a file exists
     Args:
@@ -280,7 +288,7 @@ def is_file(filename: str):
     return os.path.isfile(filename)
 
 
-def is_yaml(filename: str):
+def is_yaml(filename: str) -> bool:
     """
     Internal function to check whether a file can be opened as a YAML file
     ! warning returns True if the file can be coerced into yaml format
@@ -298,7 +306,7 @@ def is_yaml(filename: str):
     return True
 
 
-def is_valid_yaml(filename: str):
+def is_valid_yaml(filename: str) -> bool:
     """
     Internal function validate whether a file exists and can be coerced into a yaml format
     Args:
@@ -309,7 +317,7 @@ def is_valid_yaml(filename: str):
     return is_file(filename) & is_yaml(filename)
 
 
-def generate_uuid():
+def generate_uuid() -> str:
     """
     Internal function similar to random hash
     Returns:
@@ -318,7 +326,7 @@ def generate_uuid():
     return datetime.now().strftime("%Y%m-%d%H-%M%S-") + str(uuid.uuid4())
 
 
-def get_handle_index_from_path(handle: dict, path: str):
+def get_handle_index_from_path(handle: dict, path: str) -> Optional[Any]:
     """
     Get an input or output handle index from a path
     usually generated by link_read or link_write
@@ -340,7 +348,7 @@ def get_handle_index_from_path(handle: dict, path: str):
 
 
 # flake8: noqa C901
-def register_issues(token: str, handle: dict):
+def register_issues(token: str, handle: dict) -> dict:
     """
     Internal function, should only be called from finalise.
     """
@@ -462,4 +470,4 @@ def register_issues(token: str, handle: dict):
             token=token,
             api_version=api_version,
         )
-        return current_issue
+    return current_issue

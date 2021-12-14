@@ -143,3 +143,6 @@ tests/ext/coderuns.txt
 data_store
 
 fairdatapipeline/simpleModel/ext/test.py
+
+# Sphinx documentation
+doc/_build/

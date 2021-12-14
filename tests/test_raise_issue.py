@@ -3,8 +3,8 @@ import shutil
 
 import pytest
 
-import fairdatapipeline.api as pipeline
-import fairdatapipeline.api.common.fdp_utils as fdp_utils
+import fairdatapipeline as pipeline
+import fairdatapipeline.fdp_utils as fdp_utils
 
 # from org.fairdatapipeline.api.common.link_read import link_read
 
