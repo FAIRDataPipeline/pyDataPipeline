@@ -1,5 +1,5 @@
-org.fairdatapipeline.simpleModel
+simpleModel
 ================================
 
-.. automodule:: org.fairdatapipeline.simpleModel
+.. automodule:: simpleModel
     :members:

@@ -1,5 +1,5 @@
 SEIRS Model example
-==================
+====================
 
 .. toctree::
    :maxdepth: 2
@@ -20,10 +20,10 @@ and the following outputs:
    SEIRS_model/results/model_output/python
    SEIRS_model/results/figure/python
 
-an example config is provided within the pyDataPipeline package located in :code:`src/org/simpleModel/ext/SEIRSconfig.yaml`
+an example config is provided within the pyDataPipeline package located in :code:`simpleModel/ext/SEIRSconfig.yaml`
 and contains the following:
 
-.. literalinclude:: /../src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+.. literalinclude:: /../simpleModel/ext/SEIRSconfig.yaml
    :linenos:
    :language: yaml
 
@@ -39,7 +39,7 @@ The following commands should be run after activating a poetry shell from the CL
 ::
 
    fair init --ci
-   fair pull src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+   fair pull simpleModel/ext/SEIRSconfig.yaml
 
 The :code:`--ci` flag can be used to use temporary directories. If using this flag the above code should be run from the :code:`local_repo` directory
 
@@ -56,15 +56,15 @@ This should also only be run after activating a poetry shell from the command li
 following the `Installation <../installation.html>`_ instructions.
 ::
 
-   fair run src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml
+   fair run simpleModel/ext/SEIRSconfig.yaml
 
 
 This will call :code:`fair run` which will produce a code run and the appropriate output using the script provided in the :code:`run_metadata` field of the config.yaml file.
 
-The following code will be executed when using the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSconfig.yaml` config file,
-which is located in the :code:`src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py` Python script
+The following code will be executed when using the :code:`simpleModel/ext/SEIRSconfig.yaml` config file,
+which is located in the :code:`simpleModel/ext/SEIRSModelRun.py` Python script
 
-.. literalinclude:: /../src/org/fairdatapipeline/simpleModel/ext/SEIRSModelRun.py
+.. literalinclude:: /../simpleModel/ext/SEIRSModelRun.py
    :linenos:
    :language: python
 
