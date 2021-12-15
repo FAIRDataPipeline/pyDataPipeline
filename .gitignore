@@ -139,7 +139,13 @@ test.yaml
 .fair/
 
 tmp/
-src/tests/ext/coderuns.txt
+tests/ext/coderuns.txt
 data_store
 
-src/org/fairdatapipeline/simpleModel/ext/test.py
+fairdatapipeline/simpleModel/ext/test.py
+
+# Sphinx documentation
+doc/_build/
+
+# Poetry Lock
+poetry.lock

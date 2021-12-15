@@ -1,0 +1,92 @@
+[tool.poetry]
+name = "pydatapipeline"
+version = "0.4.0"
+description = "Python api to interact with the Fair Data Pipeline"
+authors = [
+    "Ryan J Field <ryan.field@glasgow.ac.uk>",
+    "Dennis Reddyhoff <d.reddyhoff@sheffield.ac.uk>",  
+    "Robert D Turner <r.d.turner@shef.ac.uk>",
+    "Bruno Viola <bruno.viola@ukaea.uk>",
+    "Kristian Zarebski <kristian.zarebski@ukaea.uk>"
+    ]
+
+
+homepage = "https://www.fairdatapipeline.org/"
+
+repository = "https://github.com/FAIRDataPipeline/pyDataPipeline"
+
+license = "GNU General Public License v3.0"
+
+packages = [
+    {include = "fairdatapipeline"}
+]
+
+readme = "README.md"
+
+keywords = [
+    "FAIR Data Pipeline",
+    "FAIR",
+    "Data Management",
+    "Provenance"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7.1,<3.11"
+requests = "^2.26.0"
+matplotlib = "^3.5.1"
+scipy = "^1.7.3"
+h5py = "^3.6.0"
+PyYAML = "^5.4.1"
+fair-cli = "^0.2.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+black = "^21.5b1"
+mypy = "^0.812"
+flake8 = "^3.9.2"
+poetry = "^1.1.6"
+pytest-mock = "^3.6.1"
+pytest-dependency = "^0.5.1"
+pytest-cov = "^2.12.1"
+pre-commit = "^2.16.0"
+isort = "^5.10.1"
+Sphinx = "^4.3.1"
+sphinx-rtd-theme = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/FAIRDataPipeline/pyDataPipeline/issues"
+
+
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 79
+
+
+
+[tool.black]
+line-length = 79
+
+[tool.pytest.ini_options]
+addopts = '-s -v'
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+
+[tool.flake8]
+ignore =  'E501, W503'
+max-line-length = 79
+max-complexity = 18
+select = 'B,C,E,F,W,T4,B9,N'

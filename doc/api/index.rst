@@ -1,5 +1,5 @@
-org.fairdatapipeline.api
+fairdatapipeline
 ========================
 
-.. automodule:: org.fairdatapipeline.api
+.. automodule:: fairdatapipeline
     :members:
