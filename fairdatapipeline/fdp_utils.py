@@ -135,7 +135,11 @@ def post_entry(
     # print(response.request.headers)
 
     if response.status_code == 409:
-        return get_entry(url, endpoint, data)[0]
+        logging.info("Entry Exists: Attempting to return Existing Entry")
+        existing_entry = get_entry(url, endpoint, data)
+        if not existing_entry:
+            raise ValueError("Could not return existing Entry")
+        return existing_entry[0]
 
     if response.status_code != 201:
         raise ValueError("Server responded with: " + str(response.status_code))
