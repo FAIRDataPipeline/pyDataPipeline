@@ -56,7 +56,7 @@ This should also only be run after activating a poetry shell from the command li
 following the `Installation <../installation.html>`_ instructions.
 ::
 
-   fair run /simpleModel/ext/SEIRSconfig.yaml
+   fair run simpleModel/ext/SEIRSconfig.yaml
 
 
 This will call :code:`fair run` which will produce a code run and the appropriate output using the script provided in the :code:`run_metadata` field of the config.yaml file.
