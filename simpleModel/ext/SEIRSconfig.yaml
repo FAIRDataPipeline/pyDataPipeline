@@ -12,7 +12,7 @@ register:
 - external_object: SEIRS_model/parameters
   namespace_name: PSU
   root: https://raw.githubusercontent.com/
-  path: FAIRDataPipeline/pythonFDP/dev/src/org/fairdatapipeline/simpleModel/ext/static_params_SEIRS.csv
+  path: FAIRDataPipeline/pyDataPipeline/dev/simpleModel/ext/static_params_SEIRS.csv
   title: Static parameters of the model
   description: Static parameters of the model
   identifier: https://doi.org/10.1038/s41592-020-0856-2
