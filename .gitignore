@@ -146,3 +146,6 @@ fairdatapipeline/simpleModel/ext/test.py
 
 # Sphinx documentation
 doc/_build/
+
+# Poetry Lock
+poetry.lock

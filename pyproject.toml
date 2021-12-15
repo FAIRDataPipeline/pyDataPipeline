@@ -3,13 +3,11 @@ name = "pydatapipeline"
 version = "0.4.0"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
-    "Richard Reeve <richard.reeve@glasgow.ac.uk>",
-    "Nathan Cummings <nathan.cummings@ukaea.uk>",
-    "Dennis Reddyhoff <d.reddyhoff@sheffield.ac.uk>",
-    "Kristian Zarebski <kristian.zarebski@ukaea.uk>",
+    "Ryan J Field <ryan.field@glasgow.ac.uk>",
+    "Dennis Reddyhoff <d.reddyhoff@sheffield.ac.uk>",  
+    "Robert D Turner <r.d.turner@shef.ac.uk>",
     "Bruno Viola <bruno.viola@ukaea.uk>",
-    "Rjan J Field <ryan.field@glasgow.ac.uk>",
-    "Robert D Turner <r.d.turner@shef.ac.uk>"
+    "Kristian Zarebski <kristian.zarebski@ukaea.uk>"
     ]
 
 
