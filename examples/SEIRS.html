@@ -97,37 +97,37 @@
 </div>
 <p>an example config is provided within the pyDataPipeline package located in <code class="code docutils literal notranslate"><span class="pre">simpleModel/ext/SEIRSconfig.yaml</span></code>
 and contains the following:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">run_metadata</span><span class="p">:</span>
-<span class="linenos"> 2</span>  <span class="nt">default_input_namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rfield</span>
-<span class="linenos"> 3</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS Model python</span>
-<span class="linenos"> 4</span>  <span class="nt">script</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">python3 simpleModel/ext/SEIRSModelRun.py</span>
-<span class="linenos"> 5</span>  <span class="nt">remote_repo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://github.com/FAIRDataPipeline/pythonFDP.git</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">run_metadata</span><span class="p">:</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="nt">default_input_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rfield</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS Model python</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python3 simpleModel/ext/SEIRSModelRun.py</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="nt">remote_repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/FAIRDataPipeline/pythonFDP.git</span><span class="w"></span>
 <span class="linenos"> 6</span>
-<span class="linenos"> 7</span><span class="nt">register</span><span class="p">:</span>
-<span class="linenos"> 8</span><span class="p p-Indicator">-</span> <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PSU</span>
-<span class="linenos"> 9</span>  <span class="nt">full_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Pennsylvania State University</span>
-<span class="linenos">10</span>  <span class="nt">website</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://ror.org/04p491231</span>
+<span class="linenos"> 7</span><span class="nt">register</span><span class="p">:</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PSU</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="nt">full_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pennsylvania State University</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">  </span><span class="nt">website</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://ror.org/04p491231</span><span class="w"></span>
 <span class="linenos">11</span>
-<span class="linenos">12</span><span class="p p-Indicator">-</span> <span class="nt">external_object</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/parameters</span>
-<span class="linenos">13</span>  <span class="nt">namespace_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PSU</span>
-<span class="linenos">14</span>  <span class="nt">root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://raw.githubusercontent.com/</span>
-<span class="linenos">15</span>  <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FAIRDataPipeline/pyDataPipeline/dev/simpleModel/ext/static_params_SEIRS.csv</span>
-<span class="linenos">16</span>  <span class="nt">title</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Static parameters of the model</span>
-<span class="linenos">17</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Static parameters of the model</span>
-<span class="linenos">18</span>  <span class="nt">identifier</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://doi.org/10.1038/s41592-020-0856-2</span>
-<span class="linenos">19</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">csv</span>
-<span class="linenos">20</span>  <span class="nt">release_date</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2021-09-20T12:00</span>
-<span class="linenos">21</span>  <span class="nt">version</span><span class="p">:</span> <span class="s">&quot;1.0.0&quot;</span>
-<span class="linenos">22</span>  <span class="nt">primary</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="linenos">12</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">external_object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS_model/parameters</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">  </span><span class="nt">namespace_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PSU</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">  </span><span class="nt">root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://raw.githubusercontent.com/</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FAIRDataPipeline/pyDataPipeline/dev/simpleModel/ext/static_params_SEIRS.csv</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Static parameters of the model</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Static parameters of the model</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">  </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://doi.org/10.1038/s41592-020-0856-2</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">  </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">  </span><span class="nt">release_date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2021-09-20T12:00</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span><span class="w"></span>
+<span class="linenos">22</span><span class="w">  </span><span class="nt">primary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
 <span class="linenos">23</span>
-<span class="linenos">24</span><span class="nt">write</span><span class="p">:</span>
-<span class="linenos">25</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/model_output/python</span>
-<span class="linenos">26</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS model results</span>
-<span class="linenos">27</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">csv</span>
+<span class="linenos">24</span><span class="nt">write</span><span class="p">:</span><span class="w"></span>
+<span class="linenos">25</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data_product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/model_output/python</span><span class="w"></span>
+<span class="linenos">26</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS model results</span><span class="w"></span>
+<span class="linenos">27</span><span class="w">  </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span><span class="w"></span>
 <span class="linenos">28</span>
-<span class="linenos">29</span><span class="p p-Indicator">-</span> <span class="nt">data_product</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/figure/python</span>
-<span class="linenos">30</span>  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEIRS output plot</span>
-<span class="linenos">31</span>  <span class="nt">file_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">png</span>
+<span class="linenos">29</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data_product</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS_model/results/figure/python</span><span class="w"></span>
+<span class="linenos">30</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEIRS output plot</span><span class="w"></span>
+<span class="linenos">31</span><span class="w">  </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">png</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The script specified in <code class="code docutils literal notranslate"><span class="pre">run_metadata</span></code> will be called by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">run</span></code></p>
