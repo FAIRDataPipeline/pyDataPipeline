@@ -37,6 +37,7 @@ jobs:
         run: |
           poetry install
           source .venv/bin/activate
+          pip install fair-cli
           fair init --ci
           fair registry start
           fair pull simpleModel/ext/SEIRSconfig.yaml
