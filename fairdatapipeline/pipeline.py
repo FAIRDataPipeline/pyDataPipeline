@@ -109,7 +109,8 @@ def initialise(token: str, config: str, script: str) -> dict:
 
     user_url = user["url"]
     user_id = fdp_utils.extract_id(user_url)
-
+    print(user_id)
+    print(registry_url)
     # Get author(s)
     author = fdp_utils.get_entry(
         url=registry_url,
@@ -117,7 +118,6 @@ def initialise(token: str, config: str, script: str) -> dict:
         query={"user": user_id},
         api_version=api_version,
     )[0]
-
     # Check user author exists
     if not author:
         raise ValueError(
@@ -416,7 +416,6 @@ def finalise(token: str, handle: dict) -> None:
                                 directory
                             )
                         )
-                        pass
                     directory = os.path.split(directory)[0]
                     i += 1
                     if i > 4:

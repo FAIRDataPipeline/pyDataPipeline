@@ -60,8 +60,10 @@ def get_entry(
             + " Query = "
             + url
         )
-
-    return response.json()["results"]
+    results = response.json()["results"]
+    if len(results) == 0:
+        raise IndexError(f'list {results} empty')
+    return results
 
 
 def get_entity(
