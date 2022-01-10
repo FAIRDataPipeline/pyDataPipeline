@@ -26,7 +26,7 @@ Assume FDP_CONFIG_DIR, storage_locations and objects have been set by CLI tool
 
 ```
 import os
-import org.fairdatapipeline.api as pipeline
+import fairdatapipeline as pipeline
 
 token = os.environ.get('FDP_LOCAL_TOKEN')
 config_path = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
