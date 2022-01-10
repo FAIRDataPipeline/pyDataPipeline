@@ -170,6 +170,7 @@ def storage_root_test(token: str, url: str, scope: str = "module") -> dict:
         endpoint="storage_root",
     )
 
+
 @pytest.mark.utilities
 def test_post_entry(token: str, url: str) -> None:
     storage_root = fdp_utils.post_entry(
@@ -180,6 +181,7 @@ def test_post_entry(token: str, url: str) -> None:
     )
     assert type(storage_root) == dict
 
+
 @pytest.mark.utilities
 def test_post_entry_409(token: str, url: str) -> None:
     storage_root = fdp_utils.post_entry(
@@ -189,6 +191,7 @@ def test_post_entry_409(token: str, url: str) -> None:
         endpoint="storage_root",
     )
     assert type(storage_root) == dict
+
 
 @pytest.mark.utilities
 def test_post_entry_equal(token: str, url: str) -> None:
@@ -206,6 +209,7 @@ def test_post_entry_equal(token: str, url: str) -> None:
     )
     assert storage_root == storage_root_2
 
+
 @pytest.mark.utilities
 def test_post_entry_500(token: str, url: str) -> None:
     with pytest.raises(Exception):
@@ -215,6 +219,7 @@ def test_post_entry_500(token: str, url: str) -> None:
             data={"root": "https://test.com"},
             endpoint="non_existant",
         )
+
 
 @pytest.mark.utilities
 def test_get_entry(url: str, token: str, storage_root_test: dict) -> None:
@@ -226,6 +231,7 @@ def test_get_entry(url: str, token: str, storage_root_test: dict) -> None:
     )
     assert entry[0] == storage_root_test
 
+
 @pytest.mark.utilities
 def test_get_entity(url: str, storage_root_test: dict) -> None:
     entity = fdp_utils.get_entity(
@@ -234,6 +240,7 @@ def test_get_entity(url: str, storage_root_test: dict) -> None:
         id=int(fdp_utils.extract_id(storage_root_test["url"])),
     )
     assert entity == storage_root_test
+
 
 @pytest.mark.apiversion
 def test_wrong_api_version(token: str, url: str) -> None:
@@ -246,6 +253,7 @@ def test_wrong_api_version(token: str, url: str) -> None:
             api_version="2.2.2",
         )
 
+
 @pytest.mark.apiversion
 def test_wrong_api_version_get(token: str, url: str) -> None:
     with pytest.raises(Exception):
@@ -256,6 +264,7 @@ def test_wrong_api_version_get(token: str, url: str) -> None:
             endpoint="storage_root",
             api_version="3.0.0",
         )
+
 
 @pytest.mark.utilities
 def test_get_entity_with_token(
@@ -268,6 +277,7 @@ def test_get_entity_with_token(
         token=token,
     )
     assert entity == storage_root_test
+
 
 @pytest.mark.utilities
 def test_get_entity_non_200(url: str, storage_root_test: dict) -> None:
