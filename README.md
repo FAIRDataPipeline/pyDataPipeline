@@ -3,6 +3,7 @@
 [![pyDataPipeline](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml/badge.svg?branch=dev)](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml)
 [![codecov](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline/branch/dev/graph/badge.svg?token=Eax5AmrDxx)](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5562602.svg)](https://doi.org/10.5281/zenodo.5562602)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5461/badge)](https://bestpractices.coreinfrastructure.org/projects/5461)
 
 Welcome to pyDataPipeline a Python api to interact with the Fair Data Pipeline.
 
