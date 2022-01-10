@@ -78,14 +78,15 @@ line-length = 79
 
 [tool.pytest.ini_options]
 addopts = '-s -v'
+markers = [
+    "pipeline: tests for 'pipeline' module ",
+    "issue: tests for raising issues ",
+    "utilities: tests for 'utilities' functions ",
+    "apiversion: tests for api versioning ",
+]  
 
 [tool.mypy]
 ignore_missing_imports = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
 
-[tool.flake8]
-ignore =  'E501, W503'
-max-line-length = 79
-max-complexity = 18
-select = 'B,C,E,F,W,T4,B9,N'

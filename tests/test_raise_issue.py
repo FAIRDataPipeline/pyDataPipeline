@@ -30,18 +30,18 @@ def script(test_dir: str) -> str:
 def config(test_dir: str) -> str:
     return os.path.join(test_dir, "write_csv.yaml")
 
-
+@pytest.mark.pipeline
 def test_initialise(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     assert type(handle) == dict
 
-
+@pytest.mark.pipeline
 def test_link_write(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.link_write(handle, "test/csv")
     assert handle["output"]["output_0"]["data_product"] == "test/csv"
 
-
+@pytest.mark.issue
 def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     link_write = pipeline.link_write(handle, "test/csv")
@@ -49,13 +49,13 @@ def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
     pipeline.raise_issue_by_index(handle, index, "Test Issue", 7)
     assert handle["issues"]["issue_0"]["use_data_product"] == "test/csv"
 
-
+@pytest.mark.issue
 def test_raise_issue_with_config(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_config(handle, "Test Issue with config", 4)
     assert handle["issues"]["issue_0"]["type"] == "config"
 
-
+@pytest.mark.issue
 def test_raise_issue_with_github_repo(
     token: str, config: str, script: str
 ) -> None:
@@ -65,7 +65,7 @@ def test_raise_issue_with_github_repo(
     )
     assert handle["issues"]["issue_0"]["type"] == "github_repo"
 
-
+@pytest.mark.issue
 def test_raise_issue_with_script(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_submission_script(
@@ -73,7 +73,7 @@ def test_raise_issue_with_script(token: str, config: str, script: str) -> None:
     )
     assert handle["issues"]["issue_0"]["type"] == "submission_script"
 
-
+@pytest.mark.pipeline
 def test_link_read(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
@@ -89,7 +89,7 @@ def test_link_read(
     link_read_2 = pipeline.link_read(handle, "test/csv")
     assert type(link_read_1) == str and type(link_read_2) == str
 
-
+@pytest.mark.pipeline
 def test_link_read_data_product_exists(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
@@ -99,7 +99,7 @@ def test_link_read_data_product_exists(
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
 
-
+@pytest.mark.issue
 def test_raise_issue_existing_data_product(
     token: str, config: str, script: str
 ) -> None:
@@ -114,7 +114,7 @@ def test_raise_issue_existing_data_product(
     )
     pipeline.finalise(token, handle)
 
-
+@pytest.mark.issue
 def test_raise_issue_data_product_from_reads(
     token: str, script: str, test_dir: str
 ) -> None:

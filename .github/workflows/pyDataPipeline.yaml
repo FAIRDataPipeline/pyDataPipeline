@@ -43,7 +43,7 @@ jobs:
           fair pull simpleModel/ext/SEIRSconfig.yaml
           fair run simpleModel/ext/SEIRSconfig.yaml
 
-          python3 -m poetry run pytest --cov=fairdatapipeline.api  --cov-report=xml --cov-report=term -s tests/
+          python3 -m poetry run pytest --cov=fairdatapipeline  --cov-report=xml --cov-report=term -s tests/
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
