@@ -31,6 +31,7 @@ def test_is_file_exists(test_dir: str) -> None:
     test_file = os.path.join(test_dir, "test.csv")
     assert fdp_utils.is_file(test_file)
 
+
 @pytest.mark.utilities
 @pytest.mark.parametrize(
     "file_path",
@@ -43,11 +44,13 @@ def test_is_file_exists(test_dir: str) -> None:
 def test_is_file_not_exists(file_path: str) -> None:
     assert not fdp_utils.is_file(file_path)
 
+
 @pytest.mark.utilities
 @pytest.mark.parametrize("file_path", ["read_csv_path", "write_csv_path"])
 def test_is_yaml(file_path: str, request: FixtureRequest) -> None:
     file_path = request.getfixturevalue(file_path)
     assert fdp_utils.is_yaml(file_path)
+
 
 @pytest.mark.utilities
 @pytest.mark.parametrize(
@@ -62,11 +65,13 @@ def test_is_yaml(file_path: str, request: FixtureRequest) -> None:
 def test_is_yaml_not(file_path: str) -> None:
     assert not fdp_utils.is_yaml(file_path)
 
+
 @pytest.mark.utilities
 @pytest.mark.parametrize("file_path", ["read_csv_path", "write_csv_path"])
 def test_is_valid_yaml(file_path: str, request: FixtureRequest) -> None:
     file_path = request.getfixturevalue(file_path)
     assert fdp_utils.is_yaml(file_path)
+
 
 @pytest.mark.utilities
 @pytest.mark.parametrize(
@@ -81,6 +86,7 @@ def test_is_valid_yaml(file_path: str, request: FixtureRequest) -> None:
 def test_is_valid_yaml_not(file_path: str) -> None:
     assert not fdp_utils.is_valid_yaml(file_path)
 
+
 @pytest.mark.utilities
 def test_read_token(test_dir: str) -> None:
     token = os.path.join(test_dir, "test_token")
@@ -89,6 +95,7 @@ def test_read_token(test_dir: str) -> None:
         == "1a2b3c4d5e6d7f8a9b8c7d6e5f1a2b3c4d5e6d7f"
     )
 
+
 @pytest.mark.utilities
 def test_get_token(test_dir: str) -> None:
     token = os.path.join(test_dir, "test_token")
@@ -96,6 +103,7 @@ def test_get_token(test_dir: str) -> None:
         fdp_utils.get_token(token)
         == "1a2b3c4d5e6d7f8a9b8c7d6e5f1a2b3c4d5e6d7f"
     )
+
 
 @pytest.mark.utilities
 def test_read_token_get_token(test_dir: str) -> None:
@@ -108,6 +116,7 @@ def token() -> str:
     return fdp_utils.read_token(
         os.path.join(os.path.expanduser("~"), ".fair/registry/token")
     )
+
 
 @pytest.mark.utilities
 def test_get_file_hash(test_dir: str) -> None:
@@ -123,31 +132,38 @@ def test_get_file_hash(test_dir: str) -> None:
             == "51345410c236d375ccf47149196746bc7f4db29d"
         )
 
+
 @pytest.mark.utilities
 def test_random_hash_is_string() -> None:
     assert type(fdp_utils.random_hash()) == str
+
 
 @pytest.mark.utilities
 def test_random_hash_length() -> None:
     assert len(fdp_utils.random_hash()) == 40
 
+
 @pytest.mark.utilities
 def test_extract_id() -> None:
     assert fdp_utils.extract_id("http://localhost:8000/api/object/85") == "85"
 
+
 @pytest.mark.utilities
 def test_get_headers() -> None:
     assert type(fdp_utils.get_headers()) == dict
+
 
 @pytest.mark.utilities
 def test_get_headers_with_token(token: str) -> None:
     headers = fdp_utils.get_headers(token=token)
     assert headers["Authorization"] == "token " + token
 
+
 @pytest.mark.utilities
 def test_get_headers_post() -> None:
     headers = fdp_utils.get_headers(request_type="post")
     assert headers["Content-Type"] == "application/json"
+
 
 @pytest.mark.utilities
 def test_get_headers_api_version() -> None:
@@ -232,15 +248,6 @@ def test_get_entry(url: str, token: str, storage_root_test: dict) -> None:
     )
     assert entry[0] == storage_root_test
 
-@pytest.mark.utilities
-def test_get_entry_author(url: str, token: str, storage_root_test: dict) -> None:
-    with pytest.raises(IndexError) as e_info:
-        entry = fdp_utils.get_entry(
-            url=url,
-            query={"root": "https://storage-root-test.com"},
-            token=token,
-            endpoint="user_author",
-        )
 
 @pytest.mark.utilities
 def test_get_entity(url: str, storage_root_test: dict) -> None:

@@ -92,14 +92,17 @@ def initialise(token: str, config: str, script: str) -> dict:
     config_filetype_url = config_filetype_response["url"]
 
     # Get user for registry admin account
-    user = fdp_utils.get_entry(
+    results = fdp_utils.get_entry(
         url=registry_url,
         endpoint="users",
         query={"username": "admin"},
         token=token,
         api_version=api_version,
-    )[0]
-
+    )
+    if len(results) == 0:
+        raise IndexError(f"list {results} empty")
+    else:
+        user = results[0]
     # Check users exists
     if not user:
         raise ValueError(
@@ -109,15 +112,17 @@ def initialise(token: str, config: str, script: str) -> dict:
 
     user_url = user["url"]
     user_id = fdp_utils.extract_id(user_url)
-    print(user_id)
-    print(registry_url)
     # Get author(s)
-    author = fdp_utils.get_entry(
+    results = fdp_utils.get_entry(
         url=registry_url,
         endpoint="user_author",
         query={"user": user_id},
         api_version=api_version,
-    )[0]
+    )
+    if len(results) == 0:
+        raise IndexError(f"list {results} empty")
+    else:
+        author = results[0]
     # Check user author exists
     if not author:
         raise ValueError(
@@ -334,7 +339,6 @@ def finalise(token: str, handle: dict) -> None:
     api_version = handle["yaml"]["run_metadata"]["api_version"]
 
     datastore = fdp_utils.remove_local_from_root(datastore)
-
     datastore_root = fdp_utils.get_entry(
         url=registry_url,
         endpoint="storage_root",
@@ -416,6 +420,7 @@ def finalise(token: str, handle: dict) -> None:
                                 directory
                             )
                         )
+                        pass
                     directory = os.path.split(directory)[0]
                     i += 1
                     if i > 4:

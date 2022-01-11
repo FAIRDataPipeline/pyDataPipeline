@@ -92,6 +92,7 @@ def test_link_read(
 
     config = os.path.join(test_dir, "read_csv.yaml")
     handle = pipeline.initialise(token, config, script)
+
     link_read_1 = pipeline.link_read(handle, "test/csv")
     link_read_2 = pipeline.link_read(handle, "test/csv")
     assert type(link_read_1) == str and type(link_read_2) == str
