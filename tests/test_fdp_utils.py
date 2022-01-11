@@ -250,6 +250,32 @@ def test_get_entry(url: str, token: str, storage_root_test: dict) -> None:
 
 
 @pytest.mark.utilities
+def test_get_entry_author(url: str, token: str) -> None:
+
+    results = fdp_utils.get_entry(
+        url=url,
+        query={"user": 2},
+        token=token,
+        endpoint="user_author",
+    )
+    with pytest.raises(IndexError):
+        _ = results[0]
+
+
+@pytest.mark.utilities
+def test_get_entry_users(url: str, token: str) -> None:
+
+    results = fdp_utils.get_entry(
+        url=url,
+        query={"username": "admin1"},
+        token=token,
+        endpoint="users",
+    )
+    with pytest.raises(IndexError):
+        _ = results[0]
+
+
+@pytest.mark.utilities
 def test_get_entity(url: str, storage_root_test: dict) -> None:
     entity = fdp_utils.get_entity(
         url=url,
