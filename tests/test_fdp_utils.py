@@ -151,6 +151,8 @@ def test_extract_id() -> None:
 @pytest.mark.utilities
 def test_get_headers() -> None:
     assert type(fdp_utils.get_headers()) == dict
+    headers = {"Accept": "application/json; version=" + "1.0.0"}
+    assert headers == fdp_utils.get_headers()
 
 
 @pytest.mark.utilities
