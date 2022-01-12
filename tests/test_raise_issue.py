@@ -54,6 +54,15 @@ def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
 
 
 @pytest.mark.issue
+def test_raise_issue_by_type(token: str, config: str, script: str) -> None:
+    handle = pipeline.initialise(token, config, script)
+    with pytest.raises(ValueError):
+        pipeline.raise_issue_by_type(
+            handle, "testing_type", "Test Issue by type", 1, group=True
+        )
+
+
+@pytest.mark.issue
 def test_raise_issue_with_config(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     pipeline.raise_issue_with_config(handle, "Test Issue with config", 4)
@@ -107,6 +116,13 @@ def test_link_read_data_product_exists(
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
+    assert len(handle["yaml"]["write"]) == 1
+    assert handle["yaml"]["write"][0] == {
+        "data_product": "test/csv",
+        "description": "test csv file with simple data",
+        "file_type": "csv",
+        "use": {"version": "0.0.1"},
+    }
 
 
 @pytest.mark.issue
@@ -123,6 +139,17 @@ def test_raise_issue_existing_data_product(
         5,
     )
     pipeline.finalise(token, handle)
+    assert handle["issues"]["issue_0"] == {
+        "index": None,
+        "type": "existing_data_product",
+        "use_data_product": "test/csv",
+        "use_component": None,
+        "version": "0.0.1",
+        "use_namespace": "testing",
+        "issue": "Problem with csv File : Test Issue # 2",
+        "severity": 5,
+        "group": "Problem with csv File : Test Issue # 2:5",
+    }
 
 
 @pytest.mark.issue
@@ -136,7 +163,46 @@ def test_raise_issue_data_product_from_reads(
         "test/csv",
         "0.0.1",
         "testing",
-        "Problem with csv File : Test Issue # 3",
+        "Problem with reading csv File : Test Issue # 3",
         5,
     )
     pipeline.finalise(token, handle)
+    assert handle["issues"]["issue_0"] == {
+        "index": None,
+        "type": "data_product",
+        "use_data_product": "test/csv",
+        "use_component": None,
+        "version": "0.0.1",
+        "use_namespace": "testing",
+        "issue": "Problem with reading csv File : Test Issue # 3",
+        "severity": 5,
+        "group": "Problem with reading csv File : Test Issue # 3:5",
+    }
+
+
+@pytest.mark.issue
+def test_raise_issue_data_product_from_writes(
+    token: str, script: str, test_dir: str
+) -> None:
+    config = os.path.join(test_dir, "write_csv.yaml")
+    handle = pipeline.initialise(token, config, script)
+    pipeline.raise_issue_by_data_product(
+        handle,
+        "test/csv",
+        "0.0.1",
+        "testing",
+        "Problem with writing csv File : Test Issue # 4",
+        5,
+    )
+    pipeline.finalise(token, handle)
+    assert handle["issues"]["issue_0"] == {
+        "index": None,
+        "type": "data_product",
+        "use_data_product": "test/csv",
+        "use_component": None,
+        "version": "0.0.1",
+        "use_namespace": "testing",
+        "issue": "Problem with writing csv File : Test Issue # 4",
+        "severity": 5,
+        "group": "Problem with writing csv File : Test Issue # 4:5",
+    }

@@ -104,7 +104,10 @@ def extract_id(url: str) -> str:
     Returns:
         |   str: id derrived from the url
     """
-    return list(filter(None, urlsplit(url).path.split("/")))[-1]
+    try:
+        return list(filter(None, urlsplit(url).path.split("/")))[-1]
+    except:
+        raise IndexError(f"Unable to index input url: {url}")
 
 
 def post_entry(
@@ -130,8 +133,6 @@ def post_entry(
     _data = json.dumps(data)
 
     response = requests.post(_url, _data, headers=headers)
-
-    # print(response.request.headers)
 
     if response.status_code == 409:
         logging.info("Entry Exists: Attempting to return Existing Entry")

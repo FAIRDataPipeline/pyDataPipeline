@@ -149,6 +149,12 @@ def test_extract_id() -> None:
 
 
 @pytest.mark.utilities
+def test_extract_id_should_fail() -> None:
+    with pytest.raises(IndexError):
+        fdp_utils.extract_id("")
+
+
+@pytest.mark.utilities
 def test_get_headers() -> None:
     assert type(fdp_utils.get_headers()) == dict
     headers = {"Accept": "application/json; version=" + "1.0.0"}

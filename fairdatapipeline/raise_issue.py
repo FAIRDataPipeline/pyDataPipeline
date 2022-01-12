@@ -148,7 +148,7 @@ def raise_issue_by_type(
 # flake8: noqa C901
 def raise_issue(
     handle: dict,
-    type: str,
+    issue_type: str,
     issue: str,
     severity: int,
     index: bool = None,
@@ -159,7 +159,7 @@ def raise_issue(
     group: bool = True,
 ) -> None:
     current_group = issue + ":" + str(severity)
-    if type in [
+    if issue_type in [
         "config",
         "submission_script",
         "github_repo",
@@ -233,7 +233,7 @@ def raise_issue(
     # Write to handle and return path
     issues_dict = {
         "index": index,
-        "type": type,
+        "type": issue_type,
         "use_data_product": data_product,
         "use_component": component,
         "version": version,
