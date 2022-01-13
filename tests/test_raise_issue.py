@@ -6,8 +6,6 @@ import pytest
 import fairdatapipeline as pipeline
 import fairdatapipeline.fdp_utils as fdp_utils
 
-# from org.fairdatapipeline.api.common.link_read import link_read
-
 
 @pytest.fixture
 def test_dir() -> str:
@@ -36,6 +34,22 @@ def test_initialise(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     assert type(handle) == dict
     assert handle["yaml"]["run_metadata"]["script"] == "python3 py.test"
+
+
+@pytest.mark.pipeline
+def test_initialise_noconfig(
+    token: str, script: str, config: str = "file_that_does_not_exist"
+) -> None:
+    with pytest.raises(ValueError):
+        _ = pipeline.initialise(token, config, script)
+
+
+@pytest.mark.pipeline
+def test_initialise_noscript(
+    token: str, config: str, script: str = "file_that_does_not_exist"
+) -> None:
+    with pytest.raises(ValueError):
+        _ = pipeline.initialise(token, config, script)
 
 
 @pytest.mark.pipeline

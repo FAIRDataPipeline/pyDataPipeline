@@ -99,6 +99,7 @@ def initialise(token: str, config: str, script: str) -> dict:
         token=token,
         api_version=api_version,
     )
+
     if len(results) == 0:
         raise IndexError(f"list {results} empty")
     else:

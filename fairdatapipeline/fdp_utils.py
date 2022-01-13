@@ -106,7 +106,7 @@ def extract_id(url: str) -> str:
     """
     try:
         return list(filter(None, urlsplit(url).path.split("/")))[-1]
-    except:
+    except IndexError:
         raise IndexError(f"Unable to index input url: {url}")
 
 
