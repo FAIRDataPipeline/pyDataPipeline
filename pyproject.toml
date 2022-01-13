@@ -41,7 +41,7 @@ PyYAML = "^5.4.1"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 black = "^21.5b1"
-mypy = "^0.812"
+mypy = "^0.931"
 flake8 = "^4.0.1"
 poetry = "^1.1.6"
 pytest-mock = "^3.6.1"
