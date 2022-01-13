@@ -60,7 +60,6 @@ def get_entry(
             + " Query = "
             + url
         )
-
     return response.json()["results"]
 
 
@@ -105,7 +104,11 @@ def extract_id(url: str) -> str:
     Returns:
         |   str: id derrived from the url
     """
-    return list(filter(None, urlsplit(url).path.split("/")))[-1]
+
+    split_url_path = urlsplit(url).path.split("/")
+    if not split_url_path:
+        raise IndexError(f"Unable to extract ID from registry URL: {url}")
+    return [s for s in split_url_path if s != ""][-1]
 
 
 def post_entry(
@@ -131,8 +134,6 @@ def post_entry(
     _data = json.dumps(data)
 
     response = requests.post(_url, _data, headers=headers)
-
-    # print(response.request.headers)
 
     if response.status_code == 409:
         logging.info("Entry Exists: Attempting to return Existing Entry")

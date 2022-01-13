@@ -77,7 +77,7 @@ line_length = 79
 line-length = 79
 
 [tool.pytest.ini_options]
-addopts = '-s -v'
+addopts = '-s -v --cov=fairdatapipeline  --cov-report=html --cov-report=term'
 markers = [
     "pipeline: tests for 'pipeline' module ",
     "issue: tests for raising issues ",
