@@ -35,6 +35,7 @@ def config(test_dir: str) -> str:
 def test_initialise(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     assert type(handle) == dict
+    assert handle["yaml"]["run_metadata"]["script"] == "python3 py.test"
 
 
 @pytest.mark.pipeline
