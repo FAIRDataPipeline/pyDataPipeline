@@ -100,7 +100,7 @@ def initialise(token: str, config: str, script: str) -> dict:
         api_version=api_version,
     )
 
-    if len(results) == 0:
+    if not results:
         raise IndexError(f"list {results} empty")
     else:
         user = results[0]
@@ -120,7 +120,7 @@ def initialise(token: str, config: str, script: str) -> dict:
         query={"user": user_id},
         api_version=api_version,
     )
-    if len(results) == 0:
+    if not results:
         raise IndexError(f"list {results} empty")
     else:
         author = results[0]
