@@ -68,7 +68,7 @@ def link_write(handle: dict, data_product: str) -> str:
     }
 
     # If output exists in handle, append new metadata, otherwise create dict
-    if "output" in handle.keys():
+    if "output" in handle:
         key = "output_" + str(len(handle["output"]))
         handle["output"][key] = output_dict
     else:
@@ -90,7 +90,7 @@ def link_read(handle: dict, data_product: str) -> str:
     """
 
     # If data product is already in handle, return path
-    if "input" in handle.keys():
+    if "input" in handle:
         for index in handle["input"].keys():
             if handle["input"][index]["data_product"] == data_product:
                 return handle["input"][index]["path"]
@@ -138,9 +138,7 @@ def link_read(handle: dict, data_product: str) -> str:
     if "data_product" in use:
         data_product = use["data_product"]
 
-    version = "0.0.1"
-    if "version" in use:
-        version = use["version"]
+    version = use["version"] if "version" in use else "0.0.1"
 
     # Get data_product metadata and extract object id
     data_product_response = fdp_utils.get_entry(
@@ -208,7 +206,7 @@ def link_read(handle: dict, data_product: str) -> str:
         "component_url": component_url,
     }
 
-    if "input" in handle.keys():
+    if "input" in handle:
         index = "input_" + str(len(handle["input"]))
         handle["input"][index] = input_dict
     else:

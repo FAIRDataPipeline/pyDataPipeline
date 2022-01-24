@@ -159,41 +159,45 @@ def raise_issue(
     group: bool = True,
 ) -> None:
     current_group = issue + ":" + str(severity)
-    if issue_type in [
+    if issue_type in {
         "config",
         "submission_script",
         "github_repo",
         "existing_data_product",
-    ]:
+    }:
         logging.info("Adding issue {} for {} to handle".format(issue, type))
     elif index is None:
+        reads = (
+            handle["yaml"]["read"] if "read" in handle["yaml"].keys() else None
+        )
+        writes = (
+            handle["yaml"]["write"]
+            if "write" in handle["yaml"].keys()
+            else None
+        )
         data_product_in_config = False
-        reads = None
-        writes = None
-        if "read" in handle["yaml"].keys():
-            reads = handle["yaml"]["read"]
-        if "write" in handle["yaml"].keys():
-            writes = handle["yaml"]["write"]
-
         if reads:
             for i in reads:
                 if i["data_product"] == data_product:
                     data_product_in_config = True
-                    if "use" in i.keys():
-                        if "use_version" in i["use"].keys():
-                            if not i["use"]["version"] == version:
-                                data_product_in_config = False
+                    if (
+                        "use" in i.keys()
+                        and "use_version" in i["use"].keys()
+                        and i["use"]["version"] != version
+                    ):
+                        data_product_in_config = False
                     data_product = i["data_product"]
                     if not group:
                         current_group = i["data_product"]
         if writes:
             for i in writes:
                 if i["data_product"] == data_product:
-                    data_product_in_config = True
-                    if "use" in i.keys():
-                        if "use_version" in i["use"].keys():
-                            if not i["use"]["version"] == version:
-                                data_product_in_config = False
+                    data_product_in_config = (
+                        "use" not in i.keys()
+                        or "use_version" not in i["use"].keys()
+                        or i["use"]["version"] == version
+                    )
+
                     data_product = i["data_product"]
                     if not group:
                         current_group = i["data_product"]
@@ -209,13 +213,13 @@ def raise_issue(
 
     else:
         tmp = None
-        if "output" in handle.keys():
+        if "output" in handle:
             for output in handle["output"]:
                 if output == index:
                     tmp = handle["output"][output]
                     if not group:
                         current_group = handle["output"][output]
-        if "input" in handle.keys():
+        if "input" in handle:
             for input in handle["input"]:
                 if input == index:
                     tmp = handle["input"][input]
@@ -243,7 +247,7 @@ def raise_issue(
         "group": current_group,
     }
 
-    if "issues" in handle.keys():
+    if "issues" in handle:
         this_issue = "issue_" + str(len(handle["issues"]))
         handle["issues"][this_issue] = issues_dict
     else:
