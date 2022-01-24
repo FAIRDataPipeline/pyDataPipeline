@@ -103,7 +103,7 @@ def initialise(token: str, config: str, script: str) -> dict:
     if not results:
         raise IndexError(f"list {results} empty")
     else:
-        user = results[0]
+        user = fdp_utils.get_first_entry(results)
     # Check users exists
     if not user:
         raise ValueError(
@@ -123,7 +123,7 @@ def initialise(token: str, config: str, script: str) -> dict:
     if not results:
         raise IndexError(f"list {results} empty")
     else:
-        author = results[0]
+        author = fdp_utils.get_first_entry(results)
     # Check user author exists
     if not author:
         raise ValueError(
@@ -350,7 +350,8 @@ def finalise(token: str, handle: dict) -> None:
 
     # Check datastore is in registry
     if datastore_root:
-        datastore_root_url = datastore_root[0]["url"]
+        datastore_root_dict = fdp_utils.get_first_entry(datastore_root)
+        datastore_root_url = datastore_root_dict["url"]
     else:
         datastore_root_url = fdp_utils.post_storage_root(
             token=token,
@@ -378,7 +379,8 @@ def finalise(token: str, handle: dict) -> None:
             )
             write_namespace_url = None
             if write_namespace:
-                write_namespace_url = write_namespace[0]["url"]
+                entry = fdp_utils.get_first_entry(write_namespace)
+                write_namespace_url = entry["url"]
             else:
                 write_namespace_url = fdp_utils.post_entry(
                     token=token,
@@ -404,7 +406,8 @@ def finalise(token: str, handle: dict) -> None:
             storage_location_url = None
 
             if storage_exists:
-                storage_location_url = storage_exists[0]["url"]
+                storage_exists_dict = fdp_utils.get_first_entry(storage_exists)
+                storage_location_url = storage_exists_dict["url"]
 
                 os.remove(handle["output"][output]["path"])
 
@@ -427,13 +430,15 @@ def finalise(token: str, handle: dict) -> None:
                     if i > 4:
                         break
 
-                existing_path = storage_exists[0]["path"]
+                existing_path = storage_exists_dict["path"]
 
                 existing_root = fdp_utils.get_entity(
                     url=registry_url,
                     endpoint="storage_root",
                     id=int(
-                        fdp_utils.extract_id(storage_exists[0]["storage_root"])
+                        fdp_utils.extract_id(
+                            storage_exists_dict["storage_root"]
+                        )
                     ),
                     api_version=api_version,
                 )["root"]
@@ -481,7 +486,8 @@ def finalise(token: str, handle: dict) -> None:
             )
 
             if file_type_exists:
-                file_type_url = file_type_exists[0]["url"]
+                entry = fdp_utils.get_first_entry(file_type_exists)
+                file_type_url = entry["url"]
             else:
                 file_type_url = fdp_utils.post_entry(
                     token=token,
@@ -503,8 +509,11 @@ def finalise(token: str, handle: dict) -> None:
             )
 
             if data_product_exists:
-                data_product_url = data_product_exists[0]["url"]
-                object_url = data_product_exists[0]["object"]
+                data_product_exists_dict = fdp_utils.get_first_entry(
+                    data_product_exists
+                )
+                data_product_url = data_product_exists_dict["url"]
+                object_url = data_product_exists_dict["object"]
                 obj = fdp_utils.get_entity(
                     url=registry_url,
                     endpoint="object",
