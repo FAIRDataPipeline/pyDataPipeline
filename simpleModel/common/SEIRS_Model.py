@@ -58,22 +58,16 @@ def SEIRS_Model(
     time_unit_days = time_unit_years * 365.25
 
     # Convert Parameters to days
-    alpha = alpha * time_unit_days
-    beta = beta * time_unit_days
+    alpha *= time_unit_days
+    beta *= time_unit_days
     gamma = time_unit_days / inv_gamma
     omega = time_unit_days / (inv_omega * 365.25)
     mu = time_unit_days / (inv_mu * 365.25)
     sigma = time_unit_days / inv_sigma
 
-    results = {}
-    results[0] = {
-        "time": 0,
-        "S": S_data,
-        "E": E_data,
-        "I": I_data,
-        "R": R_data,
+    results = {
+        0: {"time": 0, "S": S_data, "E": E_data, "I": I_data, "R": R_data}
     }
-
     for i in range(int(timesteps)):
         N = (
             results[i]["S"]
@@ -124,8 +118,8 @@ def write_model_to_csv(model_output: dict, path: str) -> None:
             quoting=csv.QUOTE_NONNUMERIC,
         )
         dictWriter.writeheader()
-        for i in model_output:
-            dictWriter.writerow(model_output[i])
+        for i, value in model_output.items():
+            dictWriter.writerow(value)
         logging.info("Success file: {} written".format(path))
 
 

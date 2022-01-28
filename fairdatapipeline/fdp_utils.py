@@ -14,6 +14,25 @@ import requests
 import yaml
 
 
+def get_first_entry(entries: list) -> dict:
+    """
+    get_first_entry helper function for get_entry that return first element
+
+    exception handling is done in the main code
+
+    Parameters
+    ----------
+    entries : list
+        [response list from api]
+
+    Returns
+    -------
+    dict
+        [dictionary output from api]
+    """
+    return entries[0]
+
+
 def get_entry(
     url: str,
     endpoint: str,
