@@ -1,10 +1,69 @@
 import datetime
+import json
 import logging
 import os
 
+import requests
 import yaml
 
 from fairdatapipeline import fdp_utils
+
+
+def search(
+    token: str,
+    config: str,
+    script: str,
+    wildcard: str,
+    endpoint: str,
+    key: str,
+) -> str:
+    """Reads in token, config file script, wildcard, endpoint and key and returns a list of items found at the endpoint where the key contains the wildcard
+
+    Args:
+        |   token: registry token
+        |   config: Path to config file
+        |   script: Path to script file
+        |   wildcard: string to search
+        |   key: key of the results dictionary where the wildcard is searched
+        |   endpoint: api endpoint where the search is performed
+
+    Returns:
+        |   json: a list of dictionaries where the wildcard was found
+    """
+    # Validate Yamls
+    if not fdp_utils.is_valid_yaml(config):
+        raise ValueError("Config is not a valid YAML file")
+    if not fdp_utils.is_file(script):
+        raise ValueError("Script does not exist")
+
+    # Read config file and extract run metadata
+    with open(config, "r") as data:
+        config_yaml = yaml.safe_load(data)
+    run_metadata = config_yaml["run_metadata"]
+    registry_url = run_metadata["local_data_registry_url"]
+    if registry_url[-1] != "/":
+        registry_url += "/"
+    filename = os.path.basename(config)
+
+    # @todo to be set from config
+    if "api_version" not in config_yaml["run_metadata"].keys():
+        config_yaml["run_metadata"]["api_version"] = "1.0.0"
+
+    api_version = config_yaml["run_metadata"]["api_version"]
+
+    logging.info("Reading {} from local filestore".format(filename))
+
+    headers = fdp_utils.get_headers(token=token, api_version=api_version)
+    if registry_url[-1] != "/":
+        registry_url += "/"
+    registry_url += endpoint + "/?"
+
+    response = requests.get(registry_url, headers=headers)
+    data = response.json()
+
+    res = [obj for obj in data["results"] if wildcard in obj[key]]  # type: ignore
+
+    return json.dumps(res, indent=4, sort_keys=True)
 
 
 def initialise(token: str, config: str, script: str) -> dict:

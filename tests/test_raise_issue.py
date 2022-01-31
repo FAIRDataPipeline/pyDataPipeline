@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 
@@ -27,6 +28,11 @@ def script(test_dir: str) -> str:
 @pytest.fixture
 def config(test_dir: str) -> str:
     return os.path.join(test_dir, "write_csv.yaml")
+
+
+@pytest.fixture
+def fconfig(test_dir: str) -> str:
+    return os.path.join(test_dir, "find_csv.yaml")
 
 
 @pytest.mark.pipeline
@@ -120,6 +126,32 @@ def test_link_read(
     link_read_1 = pipeline.link_read(handle, "test/csv")
     link_read_2 = pipeline.link_read(handle, "test/csv")
     assert type(link_read_1) == str and type(link_read_2) == str
+
+
+@pytest.mark.pipeline
+def test_find_data_product(
+    token: str,
+    fconfig: str,
+    script: str,
+    test_dir: str,
+    query: str = "find",
+    key: str = "name",
+) -> None:
+
+    handle = pipeline.initialise(token, fconfig, script)
+    tmp_csv = os.path.join(test_dir, "test.csv")
+    link_write = pipeline.link_write(handle, "find/csv")
+    shutil.copy(tmp_csv, link_write)
+    pipeline.finalise(token, handle)
+
+    config = os.path.join(test_dir, "read_csv.yaml")
+    results = pipeline.search(
+        token, config, script, query, "data_product", "name"
+    )
+    res = json.loads(results)
+    assert len(res) == 1
+    result = fdp_utils.get_first_entry(res)
+    assert query in result[key]
 
 
 @pytest.mark.pipeline
