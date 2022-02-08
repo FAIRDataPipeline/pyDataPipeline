@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "data-pipeline-api"
+name = "data_pipeline_api"
 version = "0.7.5"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
