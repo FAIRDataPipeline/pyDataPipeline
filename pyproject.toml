@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydatapipeline"
-version = "0.4.0"
+version = "0.7.5"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
     "Ryan J Field <ryan.field@glasgow.ac.uk>",

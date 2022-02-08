@@ -10,7 +10,12 @@ Welcome to pyDataPipeline a Python api to interact with the Fair Data Pipeline.
 Full documention of the pyDataPipeline is avaialable at [https://www.fairdatapipeline.org/pyDataPipeline/](https://www.fairdatapipeline.org/pyDataPipeline/)
 
 ## Installation
+pyDataPipeline can be installed from PyPi:
+```
+pip3 install data-pipeline-api
+```
 
+Or from the Repository:
 ```
 git clone https://github.com/FAIRDataPipeline/pythonFDP.git
 
