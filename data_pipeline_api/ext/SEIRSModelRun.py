@@ -3,7 +3,7 @@ import platform
 import sys
 
 sys.path.append(str(os.getcwd()))
-import fairdatapipeline as pipeline  # noqa: E402
+import data_pipeline_api as pipeline  # noqa: E402
 import simpleModel as simpleModel  # noqa: E402
 
 token = str(os.environ.get("FDP_LOCAL_TOKEN"))

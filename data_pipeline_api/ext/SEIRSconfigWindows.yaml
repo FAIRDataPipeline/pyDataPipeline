@@ -1,7 +1,7 @@
 run_metadata:
   default_input_namespace: rfield
   description: SEIRS Model python
-  script: python simpleModel/ext/SEIRSModelRun.py
+  script: python data_pipeline_api/ext/SEIRSModelRun.py
   remote_repo: https://github.com/FAIRDataPipeline/pyDataPipeline.git
 
 register:
