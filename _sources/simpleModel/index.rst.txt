@@ -1,5 +1,0 @@
-simpleModel
-================================
-
-.. automodule:: simpleModel
-    :members:

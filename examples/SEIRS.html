@@ -51,7 +51,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">fairdatapipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../simpleModel/index.html">simpleModel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../software_checklist.html">SCRC Software checklist</a></li>
 </ul>
 
@@ -95,7 +94,7 @@
 <span class="n">SEIRS_model</span><span class="o">/</span><span class="n">results</span><span class="o">/</span><span class="n">figure</span><span class="o">/</span><span class="n">python</span>
 </pre></div>
 </div>
-<p>an example config is provided within the pyDataPipeline package located in <code class="code docutils literal notranslate"><span class="pre">simpleModel/ext/SEIRSconfig.yaml</span></code>
+<p>an example config is provided within the pyDataPipeline package located in <code class="code docutils literal notranslate"><span class="pre">data_pipeline_api/ext/SEIRSconfig.yaml</span></code>
 and contains the following:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">run_metadata</span><span class="p">:</span><span class="w"></span>
 <span class="linenos"> 2</span><span class="w">  </span><span class="nt">default_input_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rfield</span><span class="w"></span>
@@ -138,7 +137,7 @@ and contains the following:</p>
 download them to the local data store as set by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> and register the corresponding metadata to the local registry.</p>
 <p>The following commands should be run after activating a poetry shell from the CLI tool:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fair</span> <span class="n">init</span> <span class="o">--</span><span class="n">ci</span>
-<span class="n">fair</span> <span class="n">pull</span> <span class="n">simpleModel</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">SEIRSconfig</span><span class="o">.</span><span class="n">yaml</span>
+<span class="n">fair</span> <span class="n">pull</span> <span class="n">data_pipeline_api</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">SEIRSconfig</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 <p>The <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag can be used to use temporary directories. If using this flag the above code should be run from the <code class="code docutils literal notranslate"><span class="pre">local_repo</span></code> directory</p>
@@ -153,12 +152,12 @@ download them to the local data store as set by <code class="code docutils liter
 Once again if the <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag was used with the <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> command then this must be from the <code class="code docutils literal notranslate"><span class="pre">local_repo</span></code> directory.
 This should also only be run after activating a poetry shell from the command line and installing the <code class="code docutils literal notranslate"><span class="pre">pyDataPipeline</span></code> package within the poetry virtual environment
 following the <a class="reference external" href="../installation.html">Installation</a> instructions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fair</span> <span class="n">run</span> <span class="n">simpleModel</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">SEIRSconfig</span><span class="o">.</span><span class="n">yaml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fair</span> <span class="n">run</span> <span class="n">data_pipeline_api</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">SEIRSconfig</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 <p>This will call <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">run</span></code> which will produce a code run and the appropriate output using the script provided in the <code class="code docutils literal notranslate"><span class="pre">run_metadata</span></code> field of the config.yaml file.</p>
-<p>The following code will be executed when using the <code class="code docutils literal notranslate"><span class="pre">simpleModel/ext/SEIRSconfig.yaml</span></code> config file,
-which is located in the <code class="code docutils literal notranslate"><span class="pre">simpleModel/ext/SEIRSModelRun.py</span></code> Python script</p>
+<p>The following code will be executed when using the <code class="code docutils literal notranslate"><span class="pre">data_pipeline_api/ext/SEIRSconfig.yaml</span></code> config file,
+which is located in the <code class="code docutils literal notranslate"><span class="pre">data_pipeline_api/ext/SEIRSModelRun.py</span></code> Python script</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">os</span>
 <span class="linenos"> 2</span><span class="kn">import</span> <span class="nn">platform</span>
 <span class="linenos"> 3</span><span class="kn">import</span> <span class="nn">sys</span>

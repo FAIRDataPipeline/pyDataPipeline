@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="simpleModel" href="../simpleModel/index.html" />
+    <link rel="next" title="SCRC Software checklist" href="../software_checklist.html" />
     <link rel="prev" title="SEIRS Model example" href="../examples/SEIRS.html" /> 
 </head>
 
@@ -44,7 +44,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/SEIRS.html">SEIRS Model example</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">fairdatapipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../simpleModel/index.html">simpleModel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../software_checklist.html">SCRC Software checklist</a></li>
 </ul>
 
@@ -72,227 +71,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-fairdatapipeline">
-<span id="fairdatapipeline"></span><h1>fairdatapipeline<a class="headerlink" href="#module-fairdatapipeline" title="Permalink to this headline"></a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.finalise">
-<span class="sig-name descname"><span class="pre">finalise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.finalise" title="Permalink to this definition"></a></dt>
-<dd><p>Renames files with their hash, updates data_product names and records
-metadata in the registry</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">token: registry token</div>
-<div class="line">config: Path to config file</div>
-<div class="line">script: Path to script file</div>
-</div>
-</dd>
-<dt>Returns:</dt><dd><div class="line-block">
-<div class="line">dict: a dictionary containing the following keys:</div>
-<div class="line-block">
-<div class="line">‘yaml’: config_yaml path</div>
-<div class="line">‘fdp_config_dir’: config dir path</div>
-<div class="line">‘model_config’: model config url</div>
-<div class="line">‘submission_script’: submission script object url</div>
-<div class="line">‘code_repo’: code repo object url</div>
-<div class="line">‘code_run’: coderun url</div>
-<div class="line">‘code_run_uuid’: coderun uuid</div>
-<div class="line">‘author’: author url</div>
-<div class="line">‘inputs’:</div>
-<div class="line-block">
-<div class="line">‘data_product’: data product</div>
-<div class="line">‘use_data_product’: data product</div>
-<div class="line">‘use_component’: component</div>
-<div class="line">‘use_version’: version</div>
-<div class="line">‘use_namespace’: namespace</div>
-<div class="line">‘path’: path</div>
-<div class="line">‘component_url’: component url</div>
-</div>
-<div class="line">‘outputs’:</div>
-<div class="line-block">
-<div class="line">component_url: component url</div>
-<div class="line">data_product_url: data product url</div>
-</div>
-</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.get_handle_index_from_path">
-<span class="sig-name descname"><span class="pre">get_handle_index_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#fairdatapipeline.get_handle_index_from_path" title="Permalink to this definition"></a></dt>
-<dd><p>Get an input or output handle index from a path
-usually generated by link_read or link_write</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">handle: the handle containing the index</div>
-<div class="line">path: path as generated by link_read or link_write</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.initialise">
-<span class="sig-name descname"><span class="pre">initialise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#fairdatapipeline.initialise" title="Permalink to this definition"></a></dt>
-<dd><p>Reads in token, config file and script, creates necessary registry items
-and creates new code run.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">token: registry token</div>
-<div class="line">config: Path to config file</div>
-<div class="line">script: Path to script file</div>
-</div>
-</dd>
-<dt>Returns:</dt><dd><div class="line-block">
-<div class="line">dict: a dictionary containing the following keys:</div>
-<div class="line-block">
-<div class="line">‘yaml’: config_yaml path,</div>
-<div class="line">‘fdp_config_dir’: config dir path,</div>
-<div class="line">‘model_config’: model config url,</div>
-<div class="line">‘submission_script’: submission script object url,</div>
-<div class="line">‘code_repo’: code repo object url,</div>
-<div class="line">‘code_run’: coderun url,</div>
-<div class="line">‘code_run_uuid’: coderun uuid,</div>
-<div class="line">‘author’: author url</div>
-</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.link_read">
-<span class="sig-name descname"><span class="pre">link_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_product</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#fairdatapipeline.link_read" title="Permalink to this definition"></a></dt>
-<dd><p>Reads ‘read’ information in config file, updates handle with relevant
-metadata and returns path to write data product to.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">data_product: Specified name of data product in config.</div>
-</div>
-</dd>
-<dt>Returns:</dt><dd><div class="line-block">
-<div class="line">path: Path to write data product to.</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.link_write">
-<span class="sig-name descname"><span class="pre">link_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_product</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#fairdatapipeline.link_write" title="Permalink to this definition"></a></dt>
-<dd><p>Reads write information in config file, updates handle with relevant
-metadata and returns path to write data product to.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">data_product: Specified name of data product in config.</div>
-</div>
-</dd>
-<dt>Returns:</dt><dd><div class="line-block">
-<div class="line">path: Path to write data product to.</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_by_data_product">
-<span class="sig-name descname"><span class="pre">raise_issue_by_data_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_product</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_by_data_product" title="Permalink to this definition"></a></dt>
-<dd><p>Raises an issue for a given data_product in the run_metadata and writes it to the handle</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">data_product: the data_product name as a string</div>
-<div class="line">version: version of the data_product as a string</div>
-<div class="line">namespace: namespace of the date_product as a string</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_by_existing_data_product">
-<span class="sig-name descname"><span class="pre">raise_issue_by_existing_data_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_product</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_by_existing_data_product" title="Permalink to this definition"></a></dt>
-<dd><p>Raises an issue for a given data_product and writes it to the handle</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">data_product: the data_product name as a string</div>
-<div class="line">version: version of the data_product as a string</div>
-<div class="line">namespace: namespace of the date_product as a string</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_by_index">
-<span class="sig-name descname"><span class="pre">raise_issue_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_by_index" title="Permalink to this definition"></a></dt>
-<dd><p>Raises an issue for a given input or output index and writes it to the handle</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">handle: the handle containing the index</div>
-<div class="line">index: a unique reference to an input or output in</div>
-<div class="line-block">
-<div class="line">the handle see get_handle_index_from_path()</div>
-</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_by_type">
-<span class="sig-name descname"><span class="pre">raise_issue_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_by_type" title="Permalink to this definition"></a></dt>
-<dd><p>Raise an issue by type of issue (with config, with submission_script, with github_repo)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_with_config">
-<span class="sig-name descname"><span class="pre">raise_issue_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_with_config" title="Permalink to this definition"></a></dt>
-<dd><p>Raise an issue with config: add an issue for the config to the handle.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">handle</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_with_github_repo">
-<span class="sig-name descname"><span class="pre">raise_issue_with_github_repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_with_github_repo" title="Permalink to this definition"></a></dt>
-<dd><p>Raise an issue with config add an issue for the github_repo to the handle.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">handle</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="fairdatapipeline.raise_issue_with_submission_script">
-<span class="sig-name descname"><span class="pre">raise_issue_with_submission_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#fairdatapipeline.raise_issue_with_submission_script" title="Permalink to this definition"></a></dt>
-<dd><p>Raise an issue with submission script: add an issue for the submission_script to the handle.</p>
-<dl>
-<dt>Args:</dt><dd><div class="line-block">
-<div class="line">handle</div>
-<div class="line">issue: what the issue is as a string</div>
-<div class="line">severity: How severe the issue is as an interger from 1-10</div>
-</div>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="fairdatapipeline">
+<h1>fairdatapipeline<a class="headerlink" href="#fairdatapipeline" title="Permalink to this headline"></a></h1>
 </section>
 
 
@@ -300,7 +80,7 @@ metadata and returns path to write data product to.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../examples/SEIRS.html" class="btn btn-neutral float-left" title="SEIRS Model example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../simpleModel/index.html" class="btn btn-neutral float-right" title="simpleModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../software_checklist.html" class="btn btn-neutral float-right" title="SCRC Software checklist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
