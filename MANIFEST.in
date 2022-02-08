@@ -1,1 +1,1 @@
-recursive-include org fairdatapipeline simpleModel ext *
+recursive-include org data_pipeline_api ext *

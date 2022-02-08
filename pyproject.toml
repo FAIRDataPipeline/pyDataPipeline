@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pydatapipeline"
+name = "data-pipeline-api"
 version = "0.7.5"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
@@ -18,7 +18,7 @@ repository = "https://github.com/FAIRDataPipeline/pyDataPipeline"
 license = "GNU General Public License v3.0"
 
 packages = [
-    {include = "fairdatapipeline"}
+    {include = "data_pipeline_api"}
 ]
 
 readme = "README.md"

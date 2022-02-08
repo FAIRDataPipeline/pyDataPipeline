@@ -33,15 +33,23 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+      - name: Checkout pySimpleModel
+        uses: actions/checkout@v2
+        with:
+          repository: FAIRDataPipeline/pySimpleModel
+          path: pySimpleModel
+      - name: Move pySimpleModel
+        run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests
         run: |
           poetry install
           source .venv/bin/activate
           pip install fair-cli
+          pip install ../pySimpleModel
           fair init --ci
           fair registry start
-          fair pull simpleModel/ext/SEIRSconfig.yaml
-          fair run simpleModel/ext/SEIRSconfig.yaml
+          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run data_pipeline_api/ext/SEIRSconfig.yaml
 
           python3 -m poetry run pytest --cov=fairdatapipeline  --cov-report=xml --cov-report=term -s tests/
       - uses: codecov/codecov-action@v2

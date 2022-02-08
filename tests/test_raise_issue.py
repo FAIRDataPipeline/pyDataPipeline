@@ -3,8 +3,8 @@ import shutil
 
 import pytest
 
-import fairdatapipeline as pipeline
-import fairdatapipeline.fdp_utils as fdp_utils
+import data_pipeline_api as pipeline
+import data_pipeline_api.fdp_utils as fdp_utils
 
 
 @pytest.fixture

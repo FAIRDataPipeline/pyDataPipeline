@@ -4,7 +4,7 @@ import os
 
 import yaml
 
-from fairdatapipeline import fdp_utils
+from data_pipeline_api import fdp_utils
 
 
 def initialise(token: str, config: str, script: str) -> dict:
