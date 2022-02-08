@@ -25,7 +25,7 @@ copyright = "2021, Ryan Field, Dennis Reddyhoff"
 author = "Ryan Field, Dennis Reddyhoff"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1"
+release = "0.7.5"
 
 
 # -- General configuration ---------------------------------------------------
@@ -68,4 +68,4 @@ html_css_files = [
 
 add_module_names = False
 
-html_baseurl = "https://fairdatapipeline.github.io/pyDataPipeline"
+html_baseurl = "https://fairdatapipeline.org/pyDataPipeline"

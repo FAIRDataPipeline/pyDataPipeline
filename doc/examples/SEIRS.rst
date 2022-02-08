@@ -5,7 +5,7 @@ SEIRS Model example
    :maxdepth: 2
    :caption: Contents:
 
-The following example illustrates how to run the `SEIRS Model <https://doi.org/10.1038/s41592-020-0856-2>`_ using the Fair Data Pipeline with the :code:`pyDataPipeline` package.
+The following example illustrates how to run the `SEIRS Model <https://doi.org/10.1038/s41592-020-0856-2>`_ using the Fair Data Pipeline with the :code:`pyDataPipeline` and [pySimpleModel]() package.
 
 config.yaml
 -----------
