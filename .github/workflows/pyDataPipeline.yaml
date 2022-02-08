@@ -51,7 +51,7 @@ jobs:
           fair pull data_pipeline_api/ext/SEIRSconfig.yaml
           fair run data_pipeline_api/ext/SEIRSconfig.yaml
 
-          python3 -m poetry run pytest --cov=fairdatapipeline  --cov-report=xml --cov-report=term -s tests/
+          python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
