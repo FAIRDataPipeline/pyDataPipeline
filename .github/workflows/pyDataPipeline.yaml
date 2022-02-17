@@ -60,7 +60,7 @@ jobs:
       - name: Run Tests on Windows
         run: |
           poetry install
-          .venv\Scripts\activate.bat
+          .venv\Scripts\activate.ps1
           pip3 install fair-cli
           pip3 install ../pySimpleModel
           fair init --ci
