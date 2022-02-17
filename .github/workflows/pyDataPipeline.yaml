@@ -59,7 +59,6 @@ jobs:
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
         run: |
-          .venv\Scripts\activate.ps1
           poetry install
           pip3 install fair-cli
           pip3 install ../pySimpleModel
@@ -68,7 +67,7 @@ jobs:
           fair pull data_pipeline_api/ext/SEIRSconfig.yaml
           fair run data_pipeline_api/ext/SEIRSconfig.yaml
 
-          python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
+          poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
         if: matrix.os == 'windows-latest'
       - name: Run Tests on other OS
         run: |
