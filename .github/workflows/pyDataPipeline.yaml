@@ -60,11 +60,13 @@ jobs:
       - name: Run Tests on Windows
         shell: cmd
         run: |
+          pip3 install venv
+          pip3 install poetry
           python3 -m venv venv
           venv\Scripts\activate.bat
-          pip install .
-          pip install fair-cli
-          pip install ../pySimpleModel
+          pip3 install .
+          pip3 install fair-cli
+          pip3 install ../pySimpleModel
           fair init --ci
           fair registry start
           fair pull data_pipeline_api/ext/SEIRSconfig.yaml
