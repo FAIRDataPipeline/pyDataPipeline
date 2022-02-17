@@ -59,10 +59,10 @@ jobs:
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
         run: |
-          poetry install
-          poetry shell
+          python3 -m venv venv
+          venv\Scripts\activate.ps1
+          pip install .
           pip install fair-cli
-          fair registry install
           pip install ../pySimpleModel
           fair init --ci
           fair registry start
