@@ -37,6 +37,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           choco install wget
+          mkdir ~/.fair/registry
+          cd ~/.fair/registry
           wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
           install_registry.bat
       - name: Install Required
