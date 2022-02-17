@@ -33,6 +33,7 @@ jobs:
           fi
         shell: bash
       - name: install local registry on windows
+        shell: cmd
         if: matrix.os == 'windows-latest'
         run: |
           choco install wget
