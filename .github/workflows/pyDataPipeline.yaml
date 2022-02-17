@@ -6,8 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest] #, windows-latest]
-        python: ["3.7","3.8", "3.9"]
+        os: [windows-latest,ubuntu-20.04,macos-latest]
+        python: ["3.7"] #,"3.8", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -17,14 +17,47 @@ jobs:
           python-version: ${{ matrix.python }}
           architecture: "x64"
       - name: Install graphviz
-        run:  |
-              if [ ${{ runner.os }} == "Linux" ]; then
-                  sudo apt-get install graphviz
-              else
-                  brew install graphviz
-              fi
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get install graphviz
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              choco install graphviz
+          elif [ "$RUNNER_OS" == "Darwin" ]; then
+              brew install graphviz
+          fi
+        shell: bash
       - name: Install local registry
-        run: curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
+        run: |
+          if [ "$RUNNER_OS" != "Windows" ]; then
+              curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
+          fi
+        shell: bash
+      - name: Checkout data-registry
+        if: matrix.os == 'windows-latest'
+        uses: actions/checkout@v2
+        with:
+          repository: FAIRDataPipeline/data-registry
+          path: data-registry
+      - name: Move registry
+        if: matrix.os == 'windows-latest'
+        run: |
+              mkdir $HOME\.fair\registry
+              Move-Item -Path "data-registry\*" -Destination "$HOME/.fair/registry"
+      - name: install local registry on windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          python3 -m venv $HOME\.fair\registry\venv
+          python -m pip install --upgrade pip wheel
+          python -m pip install -r $HOME\.fair\registry\local-requirements.txt
+          $env:DJANGO_SETTINGS_MODULE="drams.local-settings"
+          $env:DJANGO_SUPERUSER_USERNAME="admin"
+          $env:DJANGO_SUPERUSER_PASSWORD="admin"
+          cd $HOME\.fair\registry
+          python3 manage.py makemigrations custom_user
+          python3 manage.py makemigrations data_management
+          python3 manage.py migrate
+          python3 manage.py collectstatic --noinput 
+          python3 manage.py createsuperuser --noinput
       - name: Install Required
         run: brew install memcached
         if: matrix.os == 'macos-latest'
@@ -40,7 +73,20 @@ jobs:
           path: pySimpleModel
       - name: Move pySimpleModel
         run: mv pySimpleModel ../pySimpleModel
-      - name: Run Tests
+      - name: Run Tests on Windows
+        run: |
+          poetry install
+          poetry shell
+          pip install fair-cli
+          pip install ../pySimpleModel
+          fair init --ci
+          fair registry start
+          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+
+          python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
+        if: matrix.os == 'windows-latest'
+      - name: Run Tests on other OS
         run: |
           poetry install
           source .venv/bin/activate
