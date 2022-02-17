@@ -58,9 +58,10 @@ jobs:
       - name: Move pySimpleModel
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
+        shell: cmd
         run: |
           python3 -m venv venv
-          venv\Scripts\activate.ps1
+          venv\Scripts\activate.bat
           pip install .
           pip install fair-cli
           pip install ../pySimpleModel
