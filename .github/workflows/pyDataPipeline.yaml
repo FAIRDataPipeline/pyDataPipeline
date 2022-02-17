@@ -58,13 +58,9 @@ jobs:
       - name: Move pySimpleModel
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
-        shell: cmd
         run: |
-          pip3 install venv
-          pip3 install poetry
-          python3 -m venv venv
-          venv\Scripts\activate.bat
-          pip3 install .
+          poetry install
+          source $VENV
           pip3 install fair-cli
           pip3 install ../pySimpleModel
           fair init --ci
