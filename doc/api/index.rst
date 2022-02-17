@@ -1,5 +1,5 @@
-fairdatapipeline
+data_pipeline_api
 ========================
 
-.. automodule:: fairdatapipeline
+.. automodule:: data_pipeline_api
     :members:

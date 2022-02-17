@@ -10,7 +10,12 @@ Welcome to pyDataPipeline a Python api to interact with the Fair Data Pipeline.
 Full documention of the pyDataPipeline is avaialable at [https://www.fairdatapipeline.org/pyDataPipeline/](https://www.fairdatapipeline.org/pyDataPipeline/)
 
 ## Installation
+pyDataPipeline can be installed from PyPi:
+```
+pip3 install data-pipeline-api
+```
 
+Or from the Repository:
 ```
 git clone https://github.com/FAIRDataPipeline/pythonFDP.git
 
@@ -28,9 +33,10 @@ Assume FDP_CONFIG_DIR, storage_locations and objects have been set by CLI tool
 import os
 import fairdatapipeline as pipeline
 
-token = os.environ.get('FDP_LOCAL_TOKEN')
-config_path = os.environ.get('FDP_CONFIG_DIR') + '/config.yaml'
-script_path = os.environ.get('FDP_CONFIG_DIR') + '/script.sh'
+token = os.environ['FDP_LOCAL_TOKEN']
+config_dir = os.environ['FDP_CONFIG_DIR']
+config_path = os.path.join(config_dir, 'config.yaml')
+script_path = os.path.join(config_dir, 'script.sh')
 
 handle = pipeline.initialise(token, config_path, script_path)
 

@@ -7,7 +7,7 @@ import platform
 import pytest
 from _pytest.fixtures import FixtureRequest
 
-import fairdatapipeline.fdp_utils as fdp_utils
+import data_pipeline_api.fdp_utils as fdp_utils
 
 
 @pytest.fixture

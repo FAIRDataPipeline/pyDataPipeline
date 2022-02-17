@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fairdatapipeline import fdp_utils
+from data_pipeline_api import fdp_utils
 
 
 def link_write(handle: dict, data_product: str) -> str:

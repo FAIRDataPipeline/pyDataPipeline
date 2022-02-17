@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "pydatapipeline"
-version = "0.4.0"
+name = "data_pipeline_api"
+version = "0.7.5"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
     "Ryan J Field <ryan.field@glasgow.ac.uk>",
@@ -18,7 +18,7 @@ repository = "https://github.com/FAIRDataPipeline/pyDataPipeline"
 license = "GNU General Public License v3.0"
 
 packages = [
-    {include = "fairdatapipeline"}
+    {include = "data_pipeline_api"}
 ]
 
 readme = "README.md"
@@ -39,15 +39,15 @@ h5py = "^3.6.0"
 PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
-black = "^21.5b1"
+pytest = "^7.0.0"
+black = "^22.1"
 mypy = "^0.931"
 flake8 = "^4.0.1"
 poetry = "^1.1.6"
-pytest-mock = "^3.6.1"
+pytest-mock = "^3.7.0"
 pytest-dependency = "^0.5.1"
 pytest-cov = "^3.0.0"
-pre-commit = "^2.16.0"
+pre-commit = "^2.17.0"
 isort = "^5.10.1"
 Sphinx = "^4.3.2"
 sphinx-rtd-theme = "^1.0.0"

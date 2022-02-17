@@ -6,7 +6,7 @@ import os
 import requests
 import yaml
 
-from fairdatapipeline import fdp_utils
+from data_pipeline_api import fdp_utils
 
 
 def search(

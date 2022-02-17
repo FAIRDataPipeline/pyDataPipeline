@@ -13,5 +13,4 @@ Welcome to pyDataPipeline's documentation!
    installation.rst
    examples/SEIRS.rst
    api/index.rst
-   simpleModel/index.rst
    software_checklist.rst
