@@ -70,6 +70,7 @@ jobs:
           poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
         if: matrix.os == 'windows-latest'
       - name: Run Tests on other OS
+        if: matrix.os != 'windows-latest'
         run: |
           poetry install
           source .venv/bin/activate
