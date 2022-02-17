@@ -32,17 +32,12 @@ jobs:
               curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
           fi
         shell: bash
-      - name: Checkout data-registry
-        if: matrix.os == 'windows-latest'
-        uses: actions/checkout@v2
-        with:
-          repository: FAIRDataPipeline/data-registry
-          path: data-registry
-      - name: Move registry
+      - name: install local registry on windows
         if: matrix.os == 'windows-latest'
         run: |
-              mkdir $HOME\.fair\registry
-              Move-Item -Path "data-registry\*" -Destination "$HOME/.fair/registry"
+          choco install wget
+          wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
+          install_registry.bat
       - name: Install Required
         run: brew install memcached
         if: matrix.os == 'macos-latest'
