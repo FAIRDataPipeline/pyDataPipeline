@@ -38,7 +38,7 @@ jobs:
         run: |
           choco install wget
           md %userprofile%\.fair\registry
-          cd %userprofile%\.fair\registry
+          cd /d %userprofile%\.fair\registry
           echo %CD%
           wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
           install_registry.bat
