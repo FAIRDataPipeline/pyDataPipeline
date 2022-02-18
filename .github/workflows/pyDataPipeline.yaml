@@ -6,8 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest] #, windows-latest]
-        python: ["3.7","3.8", "3.9"]
+        os: [windows-latest,ubuntu-20.04,macos-latest]
+        python: ["3.7"] #,"3.8", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -17,14 +17,31 @@ jobs:
           python-version: ${{ matrix.python }}
           architecture: "x64"
       - name: Install graphviz
-        run:  |
-              if [ ${{ runner.os }} == "Linux" ]; then
-                  sudo apt-get install graphviz
-              else
-                  brew install graphviz
-              fi
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get install graphviz
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              choco install graphviz
+          elif [ "$RUNNER_OS" == "Darwin" ]; then
+              brew install graphviz
+          fi
+        shell: bash
       - name: Install local registry
-        run: curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
+        run: |
+          if [ "$RUNNER_OS" != "Windows" ]; then
+              curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
+          fi
+        shell: bash
+      - name: install local registry on windows
+        shell: cmd
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install wget
+          md %userprofile%\.fair
+          cd /d %userprofile%\.fair
+          echo %CD%
+          wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
+          install_registry.bat
       - name: Install Required
         run: brew install memcached
         if: matrix.os == 'macos-latest'
@@ -40,7 +57,20 @@ jobs:
           path: pySimpleModel
       - name: Move pySimpleModel
         run: mv pySimpleModel ../pySimpleModel
-      - name: Run Tests
+      - name: Run Tests on Windows
+        run: |
+          poetry install
+          pip3 install fair-cli
+          pip3 install ../pySimpleModel
+          fair init --ci
+          fair registry start
+          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+
+          poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
+        if: matrix.os == 'windows-latest'
+      - name: Run Tests on other OS
+        if: matrix.os != 'windows-latest'
         run: |
           poetry install
           source .venv/bin/activate
