@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import shutil
@@ -146,11 +147,50 @@ def test_find_data_product(
     config = os.path.join(test_dir, "read_csv.yaml")
     handle = pipeline.initialise(token, config, script)
 
-    results = pipeline.search(handle, token, wildcard, "data_product", "name")
+    results = pipeline.search_data_products(handle, wildcard)
     res = json.loads(results)
     assert len(res) == 1
     result = fdp_utils.get_first_entry(res)
     assert wildcard in result[key]
+
+
+@pytest.mark.pipeline
+def test_find_data_product_empty_handle(
+    wildcard: str = "find",
+) -> None:
+    handle: dict = {}
+
+    results = pipeline.search_data_products(handle, wildcard)
+    res = json.loads(results)
+    assert res is None
+
+
+@pytest.mark.pipeline
+def test_find_data_product_wrong_registry(
+    token: str,
+    fconfig: str,
+    script: str,
+    test_dir: str,
+    wildcard: str = "find",
+    key: str = "name",
+) -> None:
+
+    handle = pipeline.initialise(token, fconfig, script)
+    tmp_csv = os.path.join(test_dir, "test.csv")
+    link_write = pipeline.link_write(handle, "find/csv")
+    shutil.copy(tmp_csv, link_write)
+    pipeline.finalise(token, handle)
+    config = os.path.join(test_dir, "read_csv.yaml")
+    handle = pipeline.initialise(token, config, script)
+    wrong_handle = copy.deepcopy(handle)
+    wrong_handle["yaml"]["run_metadata"]["local_data_registry_url"] = ""
+    results = pipeline.search_data_products(wrong_handle, wildcard)
+    res = json.loads(results)
+    assert res is None
+    handle["yaml"]["run_metadata"]["local_data_registry_url"] += "-error"
+    results = pipeline.search_data_products(handle, wildcard)
+    res = json.loads(results)
+    assert res is None
 
 
 @pytest.mark.pipeline
