@@ -134,7 +134,7 @@ def test_find_data_product(
     fconfig: str,
     script: str,
     test_dir: str,
-    query: str = "find",
+    wildcard: str = "find",
     key: str = "name",
 ) -> None:
 
@@ -143,15 +143,14 @@ def test_find_data_product(
     link_write = pipeline.link_write(handle, "find/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
-
     config = os.path.join(test_dir, "read_csv.yaml")
-    results = pipeline.search(
-        token, config, script, query, "data_product", "name"
-    )
+    handle = pipeline.initialise(token, config, script)
+
+    results = pipeline.search(handle, token, wildcard, "data_product", "name")
     res = json.loads(results)
     assert len(res) == 1
     result = fdp_utils.get_first_entry(res)
-    assert query in result[key]
+    assert wildcard in result[key]
 
 
 @pytest.mark.pipeline
