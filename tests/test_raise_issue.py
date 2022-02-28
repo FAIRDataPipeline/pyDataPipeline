@@ -8,6 +8,8 @@ import pytest
 import data_pipeline_api as pipeline
 import data_pipeline_api.fdp_utils as fdp_utils
 
+TEST_CSV = "test.csv"
+
 
 @pytest.fixture
 def test_dir() -> str:
@@ -116,7 +118,7 @@ def test_link_read(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
     handle = pipeline.initialise(token, config, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
@@ -140,7 +142,7 @@ def test_find_data_product(
 ) -> None:
 
     handle = pipeline.initialise(token, fconfig, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "find/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
@@ -176,7 +178,7 @@ def test_find_data_product_wrong_registry(
 ) -> None:
 
     handle = pipeline.initialise(token, fconfig, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "find/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
@@ -198,7 +200,7 @@ def test_link_read_data_product_exists(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
     handle = pipeline.initialise(token, config, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
