@@ -1,3 +1,5 @@
+import copy
+import json
 import os
 import shutil
 
@@ -5,6 +7,8 @@ import pytest
 
 import data_pipeline_api as pipeline
 import data_pipeline_api.fdp_utils as fdp_utils
+
+TEST_CSV = "test.csv"
 
 
 @pytest.fixture
@@ -27,6 +31,11 @@ def script(test_dir: str) -> str:
 @pytest.fixture
 def config(test_dir: str) -> str:
     return os.path.join(test_dir, "write_csv.yaml")
+
+
+@pytest.fixture
+def fconfig(test_dir: str) -> str:
+    return os.path.join(test_dir, "find_csv.yaml")
 
 
 @pytest.mark.pipeline
@@ -109,7 +118,7 @@ def test_link_read(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
     handle = pipeline.initialise(token, config, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)
@@ -123,11 +132,75 @@ def test_link_read(
 
 
 @pytest.mark.pipeline
+def test_find_data_product(
+    token: str,
+    fconfig: str,
+    script: str,
+    test_dir: str,
+    wildcard: str = "find",
+    key: str = "name",
+) -> None:
+
+    handle = pipeline.initialise(token, fconfig, script)
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
+    link_write = pipeline.link_write(handle, "find/csv")
+    shutil.copy(tmp_csv, link_write)
+    pipeline.finalise(token, handle)
+    config = os.path.join(test_dir, "read_csv.yaml")
+    handle = pipeline.initialise(token, config, script)
+
+    results = pipeline.search_data_products(handle, wildcard)
+    res = json.loads(results)
+    assert len(res) == 1
+    result = fdp_utils.get_first_entry(res)
+    assert wildcard in result[key]
+
+
+@pytest.mark.pipeline
+def test_find_data_product_empty_handle(
+    wildcard: str = "find",
+) -> None:
+    handle: dict = {}
+
+    results = pipeline.search_data_products(handle, wildcard)
+    res = json.loads(results)
+    assert res is None
+
+
+@pytest.mark.pipeline
+def test_find_data_product_wrong_registry(
+    token: str,
+    fconfig: str,
+    script: str,
+    test_dir: str,
+    wildcard: str = "find",
+    key: str = "name",
+) -> None:
+
+    handle = pipeline.initialise(token, fconfig, script)
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
+    link_write = pipeline.link_write(handle, "find/csv")
+    shutil.copy(tmp_csv, link_write)
+    pipeline.finalise(token, handle)
+    config = os.path.join(test_dir, "read_csv.yaml")
+    handle = pipeline.initialise(token, config, script)
+    wrong_handle = copy.deepcopy(handle)
+    wrong_handle["yaml"]["run_metadata"]["local_data_registry_url"] = ""
+    results = pipeline.search_data_products(wrong_handle, wildcard)
+    res = json.loads(results)
+    assert res is None
+    handle["yaml"]["run_metadata"]["local_data_registry_url"] += "-error"
+    results = pipeline.search_data_products(handle, wildcard)
+    res = json.loads(results)
+    assert res is None
+
+
+@pytest.mark.pipeline
 def test_link_read_data_product_exists(
     token: str, config: str, script: str, test_dir: str
 ) -> None:
     handle = pipeline.initialise(token, config, script)
-    tmp_csv = os.path.join(test_dir, "test.csv")
+    tmp_csv = os.path.join(test_dir, TEST_CSV)
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
     pipeline.finalise(token, handle)

@@ -1,10 +1,83 @@
 import datetime
+import json
 import logging
 import os
+from typing import List
 
+import requests
 import yaml
 
 from data_pipeline_api import fdp_utils
+
+
+def search_data_products(
+    handle: dict, wildcard: str, token: str = None
+) -> str:
+    """
+    search_data_products
+    wrapper function to search to search using a data_product name using a wildcard
+
+    Parameters
+    ----------
+    handle : dict
+
+    wildcard : str
+        search parameter
+    token : str, optional
+        optional token, by default None
+
+    Returns
+    -------
+    List
+        list of data products that meet the search criteria
+    """
+    return search(handle, wildcard, "data_product", "name", token=token)
+
+
+def search(
+    handle: dict,
+    wildcard: str,
+    endpoint: str,
+    key: str,
+    token: str = None,
+) -> str:
+    """
+    Reads 'read' information from handle, wildcard, endpoint and key and returns a list of items found at the endpoint where the key contains the wildcard
+
+    Args:
+        |   handle: pipeline handle
+        |   token: registry token
+        |   wildcard: string to search
+        |   key: key of the results dictionary where the wildcard is searched
+        |   endpoint: api endpoint where the search is performed
+
+    Returns:
+        |   json: a list of dictionaries where the wildcard was found
+    """
+
+    try:
+        api_version = handle["yaml"]["run_metadata"]["api_version"]
+        registry_url = handle["yaml"]["run_metadata"][
+            "local_data_registry_url"
+        ]
+    except KeyError:
+        return json.dumps(None, indent=4, sort_keys=True)
+
+    headers = fdp_utils.get_headers(token=token, api_version=api_version)
+    if not registry_url:
+        return json.dumps(None, indent=4, sort_keys=True)
+    if registry_url[-1] != "/":
+        registry_url += "/"
+    registry_url += endpoint + "/?"
+
+    response = requests.get(registry_url, headers=headers)
+    if response.status_code != 200:
+        return json.dumps(None, indent=4, sort_keys=True)
+    data = response.json()
+
+    res = [obj for obj in data["results"] if wildcard in obj[key]]  # type: ignore
+
+    return json.dumps(res, indent=4, sort_keys=True)
 
 
 def initialise(token: str, config: str, script: str) -> dict:
