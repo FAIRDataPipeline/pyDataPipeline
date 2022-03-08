@@ -6,8 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest] #,ubuntu-20.04,macos-latest]
-        python: ["3.10.2"] # "3.7" ,"3.8", "3.9",
+        os: [windows-latest,ubuntu-20.04,macos-latest]
+        python: ["3.10.2", "3.7" ,"3.8", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -34,8 +34,8 @@ jobs:
         shell: bash
       - name: install local registry on windows
         shell: cmd
-        if: ${{ matrix.os  == 'windows-latest' }}
-        # if: ${{ matrix.os  == 'windows-latest' && matrix.python != '3.10.2' }}
+        
+        if: ${{ matrix.os  == 'windows-latest' && matrix.python != '3.10.2' }}
         run: |
           choco install wget
           md %userprofile%\.fair
@@ -69,8 +69,8 @@ jobs:
           fair run data_pipeline_api/ext/SEIRSconfig.yaml
 
           poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
-        if: ${{ matrix.os  == 'windows-latest' }}
-        # if: ${{ matrix.os  == 'windows-latest' &&  matrix.python  != '3.10.2' }}    
+        
+        if: ${{ matrix.os  == 'windows-latest' &&  matrix.python  != '3.10.2' }}    
       - name: Run Tests on other OS
         if: matrix.os != 'windows-latest'
         run: |
