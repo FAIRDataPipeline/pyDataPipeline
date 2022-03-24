@@ -494,18 +494,3 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
             api_version=api_version,
         )
     return current_issue
-
-
-def resolve_read(handle: dict, data_product: str, component: str) -> None:
-    handle_yaml = handle["yaml"]
-    endpoint = handle_yaml["run_metadata"]["local_data_registry_url"]
-    read = handle_yaml["read"]
-
-    if not isinstance(read, list):
-        dummy = read
-        read = []
-        read.append(dummy)
-
-
-def resolve_write(handle: dict, data_product: str, file_type: str) -> None:
-    pass

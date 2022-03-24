@@ -1,42 +1,31 @@
+# type: ignore
+
 import logging
 import os
-from typing import Any
+from typing import Any, Tuple
+
+import numpy as np
 
 from data_pipeline_api import fdp_utils
 
 
-def link_write(handle: dict, data_product: str) -> str:
-    """Reads write information in config file, updates handle with relevant
-    metadata and returns path to write data product to.
-
-    Args:
-        |   data_product: Specified name of data product in config.
-
-    Returns:
-        |   path: Path to write data product to.
-    """
-
+def resolve_write(
+    handle: dict, data_product: str, file_type: str = None
+) -> Tuple[str, dict]:
+    # If multiple write blocks exist, find corresponding index for given DP
     # Get metadata from handle
     run_metadata = handle["yaml"]["run_metadata"]
     datastore = run_metadata["write_data_store"]
-
     index = 0
-
-    if "write" not in handle["yaml"].keys():
-        raise ValueError(
-            "Error: Write has not been specified in the given config file"
-        )
-
-    # If multiple write blocks exist, find corresponding index for given DP
     for i in enumerate(handle["yaml"]["write"]):
         if i[1]["data_product"] == data_product:
             index = i[0]
-
+    if file_type is None:
+        file_type = "netcdf"
     # Get metadata from config
     write = handle["yaml"]["write"][index]
     write_data_product = write["data_product"]
     write_version = write["use"]["version"]
-    file_type = write["file_type"]
     description = write["description"]
     write_namespace = run_metadata["default_output_namespace"]
     write_public = run_metadata["public"]
@@ -56,7 +45,7 @@ def link_write(handle: dict, data_product: str) -> str:
         os.makedirs(directory)
 
     # Create metadata dict
-    output_dict = {
+    return path, {
         "data_product": data_product,
         "use_data_product": write_data_product,
         "use_component": None,
@@ -67,6 +56,25 @@ def link_write(handle: dict, data_product: str) -> str:
         "component_description": None,
         "public": write_public,
     }
+
+
+def link_write(handle: dict, data_product: str) -> str:
+    """Reads write information in config file, updates handle with relevant
+    metadata and returns path to write data product to.
+
+    Args:
+        |   data_product: Specified name of data product in config.
+
+    Returns:
+        |   path: Path to write data product to.
+    """
+
+    if "write" not in handle["yaml"].keys():
+        raise ValueError(
+            "Error: Write has not been specified in the given config file"
+        )
+
+    path, output_dict = resolve_write(handle, data_product)
 
     # If output exists in handle, append new metadata, otherwise create dict
     if "output" in handle:
@@ -79,35 +87,7 @@ def link_write(handle: dict, data_product: str) -> str:
     return path
 
 
-def link_read(handle: dict, data_product: str) -> str:
-    """Reads 'read' information in config file, updates handle with relevant
-    metadata and returns path to write data product to.
-
-    Args:
-        |   data_product: Specified name of data product in config.
-
-    Returns:
-        |   path: Path to write data product to.
-    """
-
-    # If data product is already in handle, return path
-    if "input" in handle:
-        for index in handle["input"].keys():
-            if handle["input"][index]["data_product"] == data_product:
-                return handle["input"][index]["path"]
-    if "read" not in handle["yaml"].keys():
-        raise ValueError(
-            "Error: Read has not been specified in the given config file"
-        )
-
-    # Check if data product is in config yaml
-    read_list = [
-        i[1]["data_product"] for i in enumerate(handle["yaml"]["read"])
-    ]
-
-    if data_product not in read_list:
-        logging.info("Read information for data product not in config")
-
+def resolve_read(handle: dict, data_product: str) -> Tuple[str, dict]:
     index = 0
     # Get index for given data product
     for i in enumerate(handle["yaml"]["read"]):
@@ -197,7 +177,7 @@ def link_read(handle: dict, data_product: str) -> str:
     component = use["component"] if "component" in use else None
 
     # Write to handle and return path
-    input_dict = {
+    return path, {
         "data_product": data_product,
         "use_data_product": data_product,
         "use_component": component,
@@ -206,6 +186,38 @@ def link_read(handle: dict, data_product: str) -> str:
         "path": path,
         "component_url": component_url,
     }
+
+
+def link_read(handle: dict, data_product: str) -> str:
+    """Reads 'read' information in config file, updates handle with relevant
+    metadata and returns path to write data product to.
+
+    Args:
+        |   data_product: Specified name of data product in config.
+
+    Returns:
+        |   path: Path to write data product to.
+    """
+
+    # If data product is already in handle, return path
+    if "input" in handle:
+        for index in handle["input"].keys():
+            if handle["input"][index]["data_product"] == data_product:
+                return handle["input"][index]["path"]
+    if "read" not in handle["yaml"].keys():
+        raise ValueError(
+            "Error: Read has not been specified in the given config file"
+        )
+
+    # Check if data product is in config yaml
+    read_list = [
+        i[1]["data_product"] for i in enumerate(handle["yaml"]["read"])
+    ]
+
+    if data_product not in read_list:
+        logging.info("Read information for data product not in config")
+
+    path, input_dict = resolve_read(handle, data_product)
 
     if "input" in handle:
         index = "input_" + str(len(handle["input"]))
@@ -253,6 +265,38 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
     if data_product not in read_list:
         logging.info("Read information for data product not in config")
 
+    read_metadata = resolve_read(handle, data_product)
+    # Get metadata ------------------------------------------------------------
+
+    write_data_product = read_metadata["data_product"]  # noqa: F841
+    write_version = read_metadata["version"]  # noqa: F841
+    write_namespace = read_metadata["namespace"]  # noqa: F841
+    write_public = read_metadata["public"]  # noqa: F841
+    data_product_decription = read_metadata["description"]  # noqa: F841
+    path = read_metadata["path"]  # noqa: F841
+
+    if not os.path.exists(path):
+        raise FileNotFoundError("File missing from data store")
+
+    # read netcdf file
+
+
+# Extract data object
+
+
+# Extract dimension names and make sure they're in the right order
+
+
+# Attach dimension names to the object
+
+
+# Attach remaining list elements as attributes
+
+
+# Write to handle ---------------------------------------------------------
+
+# If data product is already recorded in handle return index
+
 
 def write_array(
     array: Any,
@@ -296,4 +340,85 @@ def write_array(
     which can be used to raise an issue if necessary
     """
 
-    pass
+    if "write" not in handle["yaml"].keys():
+        raise ValueError(
+            "Error: Write has not been specified in the given config file"
+        )
+
+    write_metadata = resolve_write(handle, data_product, file_type="netcdf")
+    # Get metadata ------------------------------------------------------------
+
+    write_data_product = write_metadata["data_product"]  # noqa: F841
+    write_version = write_metadata["version"]  # noqa: F841
+    write_namespace = write_metadata["namespace"]  # noqa: F841
+    write_public = write_metadata["public"]  # noqa: F841
+    data_product_decription = write_metadata["description"]  # noqa: F841
+    path = write_metadata["path"]  # noqa: F841
+
+    if not isinstance(array, np.array):
+        raise TypeError(f"{array} must be an array")
+        # Check dimensions class
+    if dimension_names:
+        if not all(
+            list(map(lambda x: isinstance(x, np.array), dimension_names))
+        ):
+            raise TypeError("Elements of dimension_names must be arrays")
+            # Check number of dimensions
+        # if (length(dim(array)) != length(dimension_names))
+        if len(array) != len(array):
+            raise ValueError(
+                "Length of dimension_names does not equal number of dimensions in array"
+            )
+
+        # Check length of elements in each dimension
+        if len(array) != len(array):
+            # if (any(unname(unlist(lapply(dimension_names, length))) != dim(array)))
+            raise ValueError(
+                "Number of elements in dimension_names does not equal number of dimensions in array"
+            )
+    parentdir = os.path.dirname(os.path.abspath(path))
+
+    # Write hdf5 file ---------------------------------------------------------
+
+    # Generate directory structure
+    if not os.path.dirname(parentdir):
+        os.makedirs(parentdir, exist_ok=True)
+
+
+# Write hdf5 file
+
+
+# Generate internal structure
+
+# This structure needs to be added
+
+# If the structure doesn't exist make it
+
+# Update current structure
+
+# Attach data
+
+# Dimension names and titles ----------------------------------------------
+
+
+# Attach dimension titles
+
+
+# Attach dimension names
+
+
+# Dimension values and units ----------------------------------------------
+
+# Attach dimension values
+
+
+# Attach dimension units
+
+
+# Attach units
+
+
+# Write to handle ---------------------------------------------------------
+
+
+# Return handle index -----------------------------------------------------
