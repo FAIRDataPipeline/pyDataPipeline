@@ -1,6 +1,8 @@
 import logging
 import os
 
+from typying import Any
+
 from data_pipeline_api import fdp_utils
 
 
@@ -41,7 +43,7 @@ def link_write(handle: dict, data_product: str) -> str:
     write_public = run_metadata["public"]
 
     # Create filename for path
-    filename = "dat-" + fdp_utils.random_hash() + "." + file_type
+    filename = f"dat-{fdp_utils.random_hash()}.{file_type}"
 
     # Get path
     path = os.path.join(
@@ -214,3 +216,85 @@ def link_read(handle: dict, data_product: str) -> str:
         handle["input"]["input_0"] = input_dict
 
     return path
+
+
+def read_array(handle: dict, data_product: str, component: str) -> Any:
+    """
+    read_array  Function to read array type data from hdf5 file.
+
+    Parameters
+    ----------
+    handle : _type_
+        an object containing metadata required by the Data Pipeline API
+    data_product : str
+        a string specifying a data product
+    component : str
+        component a string specifying a data product component
+
+    Returns
+    -------
+    Any
+        Returns an array with title, units, values and units attributes, if available
+    """
+    # If data product is already in handle, return path
+    if "input" in handle:
+        for index in handle["input"].keys():
+            if handle["input"][index]["data_product"] == data_product:
+                return handle["input"][index]["path"]
+    if "read" not in handle["yaml"].keys():
+        raise ValueError(
+            "Error: Read has not been specified in the given config file"
+        )
+
+    # Check if data product is in config yaml
+    read_list = [
+        i[1]["data_product"] for i in enumerate(handle["yaml"]["read"])
+    ]
+
+    if data_product not in read_list:
+        logging.info("Read information for data product not in config")
+
+
+def write_array(
+    array: Any,
+    handle: dict,
+    data_product: str,
+    component: str,
+    description: str,
+    dimension_names: list,
+    dimension_values: list,
+    dimension_units: list,
+    units: str,
+) -> Any:
+    """
+    write_array  Function to populate netcdf file with array type data.
+
+    Parameters
+    ----------
+    array : _type_
+        an array containing the data
+    handle : _type_
+        an object containing metadata required by the data pipeline api
+    data_product : str
+        a string specifying  the name of the data product
+    component : str
+        string specifying a location within the netcdf file
+    description : str
+        string describing the data product component
+    dimension_names : list
+        where each element is a vector containing the labels associated with a particular dimension (e.g. element 1 corresponds to dimension 1, which corresponds to row names) and the name of each element describes the contents of each dimension (e.g. age classes).
+    dimension_values : list
+         (optional) a list of values corresponding to each dimension (e.g. list element 2 corresponds to columns)
+    dimension_units : list
+        (optional) a list of units corresponding to each dimension (e.g. list element 2 corresponds to columns)
+    units : str
+        (optional) a string specifying the units of the data as a whole
+
+    Returns
+    -------
+    Any
+         Returns a handle index associated with the just written component,
+    which can be used to raise an issue if necessary
+    """
+
+    pass
