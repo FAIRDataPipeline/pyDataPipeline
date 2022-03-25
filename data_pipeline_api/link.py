@@ -20,8 +20,8 @@ def resolve_write(
     for i in enumerate(handle["yaml"]["write"]):
         if i[1]["data_product"] == data_product:
             index = i[0]
-    if file_type is None:
-        file_type = "netcdf"
+    # if file_type is None:
+    #     file_type = "netcdf"
     # Get metadata from config
     write = handle["yaml"]["write"][index]
     write_data_product = write["data_product"]
