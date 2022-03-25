@@ -1,5 +1,3 @@
-# type: ignore
-
 import logging
 import os
 from typing import Any, Tuple
@@ -20,8 +18,8 @@ def resolve_write(
     for i in enumerate(handle["yaml"]["write"]):
         if i[1]["data_product"] == data_product:
             index = i[0]
-    # if file_type is None:
-    #     file_type = "netcdf"
+    if file_type is None:
+        file_type = "netcdf"
     # Get metadata from config
     write = handle["yaml"]["write"][index]
     write_data_product = write["data_product"]
@@ -265,7 +263,7 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
     if data_product not in read_list:
         logging.info("Read information for data product not in config")
 
-    read_metadata = resolve_read(handle, data_product)
+    path, read_metadata = resolve_read(handle, data_product)
     # Get metadata ------------------------------------------------------------
 
     write_data_product = read_metadata["data_product"]  # noqa: F841
@@ -345,7 +343,9 @@ def write_array(
             "Error: Write has not been specified in the given config file"
         )
 
-    write_metadata = resolve_write(handle, data_product, file_type="netcdf")
+    path, write_metadata = resolve_write(
+        handle, data_product, file_type="netcdf"
+    )
     # Get metadata ------------------------------------------------------------
 
     write_data_product = write_metadata["data_product"]  # noqa: F841
