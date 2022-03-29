@@ -3,6 +3,7 @@ import os
 from typing import Any, Tuple
 
 import numpy as np
+from netCDF4 import Dataset
 
 from data_pipeline_api import fdp_utils
 
@@ -18,8 +19,8 @@ def resolve_write(
     for i in enumerate(handle["yaml"]["write"]):
         if i[1]["data_product"] == data_product:
             index = i[0]
-    if file_type is None:
-        file_type = "netcdf"
+    # if file_type is None:
+    #     file_type = "netcdf"
     # Get metadata from config
     write = handle["yaml"]["write"][index]
     write_data_product = write["data_product"]
@@ -267,15 +268,18 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
     # Get metadata ------------------------------------------------------------
 
     write_data_product = read_metadata["data_product"]  # noqa: F841
-    write_version = read_metadata["version"]  # noqa: F841
-    write_namespace = read_metadata["namespace"]  # noqa: F841
-    write_public = read_metadata["public"]  # noqa: F841
-    data_product_decription = read_metadata["description"]  # noqa: F841
+    write_version = read_metadata["use_version"]  # noqa: F841
+    write_namespace = read_metadata["use_namespace"]  # noqa: F841
+    # write_public = read_metadata["public"]  # noqa: F841
+    # data_product_decription = read_metadata["description"]  # noqa: F841
     path = read_metadata["path"]  # noqa: F841
 
     if not os.path.exists(path):
         raise FileNotFoundError("File missing from data store")
 
+    _ = Dataset("test.nc", "w", format="NETCDF4")
+
+    return path
     # read netcdf file
 
 
@@ -347,7 +351,7 @@ def write_array(
         handle, data_product, file_type="netcdf"
     )
     # Get metadata ------------------------------------------------------------
-
+    return False
     write_data_product = write_metadata["data_product"]  # noqa: F841
     write_version = write_metadata["version"]  # noqa: F841
     write_namespace = write_metadata["namespace"]  # noqa: F841
@@ -355,7 +359,7 @@ def write_array(
     data_product_decription = write_metadata["description"]  # noqa: F841
     path = write_metadata["path"]  # noqa: F841
 
-    if not isinstance(array, np.array):
+    if not isinstance(array, Dataset):
         raise TypeError(f"{array} must be an array")
         # Check dimensions class
     if dimension_names:
@@ -383,6 +387,8 @@ def write_array(
     # Generate directory structure
     if not os.path.dirname(parentdir):
         os.makedirs(parentdir, exist_ok=True)
+
+    return False
 
 
 # Write hdf5 file
