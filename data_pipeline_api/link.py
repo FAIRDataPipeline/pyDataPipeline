@@ -22,6 +22,8 @@ def resolve_write(
         file_type = "netcdf"
     # Get metadata from config
     write = handle["yaml"]["write"][index]
+    if write["file_type"]:
+        file_type = write["file_type"]
     write_data_product = write["data_product"]
     write_version = write["use"]["version"]
     description = write["description"]
