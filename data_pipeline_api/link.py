@@ -28,7 +28,8 @@ def resolve_write(
     description = write["description"]
     write_namespace = run_metadata["default_output_namespace"]
     write_public = run_metadata["public"]
-
+    if write["file_type"]:
+        file_type = write["file_type"]
     # Create filename for path
     filename = f"dat-{fdp_utils.random_hash()}.{file_type}"
 
