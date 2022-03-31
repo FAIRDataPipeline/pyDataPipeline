@@ -1,8 +1,17 @@
 import os
 
+import netCDF4
 import pytest
 
 import data_pipeline_api.fdp_utils as fdp_utils
+
+
+@pytest.fixture
+def test_dataset() -> netCDF4.Dataset:
+    path = os.curdir
+    if os.path.exists(f"{path}test.nc"):
+        os.remove(f"{path}test.nc")
+    return netCDF4.Dataset(f"{path}test.nc", "w", format="NETCDF4")
 
 
 @pytest.fixture

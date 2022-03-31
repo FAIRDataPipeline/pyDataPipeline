@@ -498,15 +498,41 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
 
 
 def create_group(root_group: netCDF4.Group, group_name: str) -> None:
+    """
+    create_group
+    creates a group inside a netcdf file
+
+    Parameters
+    ----------
+    root_group : netCDF4.Group
+        root group, the new group will be a child of this one
+    group_name : str
+        name of the child group
+    """
     _ = root_group.createGroup(group_name)
 
 
 def create_variable_in_group(
     group: netCDF4.Group,
     variables_name: str,
-    variable_type: str,
     variable_data: Any,
+    variable_type: str = "f",
 ) -> None:
+    """
+    create_variable_in_group
+    creates a variable inside a group, i.e. x=[1,2,3]
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : str
+        name of the variable
+    variable_data : Any
+        data
+    variable_type : str, optional
+        data type of the data, by default "f"
+    """
     var_dim = "dim"
     size = len(variable_data)
     xdim = group.createDimension(var_dim, size)
@@ -514,39 +540,36 @@ def create_variable_in_group(
     xdim_v[:] = variable_data
 
 
-def create_1d_variable_in_group(
-    group: netCDF4.Group,
-    variable_name: str,
-    variable_xdata: Any,
-    variable_ydata: Any,
-    variable_xname: str = "X",
-    variable_xname_type: str = "f",
-    variable_type: str = "f",
-) -> None:
-    if len(variable_ydata) == len(variable_xdata):
-
-        var_dim = variable_xname + "_dim"
-        size = len(variable_ydata)
-
-        xdim = group.createDimension(var_dim, size)
-        xdim_v = group.createVariable(
-            variable_xname, variable_xname_type, xdim.name
-        )
-        xdim_v[:] = variable_xdata
-
-        data_v = group.createVariable(variable_name, variable_type, xdim.name)
-        data_v[:] = variable_ydata
-
-
 def create_1d_variables_in_group(
     group: netCDF4.Group,
     variables_name: list,
     variable_xdata: Any,
-    variables_ydata: list,
-    variables_type: list,
+    data: list,
+    data_types: list,
     variable_xname: str = "X",
     variable_xname_type: str = "f",
 ) -> None:
+    """
+    create_1d_variables_in_group
+    given a list of variables in the form data=f(x) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent component
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+         name of the x component, by default "X"
+    variable_xname_type : str, optional
+         type of the x component, by default "f"
+    """
     var_dim = variable_xname + "_dim"
     size = len(variable_xdata)
 
@@ -555,6 +578,148 @@ def create_1d_variables_in_group(
         variable_xname, variable_xname_type, xdim.name
     )
     xdim_v[:] = variable_xdata
+
     for i, name in enumerate(variables_name):
-        data_v = group.createVariable(name, variables_type[i], xdim.name)
-        data_v[:] = variables_ydata[i]
+        data_v = group.createVariable(name, data_types[i], xdim.name)
+        data_v[:] = data[i]
+
+
+def create_2d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_xdata: Any,
+    variable_ydata: Any,
+    data: list,
+    data_types: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+    variable_yname: str = "Y",
+    variable_yname_type: str = "f",
+) -> None:
+    """
+    create_2d_variables_in_group
+    given a list of variables in the form data=f(x,y) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent component
+    variable_ydata : Any
+        y indipendent component
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+        name of the x component, by default "X"
+    variable_xname_type : str, optional
+        type of the x component, by default "f"
+    variable_yname : str, optional
+        name of the y component, by default "Y"
+    variable_yname_type : str, optional
+        type of the y component, by default "f"
+    """
+    x_dim = variable_xname + "_dim"
+    size = len(variable_xdata)
+
+    xdim = group.createDimension(x_dim, size)
+    xdim_v = group.createVariable(
+        variable_xname, variable_xname_type, xdim.name
+    )
+    y_dim = variable_yname + "_dim"
+    size = len(variable_ydata)
+
+    ydim = group.createDimension(y_dim, size)
+    ydim_v = group.createVariable(
+        variable_yname, variable_yname_type, ydim.name
+    )
+    ydim_v[:] = variable_ydata
+    for i, name in enumerate(variables_name):
+        data_v = group.createVariable(
+            name, data_types[i], (xdim.name, ydim.name)
+        )
+        data_v[:] = data[i]
+
+
+def create_3d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_xdata: Any,
+    variable_ydata: Any,
+    variable_zdata: Any,
+    data: list,
+    data_types: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+    variable_yname: str = "Y",
+    variable_yname_type: str = "f",
+    variable_zname: str = "Z",
+    variable_zname_type: str = "f",
+) -> None:
+    """
+    create_3d_variables_in_group
+    given a list of variables in the form data=f(x,y,z) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent component
+    variable_ydata : Any
+        y indipendent component
+    variable_zdata : Any
+        z indipendend component
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+        name of the x component, by default "X"
+    variable_xname_type : str, optional
+        type of the x component, by default "f"
+    variable_yname : str, optional
+        name of the y component, by default "Y"
+    variable_yname_type : str, optional
+        type of the y component, by default "f"
+    variable_zname : str, optional
+        name of the z component, by default "Z"
+    variable_zname_type : str, optional
+     type of the z component, by default "f"
+    """
+    x_dim = variable_xname + "_dim"
+    size = len(variable_xdata)
+
+    xdim = group.createDimension(x_dim, size)
+    xdim_v = group.createVariable(
+        variable_xname, variable_xname_type, xdim.name
+    )
+
+    y_dim = variable_yname + "_dim"
+
+    size = len(variable_ydata)
+    ydim = group.createDimension(y_dim, size)
+    ydim_v = group.createVariable(
+        variable_yname, variable_yname_type, ydim.name
+    )
+    ydim_v[:] = variable_ydata
+
+    z_dim = variable_zname + "_dim"
+    size = len(variable_zdata)
+    zdim = group.createDimension(z_dim, size)
+    zdim_v = group.createVariable(
+        variable_zname, variable_zname_type, zdim.name
+    )
+    zdim_v[:] = variable_zdata
+
+    for i, name in enumerate(variables_name):
+        data_v = group.createVariable(
+            name, data_types[i], (xdim.name, ydim.name, zdim.name)
+        )
+        data_v[:] = data[i]
