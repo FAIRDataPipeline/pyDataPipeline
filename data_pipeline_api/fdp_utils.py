@@ -10,6 +10,7 @@ from typing import Any, Optional
 # from typing import BinaryIO, Union
 from urllib.parse import urlsplit
 
+import netCDF4
 import requests
 import yaml
 
@@ -494,3 +495,66 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
             api_version=api_version,
         )
     return current_issue
+
+
+def create_group(root_group: netCDF4.Group, group_name: str) -> None:
+    _ = root_group.createGroup(group_name)
+
+
+def create_variable_in_group(
+    group: netCDF4.Group,
+    variables_name: str,
+    variable_type: str,
+    variable_data: Any,
+) -> None:
+    var_dim = "dim"
+    size = len(variable_data)
+    xdim = group.createDimension(var_dim, size)
+    xdim_v = group.createVariable(variables_name, variable_type, xdim.name)
+    xdim_v[:] = variable_data
+
+
+def create_1d_variable_in_group(
+    group: netCDF4.Group,
+    variable_name: str,
+    variable_xdata: Any,
+    variable_ydata: Any,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+    variable_type: str = "f",
+) -> None:
+    if len(variable_ydata) == len(variable_xdata):
+
+        var_dim = variable_xname + "_dim"
+        size = len(variable_ydata)
+
+        xdim = group.createDimension(var_dim, size)
+        xdim_v = group.createVariable(
+            variable_xname, variable_xname_type, xdim.name
+        )
+        xdim_v[:] = variable_xdata
+
+        data_v = group.createVariable(variable_name, variable_type, xdim.name)
+        data_v[:] = variable_ydata
+
+
+def create_1d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_xdata: Any,
+    variables_ydata: list,
+    variables_type: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+) -> None:
+    var_dim = variable_xname + "_dim"
+    size = len(variable_xdata)
+
+    xdim = group.createDimension(var_dim, size)
+    xdim_v = group.createVariable(
+        variable_xname, variable_xname_type, xdim.name
+    )
+    xdim_v[:] = variable_xdata
+    for i, name in enumerate(variables_name):
+        data_v = group.createVariable(name, variables_type[i], xdim.name)
+        data_v[:] = variables_ydata[i]

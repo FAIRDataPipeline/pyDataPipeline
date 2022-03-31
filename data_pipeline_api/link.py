@@ -2,8 +2,8 @@ import logging
 import os
 from typing import Any, Tuple
 
+import netCDF4  # noqa: F401
 import numpy as np
-from netCDF4 import Dataset
 
 from data_pipeline_api import fdp_utils
 
@@ -19,8 +19,7 @@ def resolve_write(
     for i in enumerate(handle["yaml"]["write"]):
         if i[1]["data_product"] == data_product:
             index = i[0]
-    # if file_type is None:
-    #     file_type = "netcdf"
+
     # Get metadata from config
     write = handle["yaml"]["write"][index]
     write_data_product = write["data_product"]
@@ -278,7 +277,7 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
     if not os.path.exists(path):
         raise FileNotFoundError("File missing from data store")
 
-    _ = Dataset("test.nc", "w", format="NETCDF4")
+    _ = netCDF4.Dataset("test.nc", "w", format="NETCDF4")
 
     return path
     # read netcdf file
@@ -360,7 +359,7 @@ def write_array(
     data_product_decription = write_metadata["description"]  # noqa: F841
     path = write_metadata["path"]  # noqa: F841
 
-    if not isinstance(array, Dataset):
+    if not isinstance(array, np.ndarray):
         raise TypeError(f"{array} must be an array")
         # Check dimensions class
     if dimension_names:
@@ -389,13 +388,21 @@ def write_array(
     if not os.path.dirname(parentdir):
         os.makedirs(parentdir, exist_ok=True)
 
+    # if directory:= ox.exist(path):
+    #     pass
+    # return False
+
+    # Write hdf5 file
+    _ = netCDF4.Dataset(path, "w", format="NETCDF4")
+
+    # Generate internal structure
+    if component[-1] == "/":
+        parentdir = path.join(parentdir, component.split("/")[0])
+    else:
+        parentdir = path.join(parentdir, component)
+
     return False
 
-
-# Write hdf5 file
-
-
-# Generate internal structure
 
 # This structure needs to be added
 
@@ -426,6 +433,18 @@ def write_array(
 
 
 # Write to handle ---------------------------------------------------------
+# handle = {
+#     "data_product": data_product,
+#     "use_data_product": data_product,
+#     "use_component": component,
+#     "use_version": version,
+#     "use_namespace": namespace,
+#     "path": path,
+#     "component_url": component_url,
+#     "data_product_description": data_product_description,
+#     "component_description": component_description,
+#     "public": public,
+# }
 
 
 # Return handle index -----------------------------------------------------
