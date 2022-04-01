@@ -34,3 +34,8 @@ def script(test_dir: str) -> str:
 @pytest.fixture
 def config(test_dir: str) -> str:
     return os.path.join(test_dir, "write_csv.yaml")
+
+
+@pytest.fixture
+def read_config(test_dir: str) -> str:
+    return os.path.join(test_dir, "read_csv.yaml")

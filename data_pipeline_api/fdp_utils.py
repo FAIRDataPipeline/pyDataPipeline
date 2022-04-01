@@ -124,9 +124,8 @@ def extract_id(url: str) -> str:
     Returns:
         |   str: id derrived from the url
     """
-
     split_url_path = urlsplit(url).path.split("/")
-    if not split_url_path:
+    if len(split_url_path) < 1:
         raise IndexError(f"Unable to extract ID from registry URL: {url}")
     return [s for s in split_url_path if s != ""][-1]
 

@@ -46,6 +46,17 @@ def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
 
 
 @pytest.mark.issue
+def test_raise_issue_by_index_read(
+    token: str, read_config: str, script: str
+) -> None:
+    handle = pipeline.initialise(token, read_config, script)
+    link_read = pipeline.link_read(handle, "test/csv")
+    index = pipeline.get_handle_index_from_path(handle, link_read)
+    pipeline.raise_issue_by_index(handle, index, "Test Issue", 7)
+    assert handle["issues"]["issue_0"]["use_data_product"] == "test/csv"
+
+
+@pytest.mark.issue
 def test_raise_issue_by_type(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     with pytest.raises(ValueError):
