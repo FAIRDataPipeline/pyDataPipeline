@@ -305,7 +305,7 @@ def test_get_entry_users(url: str, token: str) -> None:
 )
 def test_url_split(fields: str) -> None:
     """
-    test_url_split this property test is useful to demonstrate that fdp_utils.extract_id does not need a check on being None but on its length.
+    test_url_split this property test is useful to demonstrate that fdp_utils.extract_id does not need a check on being None but being empty ''.
 
     Parameters
     ----------
@@ -314,7 +314,12 @@ def test_url_split(fields: str) -> None:
     """
     split_url_path = urlsplit(fields).path.split("/")
     assert split_url_path is not None
-    assert [s for s in split_url_path if s != ""][-1] is not None
+    assert len([s for s in split_url_path if s != ""]) != 0
+
+
+def test_url_split_will_fail(url: str = "") -> None:
+    with pytest.raises(IndexError):
+        fdp_utils.extract_id(url)
 
 
 @pytest.mark.apiversion
