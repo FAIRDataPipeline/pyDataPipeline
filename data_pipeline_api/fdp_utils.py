@@ -512,6 +512,28 @@ def create_group(root_group: netCDF4.Group, group_name: str) -> None:
     _ = root_group.createGroup(group_name)
 
 
+def create_nested_groups(root_group: netCDF4.Group, path: str) -> None:
+    """
+    create_nested_groups
+    creates nested groups inside a netcdf file
+
+    Parameters
+    ----------
+    root_group : netCDF4.Group
+        root group, the new group will be a child of this one
+    path : str
+        nested groups in the form first/second/third/
+    """
+
+    groups = [grp for grp in path.split("/") if grp != ""]
+    count = 0
+    while count < len(groups):
+        current = groups[count]
+        create_group(root_group, current)
+        root_group = root_group[current]
+        count += 1
+
+
 def create_variable_in_group(
     group: netCDF4.Group,
     variables_name: str,

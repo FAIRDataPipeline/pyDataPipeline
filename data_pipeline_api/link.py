@@ -369,17 +369,16 @@ def write_array(
             raise TypeError("Elements of dimension_names must be arrays")
             # Check number of dimensions
         # if (length(dim(array)) != length(dimension_names))
-        if len(array) != len(array):
+        if len(array) != len(dimension_names):
             raise ValueError(
                 "Length of dimension_names does not equal number of dimensions in array"
             )
 
         # Check length of elements in each dimension
-        if len(array) != len(array):
-            # if (any(unname(unlist(lapply(dimension_names, length))) != dim(array)))
-            raise ValueError(
-                "Number of elements in dimension_names does not equal number of dimensions in array"
-            )
+        # if any([ for i in dimension_names if check := dimension_names[i] == len(array)]):
+        #     raise ValueError(
+        #         "Number of elements in dimension_names does not equal number of dimensions in array"
+        #     )
     parentdir = os.path.dirname(os.path.abspath(path))
 
     # Write hdf5 file ---------------------------------------------------------
@@ -401,7 +400,8 @@ def write_array(
     else:
         parentdir = path.join(parentdir, component)
 
-    return False
+        # if group does not exist in Dataset:
+        # create_group(root_group)
 
 
 # This structure needs to be added

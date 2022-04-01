@@ -13,6 +13,7 @@ from data_pipeline_api.fdp_utils import (
     create_2d_variables_in_group,
     create_3d_variables_in_group,
     create_group,
+    create_nested_groups,
     create_variable_in_group,
 )
 
@@ -105,6 +106,15 @@ def test_netcdf_write_wrappers(
         assert var[0] in test_dataset[group_name].variables.keys()
         assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
         assert test_dataset[group_name]["2cd"][:].shape == (nx, ny)
+
+    # test creation of nest groups
+    path = "/1/2/3/"
+    create_nested_groups(test_dataset, path)
+    groups = [grp for grp in path.split("/") if grp != ""]
+    new_dts = test_dataset
+    for grp in groups:
+        assert grp in new_dts.groups.keys()
+        new_dts = new_dts[grp]
 
 
 @pytest.mark.pipeline
