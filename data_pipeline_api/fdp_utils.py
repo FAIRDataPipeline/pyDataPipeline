@@ -603,10 +603,6 @@ def create_1d_variables_in_group(
             f"failed to create dimension. {var_dim} already exists inside {group}"
         )
     xdim = group.createDimension(var_dim, size)
-    if variable_xname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_xname} already exists inside {group}"
-        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
@@ -667,10 +663,6 @@ def create_2d_variables_in_group(
             f"failed to create dimension. {x_dim} already exists inside {group}"
         )
     xdim = group.createDimension(x_dim, size)
-    if variable_xname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_xname} already exists inside {group}"
-        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
@@ -682,10 +674,6 @@ def create_2d_variables_in_group(
         )
 
     ydim = group.createDimension(y_dim, size)
-    if variable_yname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_yname} already exists inside {group}"
-        )
     ydim_v = group.createVariable(
         variable_yname, variable_yname_type, ydim.name
     )
@@ -757,10 +745,6 @@ def create_3d_variables_in_group(
         )
 
     xdim = group.createDimension(x_dim, size)
-    if variable_xname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_xname} already exists inside {group}"
-        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
@@ -773,10 +757,6 @@ def create_3d_variables_in_group(
             f"failed to create dimension. {y_dim} already exists inside {group}"
         )
     ydim = group.createDimension(y_dim, size)
-    if variable_yname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_yname} already exists inside {group}"
-        )
     ydim_v = group.createVariable(
         variable_yname, variable_yname_type, ydim.name
     )
@@ -789,10 +769,6 @@ def create_3d_variables_in_group(
             f"failed to create dimension. {z_dim} already exists inside {group}"
         )
     zdim = group.createDimension(z_dim, size)
-    if variable_zname in group.variables.keys():
-        raise ValueError(
-            f"failed to create variable. {variable_zname} already exists inside {group}"
-        )
     zdim_v = group.createVariable(
         variable_zname, variable_zname_type, zdim.name
     )

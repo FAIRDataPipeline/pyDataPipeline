@@ -76,22 +76,9 @@ def test_create_1d_variables(
     assert len(test_dataset[group_name]["cos1"][:]) == len(xs)
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize(
     ("args"),
-    [
-        (
-            ("sin1", "sin1"),
-            ("xx", "xxbis"),
-            ("x3", "x3"),
-            ("y3", "y3"),
-            ("z3", "z3"),
-            ("data3d", "data3d"),
-            ("x2", "x2"),
-            ("y2", "y2"),
-            ("data2d", "data2d"),
-        ),
-    ],
+    [("x", "sin"), ("xx", "sin")],
 )
 @pytest.mark.netcdf
 def test_create_1d_variables_already_exists_should_fail(
@@ -108,12 +95,12 @@ def test_create_1d_variables_already_exists_should_fail(
         xs,
         [sins, coss],
         ["f", "f"],
-        variable_xname=args[0],
+        variable_xname="x",
     )
     with pytest.raises(ValueError):
         create_1d_variables_in_group(
             test_dataset[group_name],
-            ["sin", "cos"],
+            [args[1], "cos"],
             xs,
             [sins, coss],
             ["f", "f"],
@@ -151,21 +138,13 @@ def test_create_3d_variable(
 
 
 @pytest.mark.netcdf
-@pytest.mark.skip
 @pytest.mark.parametrize(
     ("args"),
     [
-        (
-            ("sin1", "sin1"),
-            ("xx", "xxbis"),
-            ("x3", "x3"),
-            ("y3", "y3"),
-            ("z3", "z3"),
-            ("data3d", "data3d"),
-            ("x2", "x2"),
-            ("y2", "y2"),
-            ("data2d", "data2d"),
-        ),
+        ("data", "x", "y", "z"),
+        ("data", "xx", "y", "z"),
+        ("data", "xx", "yy", "z"),
+        ("data", "xx", "yy", "zz"),
     ],
 )
 def test_create_3d_variable_already_exist_should_fail(
@@ -233,21 +212,13 @@ def test_create_2d_variables(
 
 
 @pytest.mark.netcdf
-@pytest.mark.skip
 @pytest.mark.parametrize(
     ("args"),
     [
-        (
-            ("sin1", "sin1"),
-            ("xx", "xxbis"),
-            ("x3", "x3"),
-            ("y3", "y3"),
-            ("z3", "z3"),
-            ("data3d", "data3d"),
-            ("x2", "x2"),
-            ("y2", "y2"),
-            ("data2d", "data2d"),
-        ),
+        ("data", "x", "y"),
+        ("data", "xx", "y"),
+        ("data", "xx", "yy"),
+        ("data", "xx", "yy"),
     ],
 )
 def test_create_2d_variables_already_exist_should_fail(
