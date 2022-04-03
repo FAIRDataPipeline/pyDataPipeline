@@ -509,6 +509,7 @@ def create_group(root_group: netCDF4.Group, group_name: str) -> None:
     group_name : str
         name of the child group
     """
+    # no need to check if group_name exists as createGroup is idempotent
     _ = root_group.createGroup(group_name)
 
 
@@ -555,6 +556,9 @@ def create_variable_in_group(
     variable_type : str, optional
         data type of the data, by default "f"
     """
+    if variables_name in group.variables.keys():
+        raise ValueError("variable already exists")
+
     var_dim = "dim"
     size = len(variable_data)
     xdim = group.createDimension(var_dim, size)
@@ -594,14 +598,25 @@ def create_1d_variables_in_group(
     """
     var_dim = variable_xname + "_dim"
     size = len(variable_xdata)
-
+    if var_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {var_dim} already exists inside {group}"
+        )
     xdim = group.createDimension(var_dim, size)
+    if variable_xname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_xname} already exists inside {group}"
+        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
     xdim_v[:] = variable_xdata
 
     for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
         data_v = group.createVariable(name, data_types[i], xdim.name)
         data_v[:] = data[i]
 
@@ -647,20 +662,39 @@ def create_2d_variables_in_group(
     """
     x_dim = variable_xname + "_dim"
     size = len(variable_xdata)
-
+    if x_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {x_dim} already exists inside {group}"
+        )
     xdim = group.createDimension(x_dim, size)
+    if variable_xname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_xname} already exists inside {group}"
+        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
     y_dim = variable_yname + "_dim"
     size = len(variable_ydata)
+    if y_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {y_dim} already exists inside {group}"
+        )
 
     ydim = group.createDimension(y_dim, size)
+    if variable_yname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_yname} already exists inside {group}"
+        )
     ydim_v = group.createVariable(
         variable_yname, variable_yname_type, ydim.name
     )
     ydim_v[:] = variable_ydata
     for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
         data_v = group.createVariable(
             name, data_types[i], (xdim.name, ydim.name)
         )
@@ -717,8 +751,16 @@ def create_3d_variables_in_group(
     """
     x_dim = variable_xname + "_dim"
     size = len(variable_xdata)
+    if x_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {x_dim} already exists inside {group}"
+        )
 
     xdim = group.createDimension(x_dim, size)
+    if variable_xname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_xname} already exists inside {group}"
+        )
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
@@ -726,7 +768,15 @@ def create_3d_variables_in_group(
     y_dim = variable_yname + "_dim"
 
     size = len(variable_ydata)
+    if y_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {y_dim} already exists inside {group}"
+        )
     ydim = group.createDimension(y_dim, size)
+    if variable_yname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_yname} already exists inside {group}"
+        )
     ydim_v = group.createVariable(
         variable_yname, variable_yname_type, ydim.name
     )
@@ -734,13 +784,25 @@ def create_3d_variables_in_group(
 
     z_dim = variable_zname + "_dim"
     size = len(variable_zdata)
+    if z_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {z_dim} already exists inside {group}"
+        )
     zdim = group.createDimension(z_dim, size)
+    if variable_zname in group.variables.keys():
+        raise ValueError(
+            f"failed to create variable. {variable_zname} already exists inside {group}"
+        )
     zdim_v = group.createVariable(
         variable_zname, variable_zname_type, zdim.name
     )
     zdim_v[:] = variable_zdata
 
     for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
         data_v = group.createVariable(
             name, data_types[i], (xdim.name, ydim.name, zdim.name)
         )

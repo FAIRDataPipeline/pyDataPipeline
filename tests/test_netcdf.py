@@ -1,10 +1,8 @@
-import math
 import os
 import shutil
-from typing import List
+from typing import List, Tuple
 
 import netCDF4
-import numpy as np
 import pytest
 
 import data_pipeline_api as pipeline
@@ -19,21 +17,51 @@ from data_pipeline_api.fdp_utils import (
 
 
 @pytest.mark.netcdf
-def test_netcdf_write_wrappers(
+def test_create_group(
     test_dataset: netCDF4.Dataset, group_name: str = "root_group"
 ) -> None:
     create_group(test_dataset, group_name)
 
     assert group_name in test_dataset.groups
-    nx = 10
-    xs = [x for x in range(nx)]
-    sins = [math.sin(math.radians(x)) for x in xs]
-    coss = [math.cos(math.radians(x)) for x in xs]
+
+
+@pytest.mark.netcdf
+def test_create_variable(
+    dataset_variable: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, _, _ = dataset_variable
     create_variable_in_group(test_dataset[group_name], "first_var", xs, "f")
 
     assert all(test_dataset[group_name]["first_var"][:]) == all(xs)
     assert len(test_dataset[group_name]["first_var"][:]) == len(xs)
 
+
+@pytest.mark.netcdf
+def test_creat_variable_already_exists_should_fail(
+    dataset_variable: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, _, _ = dataset_variable
+    create_variable_in_group(test_dataset[group_name], "first_var", xs, "f")
+    with pytest.raises(ValueError):
+        create_variable_in_group(
+            test_dataset[group_name], "first_var", xs, "f"
+        )
+
+
+@pytest.mark.netcdf
+def test_create_1d_variables(
+    dataset_variable: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, sins, coss = dataset_variable
     create_1d_variables_in_group(
         test_dataset[group_name],
         ["sin1", "cos1"],
@@ -47,66 +75,219 @@ def test_netcdf_write_wrappers(
     assert all(test_dataset[group_name]["cos1"][:]) == all(coss)
     assert len(test_dataset[group_name]["cos1"][:]) == len(xs)
 
-    # 3d    #data
-    nx = 3
-    ny = 4
-    nz = 5
 
-    xs = [x for x in range(nx)]
-    ys = [y for y in range(ny)]
-    zs = [z for z in range(nz)]
+@pytest.mark.skip
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        (
+            ("sin1", "sin1"),
+            ("xx", "xxbis"),
+            ("x3", "x3"),
+            ("y3", "y3"),
+            ("z3", "z3"),
+            ("data3d", "data3d"),
+            ("x2", "x2"),
+            ("y2", "y2"),
+            ("data2d", "data2d"),
+        ),
+    ],
+)
+@pytest.mark.netcdf
+def test_create_1d_variables_already_exists_should_fail(
+    args: str,
+    dataset_variable: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, sins, coss = dataset_variable
+    create_1d_variables_in_group(
+        test_dataset[group_name],
+        ["sin", "cos"],
+        xs,
+        [sins, coss],
+        ["f", "f"],
+        variable_xname=args[0],
+    )
+    with pytest.raises(ValueError):
+        create_1d_variables_in_group(
+            test_dataset[group_name],
+            ["sin", "cos"],
+            xs,
+            [sins, coss],
+            ["f", "f"],
+            variable_xname=args[0],
+        )
 
-    data = np.zeros((nx, ny, nz))
 
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                data[i][j][k] = math.sin(math.radians(i + j + k))
+def test_create_3d_variable(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, zs, data = dataset_variable_3d
+
     create_3d_variables_in_group(
         test_dataset[group_name],
-        ["3cd"],
+        ["data"],
         xs,
         ys,
         zs,
         [data],
         ["f"],
-        variable_xname="x3",
-        variable_yname="y3",
-        variable_zname="z3",
+        variable_xname="x",
+        variable_yname="y",
+        variable_zname="z",
     )
-    for var in [("x3", "xs"), ("y3", "ys"), ("z3", "zs")]:
+    nx = len(xs)
+    ny = len(ys)
+    nz = len(zs)
+    for var in [("x", "xs"), ("y", "ys"), ("z", "zs")]:
         assert var[0] in test_dataset[group_name].variables.keys()
         assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
-        assert test_dataset[group_name]["3cd"][:].shape == (nx, ny, nz)
+        assert test_dataset[group_name]["data"][:].shape == (nx, ny, nz)
 
-    # 2d data
-    # data
-    nx = 10
-    ny = 5
 
-    xs = [x for x in range(nx)]
-    ys = [y for y in range(ny)]
+@pytest.mark.netcdf
+@pytest.mark.skip
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        (
+            ("sin1", "sin1"),
+            ("xx", "xxbis"),
+            ("x3", "x3"),
+            ("y3", "y3"),
+            ("z3", "z3"),
+            ("data3d", "data3d"),
+            ("x2", "x2"),
+            ("y2", "y2"),
+            ("data2d", "data2d"),
+        ),
+    ],
+)
+def test_create_3d_variable_already_exist_should_fail(
+    args: Tuple[str, str, str, str],
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, zs, data = dataset_variable_3d
 
-    data = np.zeros((nx, ny))
+    create_3d_variables_in_group(
+        test_dataset[group_name],
+        ["data"],
+        xs,
+        ys,
+        zs,
+        [data],
+        ["f"],
+        variable_xname="x",
+        variable_yname="y",
+        variable_zname="z",
+    )
 
-    for i in range(nx):
-        for j in range(ny):
-            data[i][j] = math.sin(math.radians(i + j))
+    with pytest.raises(ValueError):
+        create_3d_variables_in_group(
+            test_dataset[group_name],
+            [args[0]],
+            xs,
+            ys,
+            zs,
+            [data],
+            ["f"],
+            variable_xname=args[1],
+            variable_yname=args[2],
+            variable_zname=args[3],
+        )
+
+
+def test_create_2d_variables(
+    dataset_variable_2d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, data = dataset_variable_2d
+
     create_2d_variables_in_group(
         test_dataset[group_name],
-        ["2cd"],
+        ["data"],
         xs,
         ys,
         [data],
         ["f", "f"],
-        variable_xname="x2",
-        variable_yname="y2",
+        variable_xname="x",
+        variable_yname="y",
     )
-    for var in [("x2", "xs"), ("y2", "ys")]:
+    nx = len(xs)
+    ny = len(ys)
+
+    for var in [("x", "xs"), ("y", "ys")]:
         assert var[0] in test_dataset[group_name].variables.keys()
         assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
-        assert test_dataset[group_name]["2cd"][:].shape == (nx, ny)
+        assert test_dataset[group_name]["data"][:].shape == (nx, ny)
 
+
+@pytest.mark.netcdf
+@pytest.mark.skip
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        (
+            ("sin1", "sin1"),
+            ("xx", "xxbis"),
+            ("x3", "x3"),
+            ("y3", "y3"),
+            ("z3", "z3"),
+            ("data3d", "data3d"),
+            ("x2", "x2"),
+            ("y2", "y2"),
+            ("data2d", "data2d"),
+        ),
+    ],
+)
+def test_create_2d_variables_already_exist_should_fail(
+    args: Tuple[str, str, str],
+    dataset_variable_2d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, data = dataset_variable_2d
+
+    create_2d_variables_in_group(
+        test_dataset[group_name],
+        ["data"],
+        xs,
+        ys,
+        [data],
+        ["f", "f"],
+        variable_xname="x",
+        variable_yname="y",
+    )
+    with pytest.raises(ValueError):
+        create_2d_variables_in_group(
+            test_dataset[group_name],
+            [args[0]],
+            xs,
+            ys,
+            [data],
+            ["f", "f"],
+            variable_xname=args[1],
+            variable_yname=args[2],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nested_groups(
+    dataset_variable: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
     # test creation of nest groups
     path = "/1/2/3/"
     create_nested_groups(test_dataset, path)
@@ -117,6 +298,7 @@ def test_netcdf_write_wrappers(
         new_dts = new_dts[grp]
 
 
+@pytest.mark.xfail(reason="read_array function not yet implemented")
 @pytest.mark.pipeline
 def test_read_array(
     token: str, config: str, script: str, test_dir: str
@@ -134,6 +316,7 @@ def test_read_array(
     assert path
 
 
+@pytest.mark.xfail(reason="write_array function not yet implemented")
 @pytest.mark.pipeline
 def test_write_array(
     config: str,

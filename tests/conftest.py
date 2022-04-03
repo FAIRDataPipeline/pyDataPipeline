@@ -1,9 +1,59 @@
+import math
 import os
+from typing import List, Tuple
 
 import netCDF4
+import numpy as np
 import pytest
 
 import data_pipeline_api.fdp_utils as fdp_utils
+
+
+@pytest.fixture
+def dataset_variable() -> Tuple[List, List, List]:
+    nx = 10
+    xs = [x for x in range(nx)]
+    sins = [math.sin(math.radians(x)) for x in xs]
+    coss = [math.cos(math.radians(x)) for x in xs]
+    return xs, sins, coss
+
+
+@pytest.fixture
+def dataset_variable_3d() -> Tuple[List, List, List, List]:
+    # # 3d    #data
+    nx = 3
+    ny = 4
+    nz = 5
+
+    xs = [x for x in range(nx)]
+    ys = [y for y in range(ny)]
+    zs = [z for z in range(nz)]
+
+    data = np.zeros((nx, ny, nz))
+
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                data[i][j][k] = math.sin(math.radians(i + j + k))
+
+    return xs, ys, zs, data
+
+
+@pytest.fixture
+def dataset_variable_2d() -> Tuple[List, List, List]:
+    # # 3d    #data
+    nx = 10
+    ny = 5
+
+    xs = [x for x in range(nx)]
+    ys = [y for y in range(ny)]
+
+    data = np.zeros((nx, ny))
+
+    for i in range(nx):
+        for j in range(ny):
+            data[i][j] = math.sin(math.radians(i + j))
+    return xs, ys, data
 
 
 @pytest.fixture
