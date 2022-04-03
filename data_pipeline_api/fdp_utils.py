@@ -69,7 +69,7 @@ def get_entry(
 
     if url[-1] != "/":
         url += "/"
-    url += endpoint + "/?"
+    url += f"{endpoint}/?"
     _query = [f"{k}={v}" for k, v in query.items()]
     url += "&".join(_query)
     response = requests.get(url, headers=headers)
@@ -104,7 +104,7 @@ def get_entity(
 
     if url[-1] != "/":
         url += "/"
-    url += endpoint + "/" + str(id)
+    url += f"{endpoint}/{id}"
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError(
@@ -205,9 +205,9 @@ def get_headers(
     Returns:
         |   dict: a dictionary of appropriate headers to be added to a request
     """
-    headers = {"Accept": "application/json; version=" + api_version}
+    headers = {"Accept": f"application/json; version={api_version}"}
     if token:
-        headers["Authorization"] = "token " + token
+        headers["Authorization"] = f"token {token}"
     if request_type == "post":
         headers["Content-Type"] = "application/json"
     return headers
@@ -372,7 +372,9 @@ def get_handle_index_from_path(handle: dict, path: str) -> Optional[Any]:
 
 
 # flake8: noqa C901
-def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
+def register_issues(
+    token: str, handle: dict
+) -> dict:  # sourcery no-metrics skip: avoid-builtin-shadow
     """
     Internal function, should only be called from finalise.
     """

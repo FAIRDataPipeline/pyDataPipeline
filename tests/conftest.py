@@ -1,3 +1,4 @@
+import itertools
 import math
 import os
 from typing import List, Tuple
@@ -12,7 +13,7 @@ import data_pipeline_api.fdp_utils as fdp_utils
 @pytest.fixture
 def dataset_variable() -> Tuple[List, List, List]:
     nx = 10
-    xs = [x for x in range(nx)]
+    xs = list(range(nx))
     sins = [math.sin(math.radians(x)) for x in xs]
     coss = [math.cos(math.radians(x)) for x in xs]
     return xs, sins, coss
@@ -45,14 +46,13 @@ def dataset_variable_2d() -> Tuple[List, List, List]:
     nx = 10
     ny = 5
 
-    xs = [x for x in range(nx)]
-    ys = [y for y in range(ny)]
+    xs = list(range(nx))
+    ys = list(range(ny))
 
     data = np.zeros((nx, ny))
 
-    for i in range(nx):
-        for j in range(ny):
-            data[i][j] = math.sin(math.radians(i + j))
+    for i, j in itertools.product(range(nx), range(ny)):
+        data[i][j] = math.sin(math.radians(i + j))
     return xs, ys, data
 
 

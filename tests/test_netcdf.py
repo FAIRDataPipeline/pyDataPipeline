@@ -296,11 +296,17 @@ def test_write_array(
     data_product: str = "",
     component: str = "",
     description: str = "",
-    dimension_names: List = [],
-    dimension_values: List = [],
-    dimension_units: List = [],
+    dimension_names: List = None,
+    dimension_values: List = None,
+    dimension_units: List = None,
     units: str = "",
 ) -> None:
+    if dimension_names is None:
+        dimension_names = []
+    if dimension_values is None:
+        dimension_values = []
+    if dimension_units is None:
+        dimension_units = []
     array: netCDF4.Dataset = []
     handle = pipeline.initialise(token, config, script)
     output = pipeline.write_array(

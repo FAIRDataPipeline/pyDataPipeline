@@ -158,14 +158,14 @@ def raise_issue(
     namespace: str = None,
     group: bool = True,
 ) -> None:
-    current_group = issue + ":" + str(severity)
+    current_group = f"{issue}:{severity}"
     if issue_type in {
         "config",
         "submission_script",
         "github_repo",
         "existing_data_product",
     }:
-        logging.info("Adding issue {} for {} to handle".format(issue, type))
+        logging.info(f"Adding issue {issue} for {type} to handle")
     elif index is None:
         reads = (
             handle["yaml"]["read"] if "read" in handle["yaml"].keys() else None
@@ -206,9 +206,7 @@ def raise_issue(
             raise ValueError("Data product not in config file")
 
         logging.info(
-            "Raising issue {} for {}@{} to handle".format(
-                issue, data_product, version
-            )
+            f"Raising issue {issue} for {data_product}@{version} to handle"
         )
 
     else:
@@ -233,7 +231,7 @@ def raise_issue(
         version = tmp["use_version"]
         namespace = tmp["use_namespace"]
 
-        logging.info("Adding issue {} for {} to handle".format(issue, index))
+        logging.info(f"Adding issue {issue} for {index} to handle")
     # Write to handle and return path
     issues_dict = {
         "index": index,

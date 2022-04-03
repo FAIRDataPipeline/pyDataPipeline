@@ -150,10 +150,8 @@ def test_random_hash_length() -> None:
 @pytest.mark.utilities
 def test_generate_date() -> None:
     res = fdp_utils.generate_uuid()
-    res_date = "-".join(res.split("-")[0:3]) + "-"
-    assert (
-        bool(datetime.datetime.strptime(res_date, "%Y%m-%d%H-%M%S-")) is True
-    )
+    res_date = "-".join(res.split("-")[:3]) + "-"
+    assert bool(datetime.datetime.strptime(res_date, "%Y%m-%d%H-%M%S-"))
 
 
 @pytest.mark.utilities
@@ -177,7 +175,7 @@ def test_get_headers() -> None:
 @pytest.mark.utilities
 def test_get_headers_with_token(token: str) -> None:
     headers = fdp_utils.get_headers(token=token)
-    assert headers["Authorization"] == "token " + token
+    assert headers["Authorization"] == f"token {token}"
 
 
 @pytest.mark.utilities
@@ -446,9 +444,7 @@ def test_patch_entry(
 def test_patch_entry_non_200(url: str, token: str) -> None:
     with pytest.raises(Exception):
         fdp_utils.patch_entry(
-            url=url + "/api/users/1",
-            data={"name": "New Name"},
-            token=token,
+            url=f"{url}/api/users/1", data={"name": "New Name"}, token=token
         )
 
 
