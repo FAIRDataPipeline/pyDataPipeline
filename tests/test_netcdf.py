@@ -3,9 +3,11 @@ import shutil
 from typing import List, Tuple
 
 import netCDF4
+import numpy as np
 import pytest
 
 import data_pipeline_api as pipeline
+from data_pipeline_api.exceptions import AttributeSizeError, DataSizeError
 from data_pipeline_api.fdp_utils import (
     create_1d_variables_in_group,
     create_2d_variables_in_group,
@@ -362,6 +364,47 @@ def test_set_attribute(
 
 
 @pytest.mark.netcdf
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        ("data", "x", "y"),
+        ("data", "xx", "y"),
+        ("data", "xx", "yy"),
+        ("data", "xx", "yy"),
+    ],
+)
+def test_set_attribute_already_exists(
+    args: Tuple[str, str, str],
+    dataset_variable_2d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, data = dataset_variable_2d
+
+    create_2d_variables_in_group(
+        test_dataset[group_name],
+        ["data"],
+        xs,
+        ys,
+        [data],
+        ["f", "f"],
+        variable_xname="x",
+        variable_yname="y",
+    )
+    set_or_create_attr(
+        test_dataset[group_name]["data"], "test_attribute", range(10)
+    )
+    assert "test_attribute" in test_dataset[group_name]["data"].ncattrs()
+    assert len(test_dataset[group_name]["data"].test_attribute) == 10
+    set_or_create_attr(
+        test_dataset[group_name]["data"], "test_attribute", range(5)
+    )
+    assert "test_attribute" in test_dataset[group_name]["data"].ncattrs()
+    assert len(test_dataset[group_name]["data"].test_attribute) == 5
+
+
+@pytest.mark.netcdf
 def test_create_nd_variables_in_group_w_attribute(
     dataset_variable_3d: Tuple,
     test_dataset: netCDF4.Dataset,
@@ -392,3 +435,246 @@ def test_create_nd_variables_in_group_w_attribute(
     assert test_dataset[group_name]["data3d"].units == "Unknown"
     assert test_dataset[group_name]["data3d"].title == "Unknown"
     assert len(test_dataset[group_name]["data3d_3"].ncattrs()) == 6
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail1(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(AttributeSizeError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail2(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(DataSizeError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail3(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(AttributeSizeError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=["data1"],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail4(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(AttributeSizeError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=["dim1"],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail5(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    xs = np.delete(xs, 0)
+    data1 = 3 * data
+    with pytest.raises(ValueError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail6(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(ValueError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail7(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(ValueError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d1", "y3d1", "z3d1"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute_shouldfail8(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    with pytest.raises(DataSizeError):
+        create_nd_variables_in_group_w_attribute(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero", "seciao"],
+        )

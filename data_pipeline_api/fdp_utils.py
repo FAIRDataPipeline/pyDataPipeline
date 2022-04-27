@@ -867,19 +867,19 @@ def create_nd_variables_in_group_w_attribute(
         == len(attribute_var_name)
         == len(attribute_type)
     ):
-        raise ValueError(
+        raise AttributeSizeError(
             "Invalid Operation - check size of data - all attribute inputs must be of same size"
         )
     if not len(data) == len(data_names) == len(data_types):
-        raise ValueError("Invalid Operation - check size of data")
+        raise DataSizeError("Invalid Operation - check size of data")
     if title_names:
         if not len(title_names) == len(data):
-            raise ValueError(
+            raise AttributeSizeError(
                 "Invalid Operation - check size of title names attribute"
             )
     if dimension_names:
         if not len(dimension_names) == len(data):
-            raise ValueError(
+            raise AttributeSizeError(
                 "Invalid Operation - check size of dimension names attribute"
             )
     for dd, value in enumerate(data):
@@ -921,7 +921,7 @@ def create_nd_variables_in_group_w_attribute(
 
         if all([True if x != None else False for x in other_attribute_names]):
             if not len(other_attribute_names) == len(other_attribute_data):
-                raise ValueError(
+                raise DataSizeError(
                     "incorrect data - check size of additional attributes"
                 )
 
