@@ -11,8 +11,10 @@ from data_pipeline_api.fdp_utils import (
     create_2d_variables_in_group,
     create_3d_variables_in_group,
     create_group,
+    create_nd_variables_in_group_w_attribute,
     create_nested_groups,
     create_variable_in_group,
+    set_or_create_attr,
 )
 
 
@@ -321,3 +323,72 @@ def test_write_array(
         units,
     )
     assert output is False
+
+
+@pytest.mark.netcdf
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        ("data", "x", "y"),
+        ("data", "xx", "y"),
+        ("data", "xx", "yy"),
+        ("data", "xx", "yy"),
+    ],
+)
+def test_set_attribute(
+    args: Tuple[str, str, str],
+    dataset_variable_2d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+    create_group(test_dataset, group_name)
+    xs, ys, data = dataset_variable_2d
+
+    create_2d_variables_in_group(
+        test_dataset[group_name],
+        ["data"],
+        xs,
+        ys,
+        [data],
+        ["f", "f"],
+        variable_xname="x",
+        variable_yname="y",
+    )
+    set_or_create_attr(
+        test_dataset[group_name]["data"], "test_attribute", range(10)
+    )
+    assert "test_attribute" in test_dataset[group_name]["data"].ncattrs()
+    assert len(test_dataset[group_name]["data"].test_attribute) == 10
+
+
+@pytest.mark.netcdf
+def test_create_nd_variables_in_group_w_attribute(
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    group_name: str = "root_group",
+) -> None:
+
+    create_group(test_dataset, group_name)
+
+    xs, ys, zs, data = dataset_variable_3d
+    data1 = 3 * data
+    create_nd_variables_in_group_w_attribute(
+        group=test_dataset[group_name],
+        data_names=["data3d", "data3d_3"],
+        attribute_data=[xs, ys, zs],
+        data=[data, data1],
+        attribute_type=["f", "f", "f"],
+        attribute_var_name=["x3d", "y3d", "z3d"],
+        title_names=[None],
+        data_types=["f", "f"],
+        dimension_names=[None],
+        other_attribute_names=["a novel way to be me"],
+        other_attribute_data=["lallero"],
+    )
+
+    assert len(test_dataset[group_name].variables.keys()) == 2
+    assert len(test_dataset[group_name].dimensions.keys()) == 3
+    assert len(test_dataset[group_name]["data3d"].ncattrs()) == 6
+    assert test_dataset[group_name]["data3d"].units == "Unknown"
+    assert test_dataset[group_name]["data3d"].title == "Unknown"
+    assert len(test_dataset[group_name]["data3d_3"].ncattrs()) == 6

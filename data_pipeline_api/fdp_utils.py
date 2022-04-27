@@ -165,7 +165,7 @@ def post_entry(
         return existing_entry[0]
 
     if response.status_code != 201:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(f"Server responded with: {str(response.status_code)}")
 
     return response.json()
 
@@ -190,7 +190,7 @@ def patch_entry(
 
     response = requests.patch(url, data_json, headers=headers)
     if response.status_code != 200:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(f"Server responded with: {str(response.status_code)}")
 
     return response.json()
 
@@ -531,12 +531,10 @@ def create_nested_groups(root_group: netCDF4.Group, path: str) -> None:
     """
 
     groups = [grp for grp in path.split("/") if grp != ""]
-    count = 0
-    while count < len(groups):
-        current = groups[count]
+    for group in groups:
+        current = group
         create_group(root_group, current)
         root_group = root_group[current]
-        count += 1
 
 
 def create_variable_in_group(
@@ -600,7 +598,7 @@ def create_1d_variables_in_group(
     variable_xname_type : str, optional
          type of the x component, by default "f"
     """
-    var_dim = variable_xname + "_dim"
+    var_dim = f"{variable_xname}_dim"
     size = len(variable_xdata)
     if var_dim in group.dimensions.keys():
         raise ValueError(
@@ -660,7 +658,7 @@ def create_2d_variables_in_group(
     variable_yname_type : str, optional
         type of the y component, by default "f"
     """
-    x_dim = variable_xname + "_dim"
+    x_dim = f"{variable_xname}_dim"
     size = len(variable_xdata)
     if x_dim in group.dimensions.keys():
         raise ValueError(
@@ -670,7 +668,7 @@ def create_2d_variables_in_group(
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
-    y_dim = variable_yname + "_dim"
+    y_dim = f"{variable_yname}_dim"
     size = len(variable_ydata)
     if y_dim in group.dimensions.keys():
         raise ValueError(
@@ -741,7 +739,7 @@ def create_3d_variables_in_group(
     variable_zname_type : str, optional
      type of the z component, by default "f"
     """
-    x_dim = variable_xname + "_dim"
+    x_dim = f"{variable_xname}_dim"
     size = len(variable_xdata)
     if x_dim in group.dimensions.keys():
         raise ValueError(
@@ -753,7 +751,7 @@ def create_3d_variables_in_group(
         variable_xname, variable_xname_type, xdim.name
     )
 
-    y_dim = variable_yname + "_dim"
+    y_dim = f"{variable_yname}_dim"
 
     size = len(variable_ydata)
     if y_dim in group.dimensions.keys():
@@ -766,7 +764,7 @@ def create_3d_variables_in_group(
     )
     ydim_v[:] = variable_ydata
 
-    z_dim = variable_zname + "_dim"
+    z_dim = f"{variable_zname}_dim"
     size = len(variable_zdata)
     if z_dim in group.dimensions.keys():
         raise ValueError(
@@ -790,7 +788,7 @@ def create_3d_variables_in_group(
 
 
 def set_or_create_attr(
-    var: netCDF4._netCDF4.Variable, attr_name: str, attr_value: str
+    var: netCDF4._netCDF4.Variable, attr_name: str, attr_data: Any
 ) -> None:
     """
     set_or_create_attr     setattr only sets existing netCDF4 attributes, any attributes it creates are attached to the python instance (not inside the dataset / file). Instead, you need to create a new attribute; without a method for directly creating attributes, you can use a workaround of creating an arbitrarily named attribute by directly setting it and then renaming it.
@@ -798,19 +796,19 @@ def set_or_create_attr(
     Parameters
     ----------
     var : _type_
-        _description_
+        input variable where the attribute will be set
     attr_name : _type_
-        _description_
-    attr_value : _type_
-        _description_
+        name of the attribute
+    attr_data : _type_
+        attribute data
     """
     """
 
     """
     if attr_name in var.ncattrs():
-        var.setncattr(attr_name, attr_value)
+        var.setncattr(attr_name, attr_data)
         return
-    var.UnusedNameAttribute = attr_value
+    var.UnusedNameAttribute = attr_data
     var.renameAttribute("UnusedNameAttribute", attr_name)
     return
 
@@ -858,28 +856,7 @@ def create_nd_variables_in_group_w_attribute(
     dimension_names : list, optional
         default dimension attribute, by default [None]
 
-    Raises
-    ------
-    ValueError
-        all attribute inputs must be of same size
-    ValueError
-        data inputs are of different size
-    ValueError
-        size of title names attribute and data have different size
-    ValueError
-        _description_
-    ValueError
-        _description_
-    ValueError
-        _description_
-    ValueError
-        _description_
-    ValueError
-        _description_
     """
-
-    attrinbute_num = len(attribute_data)
-    var_num = len(data)
     if len(title_names) == 1 and not title_names[0]:
         title_names = ["Unknown" for _ in range(len(data))]
     if len(dimension_names) == 1 and not dimension_names[0]:
@@ -890,11 +867,11 @@ def create_nd_variables_in_group_w_attribute(
         == len(attribute_var_name)
         == len(attribute_type)
     ):
-        raise AttributeSizeError(
+        raise ValueError(
             "Invalid Operation - check size of data - all attribute inputs must be of same size"
         )
     if not len(data) == len(data_names) == len(data_types):
-        raise DataSizeError("Invalid Operation - check size of data")
+        raise ValueError("Invalid Operation - check size of data")
     if title_names:
         if not len(title_names) == len(data):
             raise ValueError(
@@ -902,14 +879,14 @@ def create_nd_variables_in_group_w_attribute(
             )
     if dimension_names:
         if not len(dimension_names) == len(data):
-            raise DataSizeError(
+            raise ValueError(
                 "Invalid Operation - check size of dimension names attribute"
             )
     for dd, value in enumerate(data):
 
         for dim in range(len(value.shape)):
             if value.shape[dim] != len(attribute_data[dim]):
-                raise AttributeSizeError(
+                raise ValueError(
                     f"size of {attribute_var_name[dim]} incompatible with data"
                 )
     data_dim: Tuple = tuple()
@@ -926,7 +903,11 @@ def create_nd_variables_in_group_w_attribute(
         data_dim = data_dim + (vars()[attribute_var_name[dim] + "_dim"].name,)
     for i, name in enumerate(data_names):
         if name in group.variables.keys():
-            other_attribute_data[i]
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
+        data_v = group.createVariable(name, data_types[i], data_dim)
+        data_v[:] = data[i]
 
     for i, name in enumerate(data_names):
         for attr, value in enumerate(attribute_var_name):
@@ -940,7 +921,7 @@ def create_nd_variables_in_group_w_attribute(
 
         if all([True if x != None else False for x in other_attribute_names]):
             if not len(other_attribute_names) == len(other_attribute_data):
-                raise DataSizeError(
+                raise ValueError(
                     "incorrect data - check size of additional attributes"
                 )
 

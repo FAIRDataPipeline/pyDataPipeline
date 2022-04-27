@@ -13,10 +13,10 @@ import data_pipeline_api.fdp_utils as fdp_utils
 @pytest.fixture
 def dataset_variable() -> Tuple[List, List, List]:
     nx = 10
-    xs = list(range(nx))
-    sins = [math.sin(math.radians(x)) for x in xs]
-    coss = [math.cos(math.radians(x)) for x in xs]
-    return xs, sins, coss
+    xs = np.asarray(list(range(nx)))
+    sins = np.asarray([math.sin(math.radians(x)) for x in xs])
+    coss = np.asarray([math.cos(math.radians(x)) for x in xs])
+    return xs, np.asarray(sins), np.asarray(coss)
 
 
 @pytest.fixture
@@ -26,9 +26,9 @@ def dataset_variable_3d() -> Tuple[List, List, List, List]:
     ny = 4
     nz = 5
 
-    xs = [x for x in range(nx)]
-    ys = [y for y in range(ny)]
-    zs = [z for z in range(nz)]
+    xs = np.asarray([x for x in range(nx)])
+    ys = np.asarray([y for y in range(ny)])
+    zs = np.asarray([z for z in range(nz)])
 
     data = np.zeros((nx, ny, nz))
 
@@ -37,7 +37,7 @@ def dataset_variable_3d() -> Tuple[List, List, List, List]:
             for k in range(nz):
                 data[i][j][k] = math.sin(math.radians(i + j + k))
 
-    return xs, ys, zs, data
+    return xs, ys, zs, np.asarray(data)
 
 
 @pytest.fixture
@@ -46,14 +46,14 @@ def dataset_variable_2d() -> Tuple[List, List, List]:
     nx = 10
     ny = 5
 
-    xs = list(range(nx))
-    ys = list(range(ny))
+    xs = np.asarray(list(range(nx)))
+    ys = np.asarray(list(range(ny)))
 
     data = np.zeros((nx, ny))
 
     for i, j in itertools.product(range(nx), range(ny)):
         data[i][j] = math.sin(math.radians(i + j))
-    return xs, ys, data
+    return xs, ys, np.asarray(data)
 
 
 @pytest.fixture
