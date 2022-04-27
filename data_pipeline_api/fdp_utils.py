@@ -5,7 +5,7 @@ import os
 import random
 import uuid
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 # from typing import BinaryIO, Union
 from urllib.parse import urlsplit
@@ -13,6 +13,8 @@ from urllib.parse import urlsplit
 import netCDF4
 import requests
 import yaml
+
+from data_pipeline_api.exceptions import AttributeSizeError, DataSizeError
 
 
 def get_first_entry(entries: list) -> dict:
@@ -588,7 +590,7 @@ def create_1d_variables_in_group(
     variables_name : list
         a list of variables to be stored
     variable_xdata : Any
-        x indipendent component
+        x indipendent componentdecimals
     data : list
         list of variables to be stored
     data_types : list
@@ -785,3 +787,164 @@ def create_3d_variables_in_group(
             name, data_types[i], (xdim.name, ydim.name, zdim.name)
         )
         data_v[:] = data[i]
+
+
+def set_or_create_attr(
+    var: netCDF4._netCDF4.Variable, attr_name: str, attr_value: str
+) -> None:
+    """
+    set_or_create_attr     setattr only sets existing netCDF4 attributes, any attributes it creates are attached to the python instance (not inside the dataset / file). Instead, you need to create a new attribute; without a method for directly creating attributes, you can use a workaround of creating an arbitrarily named attribute by directly setting it and then renaming it.
+
+    Parameters
+    ----------
+    var : _type_
+        _description_
+    attr_name : _type_
+        _description_
+    attr_value : _type_
+        _description_
+    """
+    """
+
+    """
+    if attr_name in var.ncattrs():
+        var.setncattr(attr_name, attr_value)
+        return
+    var.UnusedNameAttribute = attr_value
+    var.renameAttribute("UnusedNameAttribute", attr_name)
+    return
+
+
+def create_nd_variables_in_group_w_attribute(
+    group: netCDF4.Group,
+    data_names: list,
+    attribute_data: list,
+    data: list,
+    data_types: list,
+    attribute_var_name: list,
+    attribute_type: list,
+    other_attribute_names: list = [None],
+    other_attribute_data: list = [None],
+    title_names: list = [None],
+    dimension_names: list = [None],
+) -> None:
+    """
+    create_nd_variables_in_group_w_attribute      given a list of data as f(x1,x2,...xi) will write them within a group of a netCDF file setting xi as attribute of each data.
+
+     Default attributes as units and dimension are also set. User can also specify additional attributes.
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        existing group inside netcdf file where to store the data
+    data_names : list
+        list string describing the name of data to be stored
+    attribute_data : list
+        list variables to store as attributes of each data
+    data : list
+        list of data to store
+    data_types : list
+        list of types of the data to be stored
+    attribute_var_name : list
+        list of names of the attribute as they will be displayed/stored in the netcdf file
+    attribute_type : list
+        list of type of each attribute
+    other_attribute_names : list, optional
+        list of names of optional attributes, by default [None]
+    other_attribute_data : list, optional
+        list of data for each of optional attributes, by default [None]
+    title_names : list, optional
+        default title attribute, by default [None]
+    dimension_names : list, optional
+        default dimension attribute, by default [None]
+
+    Raises
+    ------
+    ValueError
+        all attribute inputs must be of same size
+    ValueError
+        data inputs are of different size
+    ValueError
+        size of title names attribute and data have different size
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
+
+    attrinbute_num = len(attribute_data)
+    var_num = len(data)
+    if len(title_names) == 1 and not title_names[0]:
+        title_names = ["Unknown" for _ in range(len(data))]
+    if len(dimension_names) == 1 and not dimension_names[0]:
+        dimension_names = ["Unknown" for _ in range(len(data))]
+
+    if (
+        not len(attribute_data)
+        == len(attribute_var_name)
+        == len(attribute_type)
+    ):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of data - all attribute inputs must be of same size"
+        )
+    if not len(data) == len(data_names) == len(data_types):
+        raise DataSizeError("Invalid Operation - check size of data")
+    if title_names:
+        if not len(title_names) == len(data):
+            raise ValueError(
+                "Invalid Operation - check size of title names attribute"
+            )
+    if dimension_names:
+        if not len(dimension_names) == len(data):
+            raise DataSizeError(
+                "Invalid Operation - check size of dimension names attribute"
+            )
+    for dd, value in enumerate(data):
+
+        for dim in range(len(value.shape)):
+            if value.shape[dim] != len(attribute_data[dim]):
+                raise AttributeSizeError(
+                    f"size of {attribute_var_name[dim]} incompatible with data"
+                )
+    data_dim: Tuple = tuple()
+    for dim in range(len(attribute_data)):
+        var_dim = attribute_var_name[dim] + "_dim"
+        #         import pdb;pdb.set_trace()
+        if var_dim in group.dimensions.keys():
+            raise ValueError(
+                f"failed to create dimension. {var_dim} already exists inside {group}"
+            )
+        vars()[attribute_var_name[dim] + "_dim"] = group.createDimension(
+            var_dim, len(attribute_data[dim])
+        )
+        data_dim = data_dim + (vars()[attribute_var_name[dim] + "_dim"].name,)
+    for i, name in enumerate(data_names):
+        if name in group.variables.keys():
+            other_attribute_data[i]
+
+    for i, name in enumerate(data_names):
+        for attr, value in enumerate(attribute_var_name):
+
+            set_or_create_attr(
+                group[name], attribute_var_name[attr], attribute_data[attr]
+            )
+
+        set_or_create_attr(group[name], "title", title_names[i])
+        set_or_create_attr(group[name], "units", dimension_names[i])
+
+        if all([True if x != None else False for x in other_attribute_names]):
+            if not len(other_attribute_names) == len(other_attribute_data):
+                raise DataSizeError(
+                    "incorrect data - check size of additional attributes"
+                )
+
+            for i, attr in enumerate(other_attribute_names):
+                set_or_create_attr(
+                    group[name], str(attr), other_attribute_data[i]
+                )

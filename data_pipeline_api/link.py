@@ -310,6 +310,14 @@ def write_array(
     dimension_values: list,
     dimension_units: list,
     units: str,
+    # array: Any,
+    # handle: dict,
+    # data_product: str,
+    # component: str='',
+    # description: str='status',
+    # dimension_names: list = ['ambulance exploded','ambulance out of gas', 'ambulance ok'],
+    # # dimension_values: list,
+    # dimension_units: ['n','n','n'],
 ) -> Any:
     """
     write_array  Function to populate netcdf file with array type data.
