@@ -338,6 +338,32 @@ def test_write_array(
     assert len(netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(output, dict)
+    # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
+    output, netCDF_file = pipeline.write_array(
+        data,
+        "f",
+        handle,
+        "test/netCDF",
+        args[0],
+        args[1],
+        dimension_names=["x3d", "y3d", "z3d"],
+        dimension_values=[xs, ys, zs],
+        data_units_name=["kg"],
+        dimension_types=["f", "f", "f"],
+        array_name=array_name,
+    )
+
+    groups = [grp for grp in args[0].split("/") if grp != ""]
+    for group in groups:
+        current = group
+        netCDF_file = netCDF_file[current]
+    assert netCDF_file[array_name].name == array_name
+    assert netCDF_file[array_name].title == args[1]
+    assert netCDF_file[array_name].units == "kg"
+
+    assert len(netCDF_file[array_name].ncattrs()) == 5
+
+    assert isinstance(output, dict)
 
 
 @pytest.mark.netcdf
