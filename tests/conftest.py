@@ -87,5 +87,10 @@ def config(test_dir: str) -> str:
 
 
 @pytest.fixture
+def netcdf_config(test_dir: str) -> str:
+    return os.path.join(test_dir, "write_netcdf.yaml")
+
+
+@pytest.fixture
 def read_config(test_dir: str) -> str:
     return os.path.join(test_dir, "read_csv.yaml")

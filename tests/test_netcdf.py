@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import List, Tuple
+from typing import Tuple
 
 import netCDF4
 import numpy as np
@@ -291,7 +291,7 @@ def test_read_array(
     assert path
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 @pytest.mark.pipeline
 @pytest.mark.parametrize(
     ("args"),
@@ -305,23 +305,26 @@ def test_write_array(
     args: Tuple[str, str],
     dataset_variable_3d: Tuple,
     test_dataset: netCDF4.Dataset,
-    config: str,  # data product
+    netcdf_config: str,  # data product
     script: str,
     token: str,
 ) -> None:
     xs, ys, zs, data = dataset_variable_3d
 
-    handle = pipeline.initialise(token, config, script)
+    handle = pipeline.initialise(token, netcdf_config, script)
     output = pipeline.write_array(
         data,
+        "f",
         handle,
         "test/netCDF",
         args[0],
         args[1],
         dimension_names=["x3d", "y3d", "z3d"],
         dimension_values=[xs, ys, zs],
-        dimension_units=["m", "m", "m"],
+        data_units_name=["m"],
+        dimension_types=["f", "f", "f"],
     )
+
     assert isinstance(output, dict)
 
 

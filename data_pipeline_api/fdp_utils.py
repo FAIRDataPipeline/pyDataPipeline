@@ -852,6 +852,7 @@ def create_nd_variables_in_group_w_attribute(
         default dimension attribute, by default [None]
 
     """
+
     if len(title_names) == 1 and not title_names[0]:
         title_names = ["Unknown" for _ in range(len(data))]
     if len(dimension_names) == 1 and not dimension_names[0]:

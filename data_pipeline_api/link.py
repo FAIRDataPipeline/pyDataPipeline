@@ -41,6 +41,7 @@ def resolve_write(
     ).replace("\\", "/")
 
     # Create directory structure if it doesn't exist
+
     directory = os.path.dirname(path)
 
     if not os.path.exists(directory):
@@ -304,14 +305,18 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
 
 
 def write_array(
-    array: Any,
+    array: Any,  # data: list, #
+    data_type: str,  # data_types: list,
     handle: dict,
-    data_product: str,
-    component: str,
-    description: str,
-    dimension_names: list,
-    dimension_values: list,
-    dimension_units: list,
+    data_product: str,  # data_names: list,
+    component: str,  # group: netCDF4.Group,
+    description: str,  # title_names: list = [None],
+    dimension_names: list,  # attribute_var_name: list,
+    dimension_values: list,  # attribute_data: list,
+    data_units_name: list,  # dimension_names: list = [None],
+    dimension_types: list,  # attribute_type: list,
+    other_attribute_names: list = [None],
+    other_attribute_data: list = [None],
     # array: Any,
     # handle: dict,
     # data_product: str,
@@ -384,9 +389,7 @@ def write_array(
                 "Length of dimension_names does not equal number of dimensions in array"
             )
     parentdir = os.path.dirname(os.path.abspath(path))
-    import pdb
 
-    pdb.set_trace()
     # Write hdf5 file ---------------------------------------------------------
 
     # Generate directory structure
@@ -397,60 +400,67 @@ def write_array(
     #     pass
     # return False
 
-    # Write hdf5 file
-    _ = netCDF4.Dataset(path, "w", format="NETCDF4")
+    # Write netCDF file
+    netCDF_file = netCDF4.Dataset(path, "w", format="NETCDF4")
 
     # Generate internal structure
-    if component[-1] == "/":
-        parentdir = path.join(parentdir, component.split("/")[0])
-    else:
-        parentdir = path.join(parentdir, component)
+    # if component[-1] == "/":
+    #     parentdir = path.join(parentdir, component.split("/")[0])
+    # else:
+    #     parentdir = path.join(parentdir, component)
 
-        # if group does not exist in Dataset:
-        # create_group(root_group)
+    # if group does not exist in Dataset:
+    fdp_utils.create_nested_groups(netCDF_file, component)
 
+    fdp_utils.create_nd_variables_in_group_w_attribute(
+        group=netCDF_file[component],
+        data_names=[data_product],
+        attribute_data=dimension_values,
+        data=[array],
+        attribute_type=dimension_types,
+        attribute_var_name=dimension_names,
+        title_names=[description],
+        data_types=[data_type],
+        dimension_names=data_units_name,
+        other_attribute_names=other_attribute_names,
+        other_attribute_data=other_attribute_data,
+    )
 
-# This structure needs to be added
+    logging.info(f"data {netCDF_file[component]} written to file")
 
-# If the structure doesn't exist make it
+    # This structure needs to be added
 
-# Update current structure
+    # If the structure doesn't exist make it
 
-# Attach data
+    # Update current structure
 
-# Dimension names and titles ----------------------------------------------
+    # Attach data
 
+    # Dimension names and titles ----------------------------------------------
 
-# Attach dimension titles
+    # Attach dimension titles
 
+    # Attach dimension names
 
-# Attach dimension names
+    # Dimension values and units ----------------------------------------------
 
+    # Attach dimension values
 
-# Dimension values and units ----------------------------------------------
+    # Attach dimension units
 
-# Attach dimension values
+    # Attach units
 
+    # Write to handle ---------------------------------------------------------
+    handle = {
+        "data_product": data_product,
+        "use_data_product": data_product,
+        "use_component": component,
+        "use_version": write_version,
+        "use_namespace": write_namespace,
+        "path": path,
+        "data_product_description": data_product_decription,
+        "component_description": description,
+        "public": write_public,
+    }
 
-# Attach dimension units
-
-
-# Attach units
-
-
-# Write to handle ---------------------------------------------------------
-# handle = {
-#     "data_product": data_product,
-#     "use_data_product": data_product,
-#     "use_component": component,
-#     "use_version": version,
-#     "use_namespace": namespace,
-#     "path": path,
-#     "component_url": component_url,
-#     "data_product_description": data_product_description,
-#     "component_description": component_description,
-#     "public": public,
-# }
-
-
-# Return handle index -----------------------------------------------------
+    return handle
