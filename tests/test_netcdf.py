@@ -308,11 +308,12 @@ def test_write_array(
     netcdf_config: str,  # data product
     script: str,
     token: str,
+    array_name: str = "array",
 ) -> None:
     xs, ys, zs, data = dataset_variable_3d
 
     handle = pipeline.initialise(token, netcdf_config, script)
-    output = pipeline.write_array(
+    output, netCDF_file = pipeline.write_array(
         data,
         "f",
         handle,
@@ -323,7 +324,18 @@ def test_write_array(
         dimension_values=[xs, ys, zs],
         data_units_name=["m"],
         dimension_types=["f", "f", "f"],
+        array_name=array_name,
     )
+
+    groups = [grp for grp in args[0].split("/") if grp != ""]
+    for group in groups:
+        current = group
+        netCDF_file = netCDF_file[current]
+    assert netCDF_file[array_name].name == array_name
+    assert netCDF_file[array_name].title == args[1]
+    assert netCDF_file[array_name].units == "m"
+
+    assert len(netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(output, dict)
 

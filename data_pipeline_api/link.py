@@ -317,6 +317,7 @@ def write_array(
     dimension_types: list,  # attribute_type: list,
     other_attribute_names: list = [None],
     other_attribute_data: list = [None],
+    array_name: str = "array",
     # array: Any,
     # handle: dict,
     # data_product: str,
@@ -325,36 +326,44 @@ def write_array(
     # dimension_names: list = ['ambulance exploded','ambulance out of gas', 'ambulance ok'],
     # # dimension_values: list,
     # dimension_units: ['n','n','n'],
-) -> Any:
+) -> Tuple[netCDF4.Dataset, dict]:
     """
-    write_array  Function to populate netcdf file with array type data.
+    write_array _summary_
 
     Parameters
     ----------
-    array : _type_
-        an array containing the data
-    handle : _type_
+    array : Any
+                an array containing the data
+    handle : dict
         an object containing metadata required by the data pipeline api
     data_product : str
         a string specifying  the name of the data product
     component : str
-        string specifying a location within the netcdf file
+        string specifying a location within the netcdf file as 1/2/3/array
     description : str
         string describing the data product component
     dimension_names : list
-        where each element is a vector containing the labels associated with a particular dimension (e.g. element 1 corresponds to dimension 1, which corresponds to row names) and the name of each element describes the contents of each dimension (e.g. age classes).
+                where each element is a str containing the labels associated with a particular dimension (e.g. element 1 corresponds to dimension 1, which corresponds to row names) and the name of each element describes the contents of each dimension (e.g. age classes).
     dimension_values : list
-         (optional) a list of values corresponding to each dimension (e.g. list element 2 corresponds to columns)
-    dimension_units : list
-        (optional) a list of units corresponding to each dimension (e.g. list element 2 corresponds to columns)
-    units : str
-        (optional) a string specifying the units of the data as a whole
+        a list of values corresponding to each dimension (e.g. list element 2 corresponds to columns)
+    data_units_name : list
+        list of str corresponding to each dimension
+    dimension_types : list
+        list of str corresponding to each dimension
+    other_attribute_names : list, optional
+        list of names for the optional attributes, by default [None]
+    other_attribute_data : list, optional
+        list of data (np.array) of the optional attribute to be set , by default [None]
+    array_name : str, optional
+        name of the array as it will be displayed inside the netCDF file, by default 'array'
 
     Returns
     -------
-    Any
-         Returns a handle index associated with the just written component,
+    dict
+        Returns a handle index associated with the just written component,
     which can be used to raise an issue if necessary
+
+
     """
 
     if "write" not in handle["yaml"].keys():
@@ -396,25 +405,15 @@ def write_array(
     if not os.path.dirname(parentdir):
         os.makedirs(parentdir, exist_ok=True)
 
-    # if directory:= ox.exist(path):
-    #     pass
-    # return False
-
     # Write netCDF file
     netCDF_file = netCDF4.Dataset(path, "w", format="NETCDF4")
-
-    # Generate internal structure
-    # if component[-1] == "/":
-    #     parentdir = path.join(parentdir, component.split("/")[0])
-    # else:
-    #     parentdir = path.join(parentdir, component)
 
     # if group does not exist in Dataset:
     fdp_utils.create_nested_groups(netCDF_file, component)
 
     fdp_utils.create_nd_variables_in_group_w_attribute(
         group=netCDF_file[component],
-        data_names=[data_product],
+        data_names=["array"],
         attribute_data=dimension_values,
         data=[array],
         attribute_type=dimension_types,
@@ -463,4 +462,4 @@ def write_array(
         "public": write_public,
     }
 
-    return handle
+    return handle, netCDF_file
