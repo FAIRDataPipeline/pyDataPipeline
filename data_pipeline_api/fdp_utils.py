@@ -665,9 +665,7 @@ def create_2d_variables_in_group(
             f"failed to create dimension. {x_dim} already exists inside {group}"
         )
     xdim = group.createDimension(x_dim, size)
-    xdim_v = group.createVariable(
-        variable_xname, variable_xname_type, xdim.name
-    )
+    _ = group.createVariable(variable_xname, variable_xname_type, xdim.name)
     y_dim = f"{variable_yname}_dim"
     size = len(variable_ydata)
     if y_dim in group.dimensions.keys():
@@ -747,9 +745,7 @@ def create_3d_variables_in_group(
         )
 
     xdim = group.createDimension(x_dim, size)
-    xdim_v = group.createVariable(
-        variable_xname, variable_xname_type, xdim.name
-    )
+    _ = group.createVariable(variable_xname, variable_xname_type, xdim.name)
 
     y_dim = f"{variable_yname}_dim"
 
@@ -810,7 +806,6 @@ def set_or_create_attr(
         return
     var.UnusedNameAttribute = attr_data
     var.renameAttribute("UnusedNameAttribute", attr_name)
-    return
 
 
 def create_nd_variables_in_group_w_attribute(
@@ -873,12 +868,12 @@ def create_nd_variables_in_group_w_attribute(
     if not len(data) == len(data_names) == len(data_types):
         raise DataSizeError("Invalid Operation - check size of data")
     if title_names:
-        if not len(title_names) == len(data):
+        if len(title_names) != len(data):
             raise AttributeSizeError(
                 "Invalid Operation - check size of title names attribute"
             )
     if dimension_names:
-        if not len(dimension_names) == len(data):
+        if len(dimension_names) != len(data):
             raise AttributeSizeError(
                 "Invalid Operation - check size of dimension names attribute"
             )
@@ -892,7 +887,6 @@ def create_nd_variables_in_group_w_attribute(
     data_dim: Tuple = tuple()
     for dim in range(len(attribute_data)):
         var_dim = attribute_var_name[dim] + "_dim"
-        #         import pdb;pdb.set_trace()
         if var_dim in group.dimensions.keys():
             raise ValueError(
                 f"failed to create dimension. {var_dim} already exists inside {group}"
@@ -920,7 +914,7 @@ def create_nd_variables_in_group_w_attribute(
         set_or_create_attr(group[name], "units", dimension_names[i])
 
         if all([True if x != None else False for x in other_attribute_names]):
-            if not len(other_attribute_names) == len(other_attribute_data):
+            if len(other_attribute_names) != len(other_attribute_data):
                 raise DataSizeError(
                     "incorrect data - check size of additional attributes"
                 )

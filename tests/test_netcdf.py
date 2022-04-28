@@ -291,40 +291,38 @@ def test_read_array(
     assert path
 
 
-@pytest.mark.xfail(reason="write_array function not yet implemented")
+@pytest.mark.skip
 @pytest.mark.pipeline
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        ("1/2/3", "test1"),
+        ("first/second/third", "test2"),
+        ("test_group", "test3"),
+    ],
+)
 def test_write_array(
-    config: str,
+    args: Tuple[str, str],
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    config: str,  # data product
     script: str,
     token: str,
-    data_product: str = "",
-    component: str = "",
-    description: str = "",
-    dimension_names: List = None,
-    dimension_values: List = None,
-    dimension_units: List = None,
-    units: str = "",
 ) -> None:
-    if dimension_names is None:
-        dimension_names = []
-    if dimension_values is None:
-        dimension_values = []
-    if dimension_units is None:
-        dimension_units = []
-    array: netCDF4.Dataset = []
+    xs, ys, zs, data = dataset_variable_3d
+
     handle = pipeline.initialise(token, config, script)
     output = pipeline.write_array(
-        array,
+        data,
         handle,
-        data_product,
-        component,
-        description,
-        dimension_names,
-        dimension_values,
-        dimension_units,
-        units,
+        "test/netCDF",
+        args[0],
+        args[1],
+        dimension_names=["x3d", "y3d", "z3d"],
+        dimension_values=[xs, ys, zs],
+        dimension_units=["m", "m", "m"],
     )
-    assert output is False
+    assert isinstance(output, dict)
 
 
 @pytest.mark.netcdf

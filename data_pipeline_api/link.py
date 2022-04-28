@@ -28,9 +28,12 @@ def resolve_write(
     write_namespace = run_metadata["default_output_namespace"]
     write_public = run_metadata["public"]
     if write["file_type"]:
-        file_type = write["file_type"]
+        filetype = write["file_type"]
+    if file_type:
+        filetype = file_type
     # Create filename for path
-    filename = f"dat-{fdp_utils.random_hash()}.{file_type}"
+
+    filename = f"dat-{fdp_utils.random_hash()}.{filetype}"
 
     # Get path
     path = os.path.join(
@@ -309,7 +312,6 @@ def write_array(
     dimension_names: list,
     dimension_values: list,
     dimension_units: list,
-    units: str,
     # array: Any,
     # handle: dict,
     # data_product: str,
@@ -359,36 +361,32 @@ def write_array(
         handle, data_product, file_type="netcdf"
     )
     # Get metadata ------------------------------------------------------------
-    return False
+    # return False
     write_data_product = write_metadata["data_product"]  # noqa: F841
-    write_version = write_metadata["version"]  # noqa: F841
-    write_namespace = write_metadata["namespace"]  # noqa: F841
+    write_version = write_metadata["use_version"]  # noqa: F841
+    write_namespace = write_metadata["use_namespace"]  # noqa: F841
     write_public = write_metadata["public"]  # noqa: F841
-    data_product_decription = write_metadata["description"]  # noqa: F841
+    data_product_decription = write_metadata[
+        "data_product_description"
+    ]  # noqa: F841
     path = write_metadata["path"]  # noqa: F841
 
     if not isinstance(array, np.ndarray):
         raise TypeError(f"{array} must be an array")
         # Check dimensions class
     if dimension_names:
-        if not all(
-            list(map(lambda x: isinstance(x, np.array), dimension_names))
-        ):
-            raise TypeError("Elements of dimension_names must be arrays")
+        if not all(list(map(lambda x: isinstance(x, str), dimension_names))):
+            raise TypeError("Elements of dimension_names must be strings")
             # Check number of dimensions
         # if (length(dim(array)) != length(dimension_names))
         if len(array) != len(dimension_names):
             raise ValueError(
                 "Length of dimension_names does not equal number of dimensions in array"
             )
-
-        # Check length of elements in each dimension
-        # if any([ for i in dimension_names if check := dimension_names[i] == len(array)]):
-        #     raise ValueError(
-        #         "Number of elements in dimension_names does not equal number of dimensions in array"
-        #     )
     parentdir = os.path.dirname(os.path.abspath(path))
+    import pdb
 
+    pdb.set_trace()
     # Write hdf5 file ---------------------------------------------------------
 
     # Generate directory structure
