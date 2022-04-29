@@ -300,7 +300,7 @@ def test_read_array(
     assert path
 
 
-# @pytest.mark.skip
+@pytest.mark.netcdf
 @pytest.mark.pipeline
 @pytest.mark.parametrize(
     ("args"),
@@ -375,6 +375,89 @@ def test_write_array(
     assert new_netCDF_file[array_name].units == "kg"
     assert np.isclose(data, np.sqrt(new_netCDF_file[array_name][:]).data).all()
     assert len(new_netCDF_file[array_name].ncattrs()) == 5
+
+    assert isinstance(handle, dict)
+    netCDF_file.close()
+
+
+@pytest.mark.netcdf
+@pytest.mark.pipeline
+@pytest.mark.parametrize(
+    ("args"),
+    [
+        ("1/2/3", "test1"),
+        ("first/second/third", "test2"),
+        ("test_group", "test3"),
+    ],
+)
+def test_write_array_append_data(
+    args: Tuple[str, str],
+    dataset_variable_3d: Tuple,
+    test_dataset: netCDF4.Dataset,
+    netcdf_config: str,  # data product
+    script: str,
+    token: str,
+    array_name: str = "array",
+) -> None:
+    xs, ys, zs, data = dataset_variable_3d
+
+    handle = pipeline.initialise(token, netcdf_config, script)
+    netcdf_handle = pipeline.write_array(
+        data,
+        "f",
+        handle,
+        "test/netCDF",
+        args[0],
+        args[1],
+        dimension_names=["x3d", "y3d", "z3d"],
+        dimension_values=[xs, ys, zs],
+        data_units_name=["m"],
+        dimension_types=["f", "f", "f"],
+        array_name=array_name,
+    )
+
+    netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
+    new_netCDF_file = netCDF_file
+    groups = [grp for grp in args[0].split("/") if grp != ""]
+    for group in groups:
+        current = group
+        new_netCDF_file = new_netCDF_file[current]
+
+    assert new_netCDF_file[array_name].name == array_name
+    assert new_netCDF_file[array_name].title == args[1]
+    assert new_netCDF_file[array_name].units == "m"
+
+    assert len(new_netCDF_file[array_name].ncattrs()) == 5
+
+    assert isinstance(handle, dict)
+    netCDF_file.close()
+
+    netcdf_handle = pipeline.write_array(
+        data ** 2,
+        "f",
+        netcdf_handle,
+        "test/netCDF",
+        args[0],
+        args[1],
+        dimension_names=["x3d", "y3d", "z3d"],
+        dimension_values=[xs, ys, zs],
+        data_units_name=["kg"],
+        dimension_types=["f", "f", "f"],
+        array_name="array2",
+    )
+
+    netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
+    new_netCDF_file = netCDF_file
+    groups = [grp for grp in args[0].split("/") if grp != ""]
+    for group in groups:
+        current = group
+        new_netCDF_file = new_netCDF_file[current]
+    # import pdb;pdb.set_trace()
+    assert new_netCDF_file["array2"].name == "array2"
+    assert new_netCDF_file["array2"].title == args[1]
+    assert new_netCDF_file["array2"].units == "kg"
+    assert np.isclose(data, np.sqrt(new_netCDF_file["array2"][:]).data).all()
+    assert len(new_netCDF_file["array2"].ncattrs()) == 5
 
     assert isinstance(handle, dict)
     netCDF_file.close()

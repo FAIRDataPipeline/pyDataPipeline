@@ -7,6 +7,8 @@ import numpy as np
 
 from data_pipeline_api import fdp_utils
 
+logger = logging.getLogger(__name__)
+
 
 def resolve_write(
     handle: dict, data_product: str, file_type: str = None
@@ -374,6 +376,7 @@ def write_array(
     path, write_metadata = resolve_write(
         handle, data_product, file_type="netcdf"
     )
+
     # Get metadata ------------------------------------------------------------
     # return False
     write_data_product = write_metadata["data_product"]  # noqa: F841
@@ -384,6 +387,8 @@ def write_array(
         "data_product_description"
     ]  # noqa: F841
     path = write_metadata["path"]  # noqa: F841
+    if "path" in handle.keys():
+        path = handle["path"]
 
     if not isinstance(array, np.ndarray):
         raise TypeError(f"{array} must be an array")
@@ -408,9 +413,11 @@ def write_array(
     # Write netCDF file
     # import pdb;pdb.set_trace()
     try:
+
         netCDF_file = netCDF4.Dataset(path, "r+", format="NETCDF4")
+        print(f"opening {path}")
     except FileNotFoundError:
-        logging.info(f"file {path} does not exist. creating empty one")
+        print(f"file {path} does not exist. creating empty one")
         netCDF_file = netCDF4.Dataset(path, "w", format="NETCDF4")
 
     # if group does not exist in Dataset:
@@ -418,7 +425,7 @@ def write_array(
 
     fdp_utils.create_nd_variables_in_group_w_attribute(
         group=netCDF_file[component],
-        data_names=["array"],
+        data_names=[array_name],
         attribute_data=dimension_values,
         data=[array],
         attribute_type=dimension_types,
@@ -457,14 +464,14 @@ def write_array(
     # Write to handle ---------------------------------------------------------
     handle = {
         "data_product": data_product,
-        "use_data_product": data_product,
-        "use_component": component,
-        "use_version": write_version,
-        "use_namespace": write_namespace,
+        "component": component,
+        "version": write_version,
+        "namespace": write_namespace,
         "path": path,
         "data_product_description": data_product_decription,
         "component_description": description,
         "public": write_public,
+        "yaml": handle["yaml"],
     }
 
     return handle

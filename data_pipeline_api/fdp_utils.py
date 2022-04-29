@@ -885,13 +885,20 @@ def create_nd_variables_in_group_w_attribute(
     data_dim: Tuple = tuple()
     for dim in range(len(attribute_data)):
         var_dim = f"{attribute_var_name[dim]}_dim"
+
         if var_dim in group.dimensions.keys():
-            raise ValueError(
+
+            print(
                 f"failed to create dimension. {var_dim} already exists inside {group}"
             )
-        vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
-            var_dim, len(attribute_data[dim])
-        )
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[
+                var_dim
+            ]
+
+        else:
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
+                var_dim, len(attribute_data[dim])
+            )
 
         data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
     for i, name in enumerate(data_names):
