@@ -341,7 +341,7 @@ def test_write_array(
     assert isinstance(handle, dict)
     # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
     netcdf_handle = pipeline.write_array(
-        3 * data,
+        data ** 2,
         "f",
         handle,
         "test/netCDF",
@@ -361,7 +361,7 @@ def test_write_array(
     assert netCDF_file[array_name].name == array_name
     assert netCDF_file[array_name].title == args[1]
     assert netCDF_file[array_name].units == "kg"
-    assert netCDF_file[array_name][:] / netCDF_file[array_name][:] == 3
+    assert np.isclose(data, np.sqrt(netCDF_file[array_name][:]).data).all()
     assert len(netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(handle, dict)
