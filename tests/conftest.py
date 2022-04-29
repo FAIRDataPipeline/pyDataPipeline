@@ -57,9 +57,12 @@ def dataset_variable_2d() -> Tuple[List, List, List]:
 @pytest.fixture
 def test_dataset() -> netCDF4.Dataset:
     path = os.curdir
-    if os.path.exists(f"{path}test.nc"):
-        os.remove(f"{path}test.nc")
-    return netCDF4.Dataset(f"{path}test.nc", "w", format="NETCDF4")
+
+    filename = f"test-{fdp_utils.random_hash()}.nc"
+    # if os.path.exists(f"{path}{os.sep}{filename}"):
+    #     os.remove(f"{path}{os.sep}{filename}")
+
+    return netCDF4.Dataset(f"{path}{os.sep}{filename}", "w", format="NETCDF4")
 
 
 @pytest.fixture
