@@ -313,7 +313,7 @@ def test_write_array(
     xs, ys, zs, data = dataset_variable_3d
 
     handle = pipeline.initialise(token, netcdf_config, script)
-    output, netCDF_file = pipeline.write_array(
+    netcdf_handle = pipeline.write_array(
         data,
         "f",
         handle,
@@ -327,6 +327,7 @@ def test_write_array(
         array_name=array_name,
     )
 
+    netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
     groups = [grp for grp in args[0].split("/") if grp != ""]
     for group in groups:
         current = group
@@ -337,10 +338,10 @@ def test_write_array(
 
     assert len(netCDF_file[array_name].ncattrs()) == 5
 
-    assert isinstance(output, dict)
+    assert isinstance(handle, dict)
     # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
-    output, netCDF_file = pipeline.write_array(
-        data,
+    netcdf_handle = pipeline.write_array(
+        3 * data,
         "f",
         handle,
         "test/netCDF",
@@ -352,7 +353,7 @@ def test_write_array(
         dimension_types=["f", "f", "f"],
         array_name=array_name,
     )
-
+    netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
     groups = [grp for grp in args[0].split("/") if grp != ""]
     for group in groups:
         current = group
@@ -360,10 +361,10 @@ def test_write_array(
     assert netCDF_file[array_name].name == array_name
     assert netCDF_file[array_name].title == args[1]
     assert netCDF_file[array_name].units == "kg"
-
+    assert netCDF_file[array_name][:] / netCDF_file[array_name][:] == 3
     assert len(netCDF_file[array_name].ncattrs()) == 5
 
-    assert isinstance(output, dict)
+    assert isinstance(handle, dict)
 
 
 @pytest.mark.netcdf

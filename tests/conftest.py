@@ -13,10 +13,10 @@ import data_pipeline_api.fdp_utils as fdp_utils
 @pytest.fixture
 def dataset_variable() -> Tuple[List, List, List]:
     nx = 10
-    xs = np.asarray(list(range(nx)))
-    sins = np.asarray([math.sin(math.radians(x)) for x in xs])
-    coss = np.asarray([math.cos(math.radians(x)) for x in xs])
-    return xs, np.asarray(sins), np.asarray(coss)
+    xs = np.array(list(range(nx)))
+    sins = np.array([math.sin(math.radians(x)) for x in xs])
+    coss = np.array([math.cos(math.radians(x)) for x in xs])
+    return xs, np.array(sins), np.array(coss)
 
 
 @pytest.fixture
@@ -26,18 +26,16 @@ def dataset_variable_3d() -> Tuple[List, List, List, List]:
     ny = 4
     nz = 5
 
-    xs = np.asarray([x for x in range(nx)])
-    ys = np.asarray([y for y in range(ny)])
-    zs = np.asarray([z for z in range(nz)])
+    xs = np.array(list(range(nx)))
+    ys = np.array(list(range(ny)))
+    zs = np.array(list(range(nz)))
 
     data = np.zeros((nx, ny, nz))
 
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                data[i][j][k] = math.sin(math.radians(i + j + k))
+    for i, j, k in itertools.product(range(nx), range(ny), range(nz)):
+        data[i][j][k] = math.sin(math.radians(i + j + k))
 
-    return xs, ys, zs, np.asarray(data)
+    return xs, ys, zs, np.array(data)
 
 
 @pytest.fixture
@@ -46,14 +44,14 @@ def dataset_variable_2d() -> Tuple[List, List, List]:
     nx = 10
     ny = 5
 
-    xs = np.asarray(list(range(nx)))
-    ys = np.asarray(list(range(ny)))
+    xs = np.array(list(range(nx)))
+    ys = np.array(list(range(ny)))
 
     data = np.zeros((nx, ny))
 
     for i, j in itertools.product(range(nx), range(ny)):
         data[i][j] = math.sin(math.radians(i + j))
-    return xs, ys, np.asarray(data)
+    return xs, ys, np.array(data)
 
 
 @pytest.fixture

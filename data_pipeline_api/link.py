@@ -326,7 +326,7 @@ def write_array(
     # dimension_names: list = ['ambulance exploded','ambulance out of gas', 'ambulance ok'],
     # # dimension_values: list,
     # dimension_units: ['n','n','n'],
-) -> Tuple[netCDF4.Dataset, dict]:
+) -> dict:
     """
     write_array _summary_
 
@@ -406,7 +406,12 @@ def write_array(
         os.makedirs(parentdir, exist_ok=True)
 
     # Write netCDF file
-    netCDF_file = netCDF4.Dataset(path, "w", format="NETCDF4")
+    # import pdb;pdb.set_trace()
+    try:
+        netCDF_file = netCDF4.Dataset(path, "r+", format="NETCDF4")
+    except FileNotFoundError:
+        logging.info(f"file {path} does not exist. creating empty one")
+        netCDF_file = netCDF4.Dataset(path, "w", format="NETCDF4")
 
     # if group does not exist in Dataset:
     fdp_utils.create_nested_groups(netCDF_file, component)
@@ -424,8 +429,8 @@ def write_array(
         other_attribute_names=other_attribute_names,
         other_attribute_data=other_attribute_data,
     )
-
     logging.info(f"data {netCDF_file[component]} written to file")
+    netCDF_file.close()
 
     # This structure needs to be added
 
@@ -462,4 +467,4 @@ def write_array(
         "public": write_public,
     }
 
-    return handle, netCDF_file
+    return handle
