@@ -41,6 +41,7 @@ def test_create_variable(
 
     assert all(test_dataset[group_name]["first_var"][:]) == all(xs)
     assert len(test_dataset[group_name]["first_var"][:]) == len(xs)
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -56,6 +57,7 @@ def test_creat_variable_already_exists_should_fail(
         create_variable_in_group(
             test_dataset[group_name], "first_var", xs, "f"
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -78,6 +80,7 @@ def test_create_1d_variables(
     assert len(test_dataset[group_name]["sin1"][:]) == len(xs)
     assert all(test_dataset[group_name]["cos1"][:]) == all(coss)
     assert len(test_dataset[group_name]["cos1"][:]) == len(xs)
+    test_dataset.close()
 
 
 @pytest.mark.parametrize(
@@ -110,6 +113,7 @@ def test_create_1d_variables_already_exists_should_fail(
             ["f", "f"],
             variable_xname=args[0],
         )
+    test_dataset.close()
 
 
 def test_create_3d_variable(
@@ -139,6 +143,7 @@ def test_create_3d_variable(
         assert var[0] in test_dataset[group_name].variables.keys()
         assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
         assert test_dataset[group_name]["data"][:].shape == (nx, ny, nz)
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -186,6 +191,7 @@ def test_create_3d_variable_already_exist_should_fail(
             variable_yname=args[2],
             variable_zname=args[3],
         )
+    test_dataset.close()
 
 
 def test_create_2d_variables(
@@ -213,6 +219,7 @@ def test_create_2d_variables(
         assert var[0] in test_dataset[group_name].variables.keys()
         assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
         assert test_dataset[group_name]["data"][:].shape == (nx, ny)
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -255,6 +262,7 @@ def test_create_2d_variables_already_exist_should_fail(
             variable_xname=args[1],
             variable_yname=args[2],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -271,6 +279,7 @@ def test_create_nested_groups(
     for grp in groups:
         assert grp in new_dts.groups.keys()
         new_dts = new_dts[grp]
+    test_dataset.close()
 
 
 @pytest.mark.xfail(reason="read_array function not yet implemented")
@@ -328,17 +337,19 @@ def test_write_array(
     )
 
     netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
+    new_netCDF_file = netCDF_file
     groups = [grp for grp in args[0].split("/") if grp != ""]
     for group in groups:
         current = group
-        netCDF_file = netCDF_file[current]
-    assert netCDF_file[array_name].name == array_name
-    assert netCDF_file[array_name].title == args[1]
-    assert netCDF_file[array_name].units == "m"
+        new_netCDF_file = new_netCDF_file[current]
+    assert new_netCDF_file[array_name].name == array_name
+    assert new_netCDF_file[array_name].title == args[1]
+    assert new_netCDF_file[array_name].units == "m"
 
-    assert len(netCDF_file[array_name].ncattrs()) == 5
+    assert len(new_netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(handle, dict)
+    netCDF_file.close()
     # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
     netcdf_handle = pipeline.write_array(
         data ** 2,
@@ -354,17 +365,19 @@ def test_write_array(
         array_name=array_name,
     )
     netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
+    new_netCDF_file = netCDF_file
     groups = [grp for grp in args[0].split("/") if grp != ""]
     for group in groups:
         current = group
-        netCDF_file = netCDF_file[current]
-    assert netCDF_file[array_name].name == array_name
-    assert netCDF_file[array_name].title == args[1]
-    assert netCDF_file[array_name].units == "kg"
-    assert np.isclose(data, np.sqrt(netCDF_file[array_name][:]).data).all()
-    assert len(netCDF_file[array_name].ncattrs()) == 5
+        new_netCDF_file = new_netCDF_file[current]
+    assert new_netCDF_file[array_name].name == array_name
+    assert new_netCDF_file[array_name].title == args[1]
+    assert new_netCDF_file[array_name].units == "kg"
+    assert np.isclose(data, np.sqrt(new_netCDF_file[array_name][:]).data).all()
+    assert len(new_netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(handle, dict)
+    netCDF_file.close()
 
 
 @pytest.mark.netcdf
@@ -401,6 +414,7 @@ def test_set_attribute(
     )
     assert "test_attribute" in test_dataset[group_name]["data"].ncattrs()
     assert len(test_dataset[group_name]["data"].test_attribute) == 10
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -442,6 +456,7 @@ def test_set_attribute_already_exists(
     )
     assert "test_attribute" in test_dataset[group_name]["data"].ncattrs()
     assert len(test_dataset[group_name]["data"].test_attribute) == 5
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -475,6 +490,7 @@ def test_create_nd_variables_in_group_w_attribute(
     assert test_dataset[group_name]["data3d"].units == "Unknown"
     assert test_dataset[group_name]["data3d"].title == "Unknown"
     assert len(test_dataset[group_name]["data3d_3"].ncattrs()) == 6
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -502,6 +518,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail1(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -529,6 +546,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail2(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -556,6 +574,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail3(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -583,6 +602,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail4(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -611,6 +631,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail5(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -651,6 +672,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -691,6 +713,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail7(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -718,3 +741,4 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail8(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero", "seciao"],
         )
+    test_dataset.close()
