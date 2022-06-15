@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -79,12 +80,12 @@
            <div itemprop="articleBody">
              
   <section id="seirs-model-example">
-<h1>SEIRS Model example<a class="headerlink" href="#seirs-model-example" title="Permalink to this headline"></a></h1>
+<h1>SEIRS Model example<a class="headerlink" href="#seirs-model-example" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <p>The following example illustrates how to run the <a class="reference external" href="https://doi.org/10.1038/s41592-020-0856-2">SEIRS Model</a> using the Fair Data Pipeline with the <code class="code docutils literal notranslate"><span class="pre">pyDataPipeline</span></code> and [pySimpleModel]() package.</p>
 <section id="config-yaml">
-<h2>config.yaml<a class="headerlink" href="#config-yaml" title="Permalink to this headline"></a></h2>
+<h2>config.yaml<a class="headerlink" href="#config-yaml" title="Permalink to this heading"></a></h2>
 <p>The user should supply a config.yaml file describing a code run with the following inputs:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SEIRS_model</span><span class="o">/</span><span class="n">parameters</span>
 </pre></div>
@@ -132,7 +133,7 @@ and contains the following:</p>
 <p>The script specified in <code class="code docutils literal notranslate"><span class="pre">run_metadata</span></code> will be called by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">run</span></code></p>
 </section>
 <section id="fair-pull">
-<h2>fair pull<a class="headerlink" href="#fair-pull" title="Permalink to this headline"></a></h2>
+<h2>fair pull<a class="headerlink" href="#fair-pull" title="Permalink to this heading"></a></h2>
 <p>Using the CLI tool, the command <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">pull</span></code> will indentify any data products listed in the <code class="code docutils literal notranslate"><span class="pre">register</span></code> field of the config.yaml file and
 download them to the local data store as set by <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> and register the corresponding metadata to the local registry.</p>
 <p>The following commands should be run after activating a poetry shell from the CLI tool:</p>
@@ -147,7 +148,7 @@ download them to the local data store as set by <code class="code docutils liter
 </ol>
 </section>
 <section id="fair-run">
-<h2>fair run<a class="headerlink" href="#fair-run" title="Permalink to this headline"></a></h2>
+<h2>fair run<a class="headerlink" href="#fair-run" title="Permalink to this heading"></a></h2>
 <p>In order to run the script specified in <code class="code docutils literal notranslate"><span class="pre">run_metadata['script']</span></code> field of the config.yaml the command <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">run</span></code> from the CLI Tools should be used,
 Once again if the <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag was used with the <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code> command then this must be from the <code class="code docutils literal notranslate"><span class="pre">local_repo</span></code> directory.
 This should also only be run after activating a poetry shell from the command line and installing the <code class="code docutils literal notranslate"><span class="pre">pyDataPipeline</span></code> package within the poetry virtual environment
@@ -205,7 +206,7 @@ which is located in the <code class="code docutils literal notranslate"><span cl
 </div>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline"></a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading"></a></h2>
 <p>This code run should produce the following figure in the local data store,
 this will be a temporary directory if the <code class="code docutils literal notranslate"><span class="pre">--ci</span></code> flag was used with <code class="code docutils literal notranslate"><span class="pre">fair</span> <span class="pre">init</span></code></p>
 <a class="reference external image-reference" href="/pyDataPipeline/_images/SEIRS_figure.png"><img alt="../_images/SEIRS_figure.png" src="../_images/SEIRS_figure.png" /></a>
@@ -6239,7 +6240,7 @@ an example of the CSV file is printed below:</p>
 </table>
 </section>
 <section id="provenance-report">
-<h2>Provenance Report<a class="headerlink" href="#provenance-report" title="Permalink to this headline"></a></h2>
+<h2>Provenance Report<a class="headerlink" href="#provenance-report" title="Permalink to this heading"></a></h2>
 <p>The following is the Provenance Report produced by the FAIR Data Pipeline Registry as a result of the above code run:</p>
 <a class="reference external image-reference" href="/pyDataPipeline/_images/SEIRS_PR.jpeg"><img alt="../_images/SEIRS_PR.jpeg" src="../_images/SEIRS_PR.jpeg" /></a>
 </section>

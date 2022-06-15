@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -97,7 +98,7 @@
            <div itemprop="articleBody">
              
   <section id="scrc-software-checklist">
-<h1>SCRC Software checklist<a class="headerlink" href="#scrc-software-checklist" title="Permalink to this headline"></a></h1>
+<h1>SCRC Software checklist<a class="headerlink" href="#scrc-software-checklist" title="Permalink to this heading"></a></h1>
 <p>This checklist has been developed by the Scottish Covid-19 Response
 Consortium and has been used to assess the software engineering aspects
 of “model readiness” for our six epidemiological models. This is
@@ -111,30 +112,30 @@ components, three questions that apply only to software producing
 scientific results have been marked “models only” and for other software
 an N/A response can be given.</p>
 <section id="software-details">
-<h2>Software details<a class="headerlink" href="#software-details" title="Permalink to this headline"></a></h2>
+<h2>Software details<a class="headerlink" href="#software-details" title="Permalink to this heading"></a></h2>
 <section id="model-software-name">
-<h3>Model / software name<a class="headerlink" href="#model-software-name" title="Permalink to this headline"></a></h3>
+<h3>Model / software name<a class="headerlink" href="#model-software-name" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>pyDataPipeline</p>
 </div></blockquote>
 </section>
 <section id="date">
-<h3>Date<a class="headerlink" href="#date" title="Permalink to this headline"></a></h3>
+<h3>Date<a class="headerlink" href="#date" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>11/10/2021</p>
 </div></blockquote>
 </section>
 <section id="version-identifier">
-<h3>Version identifier<a class="headerlink" href="#version-identifier" title="Permalink to this headline"></a></h3>
+<h3>Version identifier<a class="headerlink" href="#version-identifier" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>0.7.5</p>
 </div></blockquote>
 </section>
 </section>
 <section id="this-assessment">
-<h2>This assessment<a class="headerlink" href="#this-assessment" title="Permalink to this headline"></a></h2>
+<h2>This assessment<a class="headerlink" href="#this-assessment" title="Permalink to this heading"></a></h2>
 <section id="filled-in-by">
-<h3>Filled in by<a class="headerlink" href="#filled-in-by" title="Permalink to this headline"></a></h3>
+<h3>Filled in by<a class="headerlink" href="#filled-in-by" title="Permalink to this heading"></a></h3>
 <p>Name</p>
 <blockquote>
 <div><p>Ryan Field</p>
@@ -149,7 +150,7 @@ an N/A response can be given.</p>
 </div></blockquote>
 </section>
 <section id="overall-statement">
-<h3>Overall statement<a class="headerlink" href="#overall-statement" title="Permalink to this headline"></a></h3>
+<h3>Overall statement<a class="headerlink" href="#overall-statement" title="Permalink to this heading"></a></h3>
 <p>Do we have sufficient confidence in the correctness of the software to
 trust the results?</p>
 <p>This is your overall judgement on the level of confidence based on all
@@ -169,7 +170,7 @@ using the software and not others).</p>
 </section>
 </section>
 <section id="checklist">
-<h2>Checklist<a class="headerlink" href="#checklist" title="Permalink to this headline"></a></h2>
+<h2>Checklist<a class="headerlink" href="#checklist" title="Permalink to this heading"></a></h2>
 <p>Please use a statement from this list: “Sufficiently addressed”, “Some
 work remaining or caveats”, or “Needs to be addressed” to begin each
 response.</p>
@@ -178,7 +179,7 @@ any relevant links (eg tool dashboards, documentation). The sub bullet
 points are to make the scope of the question clear and should be covered
 if relevant but do not have to be answered individually.</p>
 <section id="can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only">
-<h3>Can a run be repeated and reproduce exactly the same results? (models only)<a class="headerlink" href="#can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only" title="Permalink to this headline"></a></h3>
+<h3>Can a run be repeated and reproduce exactly the same results? (models only)<a class="headerlink" href="#can-a-run-be-repeated-and-reproduce-exactly-the-same-results-models-only" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>How is stochasticity handled?</p></li>
 <li><p>Is sufficient meta-data logged to enable a run to be reproduced: Is
@@ -201,7 +202,7 @@ relevant information to achive reproducable results.</p>
 </div></blockquote>
 </section>
 <section id="are-there-appropriate-tests-and-are-they-automated">
-<h3>Are there appropriate tests? (And are they automated?)<a class="headerlink" href="#are-there-appropriate-tests-and-are-they-automated" title="Permalink to this headline"></a></h3>
+<h3>Are there appropriate tests? (And are they automated?)<a class="headerlink" href="#are-there-appropriate-tests-and-are-they-automated" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Are there unit tests? What is covered?</p></li>
 <li><p>System and integration tests? Automated model validation tests?</p></li>
@@ -225,7 +226,7 @@ Github Actions. Tests are included in the repository.</p>
 </div></blockquote>
 </section>
 <section id="are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only">
-<h3>Are the scientific results of runs robust to different ways of running the code? (models only)<a class="headerlink" href="#are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only" title="Permalink to this headline"></a></h3>
+<h3>Are the scientific results of runs robust to different ways of running the code? (models only)<a class="headerlink" href="#are-the-scientific-results-of-runs-robust-to-different-ways-of-running-the-code-models-only" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Running on a different machine?</p></li>
 <li><p>With different number of processes?</p></li>
@@ -246,7 +247,7 @@ same.)</p>
 </div></blockquote>
 </section>
 <section id="has-any-sort-of-automated-code-checking-been-applied">
-<h3>Has any sort of automated code checking been applied?<a class="headerlink" href="#has-any-sort-of-automated-code-checking-been-applied" title="Permalink to this headline"></a></h3>
+<h3>Has any sort of automated code checking been applied?<a class="headerlink" href="#has-any-sort-of-automated-code-checking-been-applied" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>For C++, this might just be the compiler output when run with “all
 warnings”. It could also be more extensive static analysis. For other
@@ -264,7 +265,7 @@ been either fixed or understood to not be important?</p></li>
 </div></blockquote>
 </section>
 <section id="is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles">
-<h3>Is the code clean, generally understandable and readable and written according to good software engineering principles?<a class="headerlink" href="#is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles" title="Permalink to this headline"></a></h3>
+<h3>Is the code clean, generally understandable and readable and written according to good software engineering principles?<a class="headerlink" href="#is-the-code-clean-generally-understandable-and-readable-and-written-according-to-good-software-engineering-principles" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Is it modular? Are the internal implementation details of one module
 hidden from other modules?</p></li>
@@ -282,7 +283,7 @@ copy and pasted code, etc.?</p></li>
 </div></blockquote>
 </section>
 <section id="is-there-sufficient-documentation">
-<h3>Is there sufficient documentation?<a class="headerlink" href="#is-there-sufficient-documentation" title="Permalink to this headline"></a></h3>
+<h3>Is there sufficient documentation?<a class="headerlink" href="#is-there-sufficient-documentation" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Is there a readme?</p></li>
 <li><p>Does the code have user documentation?</p></li>
@@ -302,7 +303,7 @@ performed?</p></li>
 </div></blockquote>
 </section>
 <section id="is-there-suitable-collaboration-infrastructure">
-<h3>Is there suitable collaboration infrastructure?<a class="headerlink" href="#is-there-suitable-collaboration-infrastructure" title="Permalink to this headline"></a></h3>
+<h3>Is there suitable collaboration infrastructure?<a class="headerlink" href="#is-there-suitable-collaboration-infrastructure" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Is the code in a version-controlled repository?</p></li>
 <li><p>Is there a license?</p></li>
@@ -320,7 +321,7 @@ and issue tracking.</p>
 </div></blockquote>
 </section>
 <section id="are-software-dependencies-listed-and-of-appropriate-quality">
-<h3>Are software dependencies listed and of appropriate quality?<a class="headerlink" href="#are-software-dependencies-listed-and-of-appropriate-quality" title="Permalink to this headline"></a></h3>
+<h3>Are software dependencies listed and of appropriate quality?<a class="headerlink" href="#are-software-dependencies-listed-and-of-appropriate-quality" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><ul class="simple">
 <li><p>☒ Sufficiently addressed</p></li>
@@ -331,7 +332,7 @@ and issue tracking.</p>
 </div></blockquote>
 </section>
 <section id="is-input-and-output-data-handled-carefully-models-only">
-<h3>Is input and output data handled carefully? (Models only)<a class="headerlink" href="#is-input-and-output-data-handled-carefully-models-only" title="Permalink to this headline"></a></h3>
+<h3>Is input and output data handled carefully? (Models only)<a class="headerlink" href="#is-input-and-output-data-handled-carefully-models-only" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Does the code use the data pipeline for all inputs and outputs?</p></li>
 <li><p>Is the code appropriately parameterized (i.e. have hard coded
@@ -349,7 +350,7 @@ parameters been removed)?</p></li>
 </section>
 </section>
 <section id="contributors-and-licence">
-<h2>Contributors and licence<a class="headerlink" href="#contributors-and-licence" title="Permalink to this headline"></a></h2>
+<h2>Contributors and licence<a class="headerlink" href="#contributors-and-licence" title="Permalink to this heading"></a></h2>
 <p>Contributors: * Ryan Field * Dennis Reddyhoff</p>
 <p>Only a few points within the checklist are specific to the work of the
 SCRC collaboration or to epidemiology so the checklist could be readily
