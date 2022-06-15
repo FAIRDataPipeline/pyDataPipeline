@@ -397,7 +397,6 @@ def write_array(
         if not all(list(map(lambda x: isinstance(x, str), dimension_names))):
             raise TypeError("Elements of dimension_names must be strings")
             # Check number of dimensions
-        # if (length(dim(array)) != length(dimension_names))
         if len(array) != len(dimension_names):
             raise ValueError(
                 "Length of dimension_names does not equal number of dimensions in array"
@@ -411,7 +410,6 @@ def write_array(
         os.makedirs(parentdir, exist_ok=True)
 
     # Write netCDF file
-    # import pdb;pdb.set_trace()
     try:
 
         netCDF_file = netCDF4.Dataset(path, "r+", format="NETCDF4")

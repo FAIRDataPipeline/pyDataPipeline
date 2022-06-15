@@ -352,7 +352,7 @@ def test_write_array(
     netCDF_file.close()
     # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
     netcdf_handle = pipeline.write_array(
-        data ** 2,
+        data**2,
         "f",
         handle,
         "test/netCDF",
@@ -432,8 +432,9 @@ def test_write_array_append_data(
     assert isinstance(handle, dict)
     netCDF_file.close()
 
+    array_name = "array2"
     netcdf_handle = pipeline.write_array(
-        data ** 2,
+        data**2,
         "f",
         netcdf_handle,
         "test/netCDF",
@@ -443,7 +444,7 @@ def test_write_array_append_data(
         dimension_values=[xs, ys, zs],
         data_units_name=["kg"],
         dimension_types=["f", "f", "f"],
-        array_name="array2",
+        array_name=array_name,
     )
 
     netCDF_file = netCDF4.Dataset(netcdf_handle["path"], "r", format="NETCDF4")
@@ -452,12 +453,11 @@ def test_write_array_append_data(
     for group in groups:
         current = group
         new_netCDF_file = new_netCDF_file[current]
-    # import pdb;pdb.set_trace()
-    assert new_netCDF_file["array2"].name == "array2"
-    assert new_netCDF_file["array2"].title == args[1]
-    assert new_netCDF_file["array2"].units == "kg"
-    assert np.isclose(data, np.sqrt(new_netCDF_file["array2"][:]).data).all()
-    assert len(new_netCDF_file["array2"].ncattrs()) == 5
+    assert new_netCDF_file[array_name].name == array_name
+    assert new_netCDF_file[array_name].title == args[1]
+    assert new_netCDF_file[array_name].units == "kg"
+    assert np.isclose(data, np.sqrt(new_netCDF_file[array_name][:]).data).all()
+    assert len(new_netCDF_file[array_name].ncattrs()) == 5
 
     assert isinstance(handle, dict)
     netCDF_file.close()
