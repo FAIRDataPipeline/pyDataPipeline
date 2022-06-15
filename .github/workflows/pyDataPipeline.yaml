@@ -1,0 +1,91 @@
+name: Python FAIR Data Pipeline
+on: [push]
+jobs:
+  test:
+    name: Test ${{ matrix.os }} (Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest,ubuntu-20.04,macos-latest]
+        python: ["3.7"] #,"3.8", "3.9"]
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: "x64"
+      - name: Install graphviz
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get install graphviz
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              choco install graphviz
+          elif [ "$RUNNER_OS" == "Darwin" ]; then
+              brew install graphviz
+          fi
+        shell: bash
+      - name: Install local registry
+        run: |
+          if [ "$RUNNER_OS" != "Windows" ]; then
+              curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
+          fi
+        shell: bash
+      - name: install local registry on windows
+        shell: cmd
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install wget
+          md %userprofile%\.fair
+          cd /d %userprofile%\.fair
+          echo %CD%
+          wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
+          install_registry.bat
+      - name: Install Required
+        run: brew install memcached
+        if: matrix.os == 'macos-latest'
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Checkout pySimpleModel
+        uses: actions/checkout@v2
+        with:
+          repository: FAIRDataPipeline/pySimpleModel
+          path: pySimpleModel
+      - name: Move pySimpleModel
+        run: mv pySimpleModel ../pySimpleModel
+      - name: Run Tests on Windows
+        run: |
+          poetry install
+          pip3 install fair-cli
+          pip3 install ../pySimpleModel
+          fair init --ci
+          fair registry start
+          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+
+          poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
+        if: matrix.os == 'windows-latest'
+      - name: Run Tests on other OS
+        if: matrix.os != 'windows-latest'
+        run: |
+          poetry install
+          source .venv/bin/activate
+          pip install fair-cli
+          pip install ../pySimpleModel
+          fair init --ci
+          fair registry start
+          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+
+          python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+        if: matrix.python == '3.9' && matrix.os == 'ubuntu-20.04'

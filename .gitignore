@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+data_pipeline.api.egg-info
 
 # C extensions
 *.so
@@ -127,3 +128,24 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Notebooks
+*.ipynb
+
+test.yaml
+
+.DS_Store
+
+.fair/
+
+tmp/
+tests/ext/coderuns.txt
+data_store
+
+fairdatapipeline/simpleModel/ext/test.py
+
+# Sphinx documentation
+doc/_build/
+
+# Poetry Lock
+poetry.lock

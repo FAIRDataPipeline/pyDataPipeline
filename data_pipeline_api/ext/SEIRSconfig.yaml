@@ -1,0 +1,31 @@
+run_metadata:
+  default_input_namespace: rfield
+  description: SEIRS Model python
+  script: python3 data_pipeline_api/ext/SEIRSModelRun.py
+  remote_repo: https://github.com/FAIRDataPipeline/pyDataPipeline.git
+
+register:
+- namespace: PSU
+  full_name: Pennsylvania State University
+  website: https://ror.org/04p491231
+
+- external_object: SEIRS_model/parameters
+  namespace_name: PSU
+  root: https://raw.githubusercontent.com/
+  path: FAIRDataPipeline/pyDataPipeline/dev/data_pipeline_api/ext/static_params_SEIRS.csv
+  title: Static parameters of the model
+  description: Static parameters of the model
+  identifier: https://doi.org/10.1038/s41592-020-0856-2
+  file_type: csv
+  release_date: 2021-09-20T12:00
+  version: "1.0.0"
+  primary: True
+
+write:
+- data_product: SEIRS_model/results/model_output/python
+  description: SEIRS model results
+  file_type: csv
+
+- data_product: SEIRS_model/results/figure/python
+  description: SEIRS output plot
+  file_type: png
