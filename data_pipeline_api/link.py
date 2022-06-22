@@ -436,7 +436,7 @@ def write_array(
         attribute_type=dimension_types,
         attribute_var_name=dimension_names,
         title_names=[description],
-        data_types=["f", "f"],
+        data_types=[data_type],
         dimension_names=data_units_name,
         other_attribute_names=other_attribute_names,
         other_attribute_data=other_attribute_data,
