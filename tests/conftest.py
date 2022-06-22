@@ -1,7 +1,7 @@
 import itertools
 import math
 import os
-from typing import List, Tuple
+from typing import Tuple
 
 import netCDF4
 import numpy as np
@@ -11,7 +11,7 @@ import data_pipeline_api.fdp_utils as fdp_utils
 
 
 @pytest.fixture
-def dataset_variable() -> Tuple[List, List, List]:
+def dataset_variable() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     nx = 10
     xs = np.array(list(range(nx)))
     sins = np.array([math.sin(math.radians(x)) for x in xs])
@@ -20,7 +20,9 @@ def dataset_variable() -> Tuple[List, List, List]:
 
 
 @pytest.fixture
-def dataset_variable_3d() -> Tuple[List, List, List, List]:
+def dataset_variable_3d() -> Tuple[
+    np.ndarray, np.ndarray, np.ndarray, np.ndarray
+]:
     # # 3d    #data
     nx = 3
     ny = 4
@@ -39,7 +41,7 @@ def dataset_variable_3d() -> Tuple[List, List, List, List]:
 
 
 @pytest.fixture
-def dataset_variable_2d() -> Tuple[List, List, List]:
+def dataset_variable_2d() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     # # 3d    #data
     nx = 10
     ny = 5
@@ -61,9 +63,6 @@ def test_dataset() -> netCDF4.Dataset:
         os.makedirs("tmp")
     path = os.path.join(os.curdir, "tmp")
     filename = f"test-{fdp_utils.random_hash()}.nc"
-    # if os.path.exists(f"{path}{os.sep}{filename}"):
-    #     os.remove(f"{path}{os.sep}{filename}")
-
     return netCDF4.Dataset(f"{path}{os.sep}{filename}", "w", format="NETCDF4")
 
 

@@ -808,80 +808,14 @@ def set_or_create_attr(
     var.renameAttribute("UnusedNameAttribute", attr_name)
 
 
-def create_nd_variables_in_group_w_attribute(
+def prepare_headers(
     group: netCDF4.Group,
-    data_names: list,
     attribute_data: list,
-    data: list,
-    data_types: list,
     attribute_var_name: list,
     attribute_type: list,
-    other_attribute_names: list = [None],
-    other_attribute_data: list = [None],
     title_names: list = [None],
-    dimension_names: list = [None],
 ) -> None:
-    """
-    create_nd_variables_in_group_w_attribute      given a list of data as f(x1,x2,...xi) will write them within a group of a netCDF file setting xi as attribute of each data.
 
-     Default attributes as units and dimension are also set. User can also specify additional attributes.
-
-    Parameters
-    ----------
-    group : netCDF4.Group
-        existing group inside netcdf file where to store the data
-    data_names : list
-        list string describing the name of data to be stored
-    attribute_data : list
-        list variables to store as attributes of each data
-    data : list
-        list of data to store
-    data_types : list
-        list of types of the data to be stored
-    attribute_var_name : list
-        list of names of the attribute as they will be displayed/stored in the netcdf file
-    attribute_type : list
-        list of type of each attribute
-    other_attribute_names : list, optional
-        list of names of optional attributes, by default [None]
-    other_attribute_data : list, optional
-        list of data for each of optional attributes, by default [None]
-    title_names : list, optional
-        default title attribute, by default [None]
-    dimension_names : list, optional
-        default dimension attribute, by default [None]
-
-    """
-
-    if len(title_names) == 1 and not title_names[0]:
-        title_names = ["Unknown" for _ in range(len(data))]
-    if len(dimension_names) == 1 and not dimension_names[0]:
-        dimension_names = ["Unknown" for _ in range(len(data))]
-
-    if (
-        not len(attribute_data)
-        == len(attribute_var_name)
-        == len(attribute_type)
-    ):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of data - all attribute inputs must be of same size"
-        )
-    if not len(data) == len(data_names) == len(data_types):
-        raise DataSizeError("Invalid Operation - check size of data")
-    if title_names and len(title_names) != len(data):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of title names attribute"
-        )
-    if dimension_names and len(dimension_names) != len(data):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of dimension names attribute"
-        )
-    for value in data:
-        for dim in range(len(value.shape)):
-            if value.shape[dim] != len(attribute_data[dim]):
-                raise ValueError(
-                    f"size of {attribute_var_name[dim]} incompatible with data"
-                )
     data_dim: Tuple = tuple()
     for dim in range(len(attribute_data)):
         var_dim = f"{attribute_var_name[dim]}_dim"
@@ -899,6 +833,58 @@ def create_nd_variables_in_group_w_attribute(
             vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
                 var_dim, len(attribute_data[dim])
             )
+
+        data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
+
+
+def write_2group(
+    group: netCDF4.Group,
+    data_names: list,
+    attribute_data: list,
+    data: list,
+    data_types: list,
+    attribute_var_name: list,
+    attribute_type: list,
+    other_attribute_names: list = [None],
+    other_attribute_data: list = [None],
+    title_names: list = [None],
+    dimension_names: list = [None],
+) -> None:
+    if len(title_names) == 1 and not title_names[0]:
+        title_names = ["Unknown" for _ in range(len(data))]
+    if len(dimension_names) == 1 and not dimension_names[0]:
+        dimension_names = ["Unknown" for _ in range(len(data))]
+
+    if (
+        not len(attribute_data)
+        == len(attribute_var_name)
+        == len(attribute_type)
+    ):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of data - all attribute inputs must be of same size"
+        )
+
+    if not len(data) == len(data_names) == len(data_types):
+        raise DataSizeError("Invalid Operation - check size of data")
+    if title_names and len(title_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of title names attribute"
+        )
+    if dimension_names and len(dimension_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of dimension names attribute"
+        )
+    for value in data:
+        for dim in range(len(value.shape)):
+            if value.shape[dim] != len(attribute_data[dim]):
+                raise ValueError(
+                    f"size of {attribute_var_name[dim]} incompatible with data"
+                )
+
+    data_dim: Tuple = tuple()
+    for dim in range(len(attribute_data)):
+        var_dim = f"{attribute_var_name[dim]}_dim"
+        vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[var_dim]
 
         data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
     for i, name in enumerate(data_names):

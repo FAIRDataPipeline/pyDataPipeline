@@ -9,14 +9,12 @@ import pytest
 import data_pipeline_api as pipeline
 from data_pipeline_api.exceptions import AttributeSizeError, DataSizeError
 from data_pipeline_api.fdp_utils import (
-    create_1d_variables_in_group,
     create_2d_variables_in_group,
-    create_3d_variables_in_group,
     create_group,
-    create_nd_variables_in_group_w_attribute,
     create_nested_groups,
-    create_variable_in_group,
+    prepare_headers,
     set_or_create_attr,
+    write_2group,
 )
 
 
@@ -27,242 +25,6 @@ def test_create_group(
     create_group(test_dataset, group_name)
 
     assert group_name in test_dataset.groups
-
-
-@pytest.mark.netcdf
-def test_create_variable(
-    dataset_variable: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, _, _ = dataset_variable
-    create_variable_in_group(test_dataset[group_name], "first_var", xs, "f")
-
-    assert all(test_dataset[group_name]["first_var"][:]) == all(xs)
-    assert len(test_dataset[group_name]["first_var"][:]) == len(xs)
-    test_dataset.close()
-
-
-@pytest.mark.netcdf
-def test_creat_variable_already_exists_should_fail(
-    dataset_variable: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, _, _ = dataset_variable
-    create_variable_in_group(test_dataset[group_name], "first_var", xs, "f")
-    with pytest.raises(ValueError):
-        create_variable_in_group(
-            test_dataset[group_name], "first_var", xs, "f"
-        )
-    test_dataset.close()
-
-
-@pytest.mark.netcdf
-def test_create_1d_variables(
-    dataset_variable: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, sins, coss = dataset_variable
-    create_1d_variables_in_group(
-        test_dataset[group_name],
-        ["sin1", "cos1"],
-        xs,
-        [sins, coss],
-        ["f", "f"],
-        variable_xname="xx",
-    )
-    assert all(test_dataset[group_name]["sin1"][:]) == all(sins)
-    assert len(test_dataset[group_name]["sin1"][:]) == len(xs)
-    assert all(test_dataset[group_name]["cos1"][:]) == all(coss)
-    assert len(test_dataset[group_name]["cos1"][:]) == len(xs)
-    test_dataset.close()
-
-
-@pytest.mark.parametrize(
-    ("args"),
-    [("x", "sin"), ("xx", "sin")],
-)
-@pytest.mark.netcdf
-def test_create_1d_variables_already_exists_should_fail(
-    args: str,
-    dataset_variable: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, sins, coss = dataset_variable
-    create_1d_variables_in_group(
-        test_dataset[group_name],
-        ["sin", "cos"],
-        xs,
-        [sins, coss],
-        ["f", "f"],
-        variable_xname="x",
-    )
-    with pytest.raises(ValueError):
-        create_1d_variables_in_group(
-            test_dataset[group_name],
-            [args[1], "cos"],
-            xs,
-            [sins, coss],
-            ["f", "f"],
-            variable_xname=args[0],
-        )
-    test_dataset.close()
-
-
-def test_create_3d_variable(
-    dataset_variable_3d: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, ys, zs, data = dataset_variable_3d
-
-    create_3d_variables_in_group(
-        test_dataset[group_name],
-        ["data"],
-        xs,
-        ys,
-        zs,
-        [data],
-        ["f"],
-        variable_xname="x",
-        variable_yname="y",
-        variable_zname="z",
-    )
-    nx = len(xs)
-    ny = len(ys)
-    nz = len(zs)
-    for var in [("x", "xs"), ("y", "ys"), ("z", "zs")]:
-        assert var[0] in test_dataset[group_name].variables.keys()
-        assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
-        assert test_dataset[group_name]["data"][:].shape == (nx, ny, nz)
-    test_dataset.close()
-
-
-@pytest.mark.netcdf
-@pytest.mark.parametrize(
-    ("args"),
-    [
-        ("data", "x", "y", "z"),
-        ("data", "xx", "y", "z"),
-        ("data", "xx", "yy", "z"),
-        ("data", "xx", "yy", "zz"),
-    ],
-)
-def test_create_3d_variable_already_exist_should_fail(
-    args: Tuple[str, str, str, str],
-    dataset_variable_3d: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, ys, zs, data = dataset_variable_3d
-
-    create_3d_variables_in_group(
-        test_dataset[group_name],
-        ["data"],
-        xs,
-        ys,
-        zs,
-        [data],
-        ["f"],
-        variable_xname="x",
-        variable_yname="y",
-        variable_zname="z",
-    )
-
-    with pytest.raises(ValueError):
-        create_3d_variables_in_group(
-            test_dataset[group_name],
-            [args[0]],
-            xs,
-            ys,
-            zs,
-            [data],
-            ["f"],
-            variable_xname=args[1],
-            variable_yname=args[2],
-            variable_zname=args[3],
-        )
-    test_dataset.close()
-
-
-def test_create_2d_variables(
-    dataset_variable_2d: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, ys, data = dataset_variable_2d
-
-    create_2d_variables_in_group(
-        test_dataset[group_name],
-        ["data"],
-        xs,
-        ys,
-        [data],
-        ["f", "f"],
-        variable_xname="x",
-        variable_yname="y",
-    )
-    nx = len(xs)
-    ny = len(ys)
-
-    for var in [("x", "xs"), ("y", "ys")]:
-        assert var[0] in test_dataset[group_name].variables.keys()
-        assert all(test_dataset[group_name][var[0]][:]) == all(vars()[var[1]])
-        assert test_dataset[group_name]["data"][:].shape == (nx, ny)
-    test_dataset.close()
-
-
-@pytest.mark.netcdf
-@pytest.mark.parametrize(
-    ("args"),
-    [
-        ("data", "x", "y"),
-        ("data", "xx", "y"),
-        ("data", "xx", "yy"),
-        ("data", "xx", "yy"),
-    ],
-)
-def test_create_2d_variables_already_exist_should_fail(
-    args: Tuple[str, str, str],
-    dataset_variable_2d: Tuple,
-    test_dataset: netCDF4.Dataset,
-    group_name: str = "root_group",
-) -> None:
-    create_group(test_dataset, group_name)
-    xs, ys, data = dataset_variable_2d
-
-    create_2d_variables_in_group(
-        test_dataset[group_name],
-        ["data"],
-        xs,
-        ys,
-        [data],
-        ["f", "f"],
-        variable_xname="x",
-        variable_yname="y",
-    )
-    with pytest.raises(ValueError):
-        create_2d_variables_in_group(
-            test_dataset[group_name],
-            [args[0]],
-            xs,
-            ys,
-            [data],
-            ["f", "f"],
-            variable_xname=args[1],
-            variable_yname=args[2],
-        )
-    test_dataset.close()
 
 
 @pytest.mark.netcdf
@@ -352,7 +114,7 @@ def test_write_array(
     netCDF_file.close()
     # following code is to test what happens when you call write again with same parameters, execpt one (kg instead of m). array is updated.
     netcdf_handle = pipeline.write_array(
-        data**2,
+        data ** 2,
         "f",
         handle,
         "test/netCDF",
@@ -434,7 +196,7 @@ def test_write_array_append_data(
 
     array_name = "array2"
     netcdf_handle = pipeline.write_array(
-        data**2,
+        data ** 2,
         "f",
         netcdf_handle,
         "test/netCDF",
@@ -553,7 +315,15 @@ def test_create_nd_variables_in_group_w_attribute(
 
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
-    create_nd_variables_in_group_w_attribute(
+    prepare_headers(
+        group=test_dataset[group_name],
+        attribute_data=[xs, ys, zs],
+        attribute_type=["f", "f", "f"],
+        attribute_var_name=["x3d", "y3d", "z3d"],
+        title_names=[None],
+    )
+
+    write_2group(
         group=test_dataset[group_name],
         data_names=["data3d", "data3d_3"],
         attribute_data=[xs, ys, zs],
@@ -588,7 +358,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail1(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -601,6 +379,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail1(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -616,7 +395,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail2(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(DataSizeError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -629,6 +416,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail2(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -644,7 +432,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail3(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -657,6 +453,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail3(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -672,7 +469,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail4(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -685,6 +490,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail4(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -701,7 +507,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail5(
     xs = np.delete(xs, 0)
     data1 = 3 * data
     with pytest.raises(ValueError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -714,6 +528,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail5(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -729,7 +544,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(ValueError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -742,7 +565,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
-        create_nd_variables_in_group_w_attribute(
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -755,6 +578,7 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
+
     test_dataset.close()
 
 
@@ -770,7 +594,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail7(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(ValueError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -783,7 +615,14 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail7(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d1", "y3d1", "z3d1"],
+            title_names=[None],
+        )
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -811,7 +650,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail8(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(DataSizeError):
-        create_nd_variables_in_group_w_attribute(
+        prepare_headers(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
+
+        write_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -824,4 +671,17 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail8(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero", "seciao"],
         )
+        # create_nd_variables_in_group_w_attribute(
+        #     group=test_dataset[group_name],
+        #     data_names=["data3d", "data3d_3"],
+        #     attribute_data=[xs, ys, zs],
+        #     data=[data, data1],
+        #     attribute_type=["f", "f", "f"],
+        #     attribute_var_name=["x3d", "y3d", "z3d"],
+        #     title_names=[None],
+        #     data_types=["f", "f"],
+        #     dimension_names=[None],
+        #     other_attribute_names=["a novel way to be me"],
+        #     other_attribute_data=["lallero", "seciao"],
+        # )
     test_dataset.close()
