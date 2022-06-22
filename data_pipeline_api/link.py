@@ -441,43 +441,9 @@ def write_array(
         other_attribute_names=other_attribute_names,
         other_attribute_data=other_attribute_data,
     )
-    # fdp_utils.create_nd_variables_in_group_w_attribute(
-    #     group=netCDF_file[component],
-    #     data_names=[array_name],
-    #     attribute_data=dimension_values,
-    #     data=[array],
-    #     attribute_type=dimension_types,
-    #     attribute_var_name=dimension_names,
-    #     title_names=[description],
-    #     data_types=[data_type],
-    #     dimension_names=data_units_name,
-    #     other_attribute_names=other_attribute_names,
-    #     other_attribute_data=other_attribute_data,
-    # )
+
     logging.info(f"data {netCDF_file[component]} written to file")
     netCDF_file.close()
-
-    # This structure needs to be added
-
-    # If the structure doesn't exist make it
-
-    # Update current structure
-
-    # Attach data
-
-    # Dimension names and titles ----------------------------------------------
-
-    # Attach dimension titles
-
-    # Attach dimension names
-
-    # Dimension values and units ----------------------------------------------
-
-    # Attach dimension values
-
-    # Attach dimension units
-
-    # Attach units
 
     # Write to handle ---------------------------------------------------------
     handle = {
