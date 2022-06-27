@@ -307,27 +307,19 @@ def read_array(handle: dict, data_product: str, component: str) -> Any:
 
 
 def write_array(
-    array: Any,  # data: list, #
-    data_type: str,  # data_types: list,
+    array: Any,
+    data_type: str,
     handle: dict,
-    data_product: str,  # data_names: list,
-    component: str,  # group: netCDF4.Group,
-    description: str,  # title_names: list = [None],
-    dimension_names: list,  # attribute_var_name: list,
-    dimension_values: list,  # attribute_data: list,
-    data_units_name: list,  # dimension_names: list = [None],
-    dimension_types: list,  # attribute_type: list,
-    other_attribute_names: list = [None],
-    other_attribute_data: list = [None],
+    data_product: str,
+    component: str,
+    description: str,
+    dimension_names: list,
+    dimension_values: list,
+    data_units_name: list,
+    dimension_types: list,
+    other_attribute_names: list = None,
+    other_attribute_data: list = None,
     array_name: str = "array",
-    # array: Any,
-    # handle: dict,
-    # data_product: str,
-    # component: str='',
-    # description: str='status',
-    # dimension_names: list = ['ambulance exploded','ambulance out of gas', 'ambulance ok'],
-    # # dimension_values: list,
-    # dimension_units: ['n','n','n'],
 ) -> dict:
     """
     write_array _summary_
@@ -368,6 +360,10 @@ def write_array(
 
     """
 
+    if other_attribute_names is None:
+        other_attribute_names = [None]
+    if other_attribute_data is None:
+        other_attribute_data = [None]
     if "write" not in handle["yaml"].keys():
         raise ValueError(
             "Error: Write has not been specified in the given config file"
@@ -387,7 +383,7 @@ def write_array(
         "data_product_description"
     ]  # noqa: F841
     path = write_metadata["path"]  # noqa: F841
-    if "path" in handle.keys():
+    if "path" in handle:
         path = handle["path"]
 
     if not isinstance(array, np.ndarray):

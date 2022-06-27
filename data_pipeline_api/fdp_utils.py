@@ -374,9 +374,7 @@ def get_handle_index_from_path(handle: dict, path: str) -> Optional[Any]:
 
 
 # flake8: noqa C901
-def register_issues(
-    token: str, handle: dict
-) -> dict:  # sourcery no-metrics skip: avoid-builtin-shadow
+def register_issues(token: str, handle: dict) -> dict:
     """
     Internal function, should only be called from finalise.
     """
@@ -392,7 +390,7 @@ def register_issues(
         severity = None
         for i in issues:
             if issues[i]["group"] == group:
-                type = issues[i]["type"]
+                issue_type = issues[i]["type"]
                 issue = issues[i]["issue"]
                 severity = issues[i]["severity"]
                 index = issues[i]["index"]
@@ -403,12 +401,12 @@ def register_issues(
 
                 component_url = None
                 object_id = None
-                if type == "config":
+                if issue_type == "config":
                     object_id = handle["model_config"]
-                elif type == "github_repo":
+                elif issue_type == "github_repo":
                     object_id = handle["code_repo"]
 
-                elif type == "submission_script":
+                elif issue_type == "submission_script":
                     object_id = handle["submission_script"]
                 if object_id:
                     component_url = get_entry(
@@ -455,7 +453,7 @@ def register_issues(
                         api_version=api_version,
                     )[0]["url"]
 
-                    object = get_entry(
+                    data_object = get_entry(
                         url=api_url,
                         endpoint="data_product",
                         query={
@@ -465,7 +463,7 @@ def register_issues(
                         },
                         api_version=api_version,
                     )[0]["object"]
-                    object_id = extract_id(object)
+                    object_id = extract_id(data_object)
                     if component:
                         component_url = get_entry(
                             url=api_url,
@@ -486,7 +484,7 @@ def register_issues(
                     component_list.append(component_url)
 
         # Register the issue:
-        logging.info("Registering issue: {}".format(group))
+        logging.info(f"Registering issue: {group}")
         current_issue = post_entry(
             url=api_url,
             endpoint="issue",
@@ -571,7 +569,7 @@ def create_variable_in_group(
 def create_1d_variables_in_group(
     group: netCDF4.Group,
     variables_name: list,
-    variable_xdata: Any,
+    variable_bdata: Any,
     data: list,
     data_types: list,
     variable_xname: str = "X",
@@ -599,7 +597,7 @@ def create_1d_variables_in_group(
          type of the x component, by default "f"
     """
     var_dim = f"{variable_xname}_dim"
-    size = len(variable_xdata)
+    size = len(variable_bdata)
     if var_dim in group.dimensions.keys():
         raise ValueError(
             f"failed to create dimension. {var_dim} already exists inside {group}"
@@ -608,7 +606,7 @@ def create_1d_variables_in_group(
     xdim_v = group.createVariable(
         variable_xname, variable_xname_type, xdim.name
     )
-    xdim_v[:] = variable_xdata
+    xdim_v[:] = variable_bdata
 
     for i, name in enumerate(variables_name):
         if name in group.variables.keys():
@@ -816,11 +814,19 @@ def prepare_headers(
     data_types: list,
     attribute_var_name: list,
     attribute_type: list,
-    other_attribute_names: list = [None],
-    other_attribute_data: list = [None],
-    title_names: list = [None],
-    dimension_names: list = [None],
-) -> None:
+    other_attribute_names: list = None,
+    other_attribute_data: list = None,
+    title_names: list = None,
+    dimension_names: list = None,
+) -> None:  # sourcery skip: low-code-quality
+    if other_attribute_names is None:
+        other_attribute_names = [None]
+    if other_attribute_data is None:
+        other_attribute_data = [None]
+    if title_names is None:
+        title_names = [None]
+    if dimension_names is None:
+        dimension_names = [None]
     attrinbute_num = len(attribute_data)
     var_num = len(data)
     if len(title_names) == 1 and not title_names[0]:
@@ -838,18 +844,15 @@ def prepare_headers(
         )
     if not len(data) == len(data_names) == len(data_types):
         raise DataSizeError("Invalid Operation - check size of data")
-    if title_names:
-        if not len(title_names) == len(data):
-            raise AttributeSizeError(
-                "Invalid Operation - check size of title names attribute"
-            )
-    if dimension_names:
-        if not len(dimension_names) == len(data):
-            raise AttributeSizeError(
-                "Invalid Operation - check size of dimension names attribute"
-            )
-    for dd, value in enumerate(data):
-
+    if title_names and len(title_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of title names attribute"
+        )
+    if dimension_names and len(dimension_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of dimension names attribute"
+        )
+    for value in data:
         for dim in range(len(value.shape)):
             if value.shape[dim] != len(attribute_data[dim]):
                 raise ValueError(
@@ -892,11 +895,19 @@ def write_2group(
     data_types: list,
     attribute_var_name: list,
     attribute_type: list,
-    other_attribute_names: list = [None],
-    other_attribute_data: list = [None],
-    title_names: list = [None],
-    dimension_names: list = [None],
-) -> None:
+    other_attribute_names: list = None,
+    other_attribute_data: list = None,
+    title_names: list = None,
+    dimension_names: list = None,
+) -> None:  # sourcery skip: low-code-quality
+    if other_attribute_names is None:
+        other_attribute_names = [None]
+    if other_attribute_data is None:
+        other_attribute_data = [None]
+    if title_names is None:
+        title_names = [None]
+    if dimension_names is None:
+        dimension_names = [None]
     attrinbute_num = len(attribute_data)
     var_num = len(data)
     if len(title_names) == 1 and not title_names[0]:
@@ -914,18 +925,15 @@ def write_2group(
         )
     if not len(data) == len(data_names) == len(data_types):
         raise DataSizeError("Invalid Operation - check size of data")
-    if title_names:
-        if not len(title_names) == len(data):
-            raise AttributeSizeError(
-                "Invalid Operation - check size of title names attribute"
-            )
-    if dimension_names:
-        if not len(dimension_names) == len(data):
-            raise AttributeSizeError(
-                "Invalid Operation - check size of dimension names attribute"
-            )
-    for dd, value in enumerate(data):
-
+    if title_names and len(title_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of title names attribute"
+        )
+    if dimension_names and len(dimension_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of dimension names attribute"
+        )
+    for value in data:
         for dim in range(len(value.shape)):
             if value.shape[dim] != len(attribute_data[dim]):
                 raise ValueError(
@@ -944,8 +952,8 @@ def write_2group(
 
         set_or_create_attr(group[name], "title", title_names[i])
         set_or_create_attr(group[name], "units", dimension_names[i])
-        if all([True if x != None else False for x in other_attribute_names]):
-            if not len(other_attribute_names) == len(other_attribute_data):
+        if all(x != None for x in other_attribute_names):
+            if len(other_attribute_names) != len(other_attribute_data):
                 raise DataSizeError(
                     "incorrect data - check size of additional attributes"
                 )
