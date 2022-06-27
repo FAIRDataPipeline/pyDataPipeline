@@ -375,6 +375,7 @@ def get_handle_index_from_path(handle: dict, path: str) -> Optional[Any]:
 
 # flake8: noqa C901
 def register_issues(token: str, handle: dict) -> dict:
+    # sourcery skip: low-code-quality
     """
     Internal function, should only be called from finalise.
     """
@@ -566,6 +567,22 @@ def create_variable_in_group(
     xdim_v[:] = variable_data
 
 
+def extract_create_1d_variables_in_group(
+    variable_xname, variable_bdata, group, variable_xname_type
+):
+    var_dim = f"{variable_xname}_dim"
+    size = len(variable_bdata)
+    if var_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {var_dim} already exists inside {group}"
+        )
+    xdim = group.createDimension(var_dim, size)
+    xdim_v = group.createVariable(
+        variable_xname, variable_xname_type, xdim.name
+    )
+    return xdim_v, xdim
+
+
 def create_1d_variables_in_group(
     group: netCDF4.Group,
     variables_name: list,
@@ -596,15 +613,8 @@ def create_1d_variables_in_group(
     variable_xname_type : str, optional
          type of the x component, by default "f"
     """
-    var_dim = f"{variable_xname}_dim"
-    size = len(variable_bdata)
-    if var_dim in group.dimensions.keys():
-        raise ValueError(
-            f"failed to create dimension. {var_dim} already exists inside {group}"
-        )
-    xdim = group.createDimension(var_dim, size)
-    xdim_v = group.createVariable(
-        variable_xname, variable_xname_type, xdim.name
+    xdim_v, xdim = extract_create_1d_variables_in_group(
+        variable_xname, variable_bdata, group, variable_xname_type
     )
     xdim_v[:] = variable_bdata
 
