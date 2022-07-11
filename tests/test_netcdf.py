@@ -10,11 +10,12 @@ import data_pipeline_api as pipeline
 from data_pipeline_api.exceptions import AttributeSizeError, DataSizeError
 from data_pipeline_api.fdp_utils import (
     create_2d_variables_in_group,
+    create_enum_type,
     create_group,
     create_nested_groups,
-    prepare_headers,
     set_or_create_attr,
-    write_2group,
+    write_data_2group,
+    write_dimensions,
 )
 
 
@@ -315,21 +316,15 @@ def test_create_nd_variables_in_group_w_attribute(
 
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
-    prepare_headers(
+    write_dimensions(
         group=test_dataset[group_name],
-        data_names=["data3d", "data3d_3"],
         attribute_data=[xs, ys, zs],
-        data=[data, data1],
         attribute_type=["f", "f", "f"],
         attribute_var_name=["x3d", "y3d", "z3d"],
         title_names=[None],
-        data_types=["f", "f"],
-        dimension_names=[None],
-        other_attribute_names=["a novel way to be me"],
-        other_attribute_data=["lallero"],
     )
 
-    write_2group(
+    write_data_2group(
         group=test_dataset[group_name],
         data_names=["data3d", "data3d_3"],
         attribute_data=[xs, ys, zs],
@@ -364,21 +359,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail1(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -407,21 +396,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail2(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(DataSizeError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -450,21 +433,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail3(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
-            title_names=["data1"],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
+            title_names=[None],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -493,21 +470,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail4(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(AttributeSizeError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=["dim1"],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -537,21 +508,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail5(
     xs = np.delete(xs, 0)
     data1 = 3 * data
     with pytest.raises(ValueError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -579,47 +544,41 @@ def test_create_nd_variables_in_group_w_attribute_write_again(
 
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
+    with pytest.raises(ValueError):
+        write_dimensions(
+            group=test_dataset[group_name],
+            attribute_data=[xs, ys, zs],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+        )
 
-    prepare_headers(
-        group=test_dataset[group_name],
-        data_names=["data3d", "data3d_3"],
-        attribute_data=[xs, ys, zs],
-        data=[data, data1],
-        attribute_type=["f", "f", "f"],
-        attribute_var_name=["x3d", "y3d", "z3d"],
-        title_names=[None],
-        data_types=["f", "f"],
-        dimension_names=[None],
-        other_attribute_names=["a novel way to be me"],
-        other_attribute_data=["lallero"],
-    )
-
-    write_2group(
-        group=test_dataset[group_name],
-        data_names=["data3d", "data3d_3"],
-        attribute_data=[xs, ys, zs],
-        data=[data, data1],
-        attribute_type=["f", "f", "f"],
-        attribute_var_name=["x3d", "y3d", "z3d"],
-        title_names=[None],
-        data_types=["f", "f"],
-        dimension_names=[None],
-        other_attribute_names=["a novel way to be me"],
-        other_attribute_data=["lallero"],
-    )
-    write_2group(
-        group=test_dataset[group_name],
-        data_names=["data3d", "data3d_3"],
-        attribute_data=[xs, ys, zs],
-        data=[data, data1],
-        attribute_type=["f", "f", "f"],
-        attribute_var_name=["x3d", "y3d", "z3d"],
-        title_names=[None],
-        data_types=["f", "f"],
-        dimension_names=[None],
-        other_attribute_names=["a novel way to be me"],
-        other_attribute_data=["lallero"],
-    )
+        write_data_2group(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
+        write_data_2group(
+            group=test_dataset[group_name],
+            data_names=["data3d", "data3d_3"],
+            attribute_data=[xs, ys, zs],
+            data=[data, data1],
+            attribute_type=["f", "f", "f"],
+            attribute_var_name=["x3d", "y3d", "z3d"],
+            title_names=[None],
+            data_types=["f", "f"],
+            dimension_names=[None],
+            other_attribute_names=["a novel way to be me"],
+            other_attribute_data=["lallero"],
+        )
 
     test_dataset.close()
 
@@ -636,21 +595,15 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
     with pytest.raises(ValueError):
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -663,20 +616,14 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail6(
             other_attribute_names=["a novel way to be me"],
             other_attribute_data=["lallero"],
         )
-        prepare_headers(
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d1", "y3d1", "z3d1"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero"],
         )
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -703,22 +650,16 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail7(
 
     xs, ys, zs, data = dataset_variable_3d
     data1 = 3 * data
-    with pytest.raises(DataSizeError):
-        prepare_headers(
+    with pytest.raises(ValueError):
+        write_dimensions(
             group=test_dataset[group_name],
-            data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
-            data=[data, data1],
             attribute_type=["f", "f", "f"],
             attribute_var_name=["x3d", "y3d", "z3d"],
             title_names=[None],
-            data_types=["f", "f"],
-            dimension_names=[None],
-            other_attribute_names=["a novel way to be me"],
-            other_attribute_data=["lallero", "seciao"],
         )
 
-        write_2group(
+        write_data_2group(
             group=test_dataset[group_name],
             data_names=["data3d", "data3d_3"],
             attribute_data=[xs, ys, zs],
@@ -745,3 +686,16 @@ def test_create_nd_variables_in_group_w_attribute_shouldfail7(
         #     other_attribute_data=["lallero", "seciao"],
         # )
     test_dataset.close()
+
+
+def test_create_enum_type(
+    test_dataset: netCDF4.Dataset,
+) -> None:
+    gender_type = create_enum_type(
+        test_dataset,
+        np.uint8,
+        "genders",
+        {"male": 1, "female": 2, "neither": 3},
+    )
+
+    assert isinstance(gender_type, netCDF4._netCDF4.EnumType)

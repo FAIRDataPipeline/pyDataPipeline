@@ -416,21 +416,15 @@ def write_array(
 
     # if group does not exist in Dataset:
     fdp_utils.create_nested_groups(netCDF_file, component)
-    fdp_utils.prepare_headers(
+    fdp_utils.write_dimensions(
         group=netCDF_file[component],
-        data_names=[array_name],
         attribute_data=dimension_values,
-        data=[array],
         attribute_type=dimension_types,
         attribute_var_name=dimension_names,
         title_names=[description],
-        data_types=[data_type],
-        dimension_names=data_units_name,
-        other_attribute_names=other_attribute_names,
-        other_attribute_data=other_attribute_data,
     )
 
-    fdp_utils.write_2group(
+    fdp_utils.write_data_2group(
         group=netCDF_file[component],
         data_names=[array_name],
         attribute_data=dimension_values,

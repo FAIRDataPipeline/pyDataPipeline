@@ -816,7 +816,36 @@ def set_or_create_attr(
     var.renameAttribute("UnusedNameAttribute", attr_name)
 
 
-def prepare_headers(
+def write_dimensions(
+    group: netCDF4.Group,
+    attribute_data: list,
+    attribute_var_name: list,
+    attribute_type: list,
+    title_names: list = [None],
+) -> None:
+
+    data_dim: Tuple = tuple()
+    for dim in range(len(attribute_data)):
+        var_dim = f"{attribute_var_name[dim]}_dim"
+
+        if var_dim in group.dimensions.keys():
+
+            print(
+                f"failed to create dimension. {var_dim} already exists inside {group}"
+            )
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[
+                var_dim
+            ]
+
+        else:
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
+                var_dim, len(attribute_data[dim])
+            )
+
+        data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
+
+
+def write_data_2group(
     group: netCDF4.Group,
     data_names: list,
     attribute_data: list,
@@ -824,21 +853,11 @@ def prepare_headers(
     data_types: list,
     attribute_var_name: list,
     attribute_type: list,
-    other_attribute_names: list = None,
-    other_attribute_data: list = None,
-    title_names: list = None,
-    dimension_names: list = None,
-) -> None:  # sourcery skip: low-code-quality
-    if other_attribute_names is None:
-        other_attribute_names = [None]
-    if other_attribute_data is None:
-        other_attribute_data = [None]
-    if title_names is None:
-        title_names = [None]
-    if dimension_names is None:
-        dimension_names = [None]
-    attrinbute_num = len(attribute_data)
-    var_num = len(data)
+    other_attribute_names: list = [None],
+    other_attribute_data: list = [None],
+    title_names: list = [None],
+    dimension_names: list = [None],
+) -> None:
     if len(title_names) == 1 and not title_names[0]:
         title_names = ["Unknown" for _ in range(len(data))]
     if len(dimension_names) == 1 and not dimension_names[0]:
@@ -872,86 +891,16 @@ def prepare_headers(
     data_dim: Tuple = tuple()
     for dim in range(len(attribute_data)):
         var_dim = f"{attribute_var_name[dim]}_dim"
-
-        if var_dim in group.dimensions.keys():
-
-            print(
-                f"failed to create dimension. {var_dim} already exists inside {group}"
-            )
-            vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[
-                var_dim
-            ]
-
-        else:
-            vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
-                var_dim, len(attribute_data[dim])
-            )
+        vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[var_dim]
 
         data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
-
     for i, name in enumerate(data_names):
         if name in group.variables.keys():
             raise ValueError(
                 f"failed to create variable. {name} already exists inside {group}"
             )
         data_v = group.createVariable(name, data_types[i], data_dim)
-
-
-def write_2group(
-    group: netCDF4.Group,
-    data_names: list,
-    attribute_data: list,
-    data: list,
-    data_types: list,
-    attribute_var_name: list,
-    attribute_type: list,
-    other_attribute_names: list = None,
-    other_attribute_data: list = None,
-    title_names: list = None,
-    dimension_names: list = None,
-) -> None:  # sourcery skip: low-code-quality
-    if other_attribute_names is None:
-        other_attribute_names = [None]
-    if other_attribute_data is None:
-        other_attribute_data = [None]
-    if title_names is None:
-        title_names = [None]
-    if dimension_names is None:
-        dimension_names = [None]
-    attrinbute_num = len(attribute_data)
-    var_num = len(data)
-    if len(title_names) == 1 and not title_names[0]:
-        title_names = ["Unknown" for _ in range(len(data))]
-    if len(dimension_names) == 1 and not dimension_names[0]:
-        dimension_names = ["Unknown" for _ in range(len(data))]
-
-    if (
-        not len(attribute_data)
-        == len(attribute_var_name)
-        == len(attribute_type)
-    ):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of data - all attribute inputs must be of same size"
-        )
-    if not len(data) == len(data_names) == len(data_types):
-        raise DataSizeError("Invalid Operation - check size of data")
-    if title_names and len(title_names) != len(data):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of title names attribute"
-        )
-    if dimension_names and len(dimension_names) != len(data):
-        raise AttributeSizeError(
-            "Invalid Operation - check size of dimension names attribute"
-        )
-    for value in data:
-        for dim in range(len(value.shape)):
-            if value.shape[dim] != len(attribute_data[dim]):
-                raise ValueError(
-                    f"size of {attribute_var_name[dim]} incompatible with data"
-                )
-
-    for i, name in enumerate(data_names):
-        group[name][:] = data[i]
+        data_v[:] = data[i]
 
     for i, name in enumerate(data_names):
         for attr, value in enumerate(attribute_var_name):
@@ -962,13 +911,37 @@ def write_2group(
 
         set_or_create_attr(group[name], "title", title_names[i])
         set_or_create_attr(group[name], "units", dimension_names[i])
-        if all(x != None for x in other_attribute_names):
-            if len(other_attribute_names) != len(other_attribute_data):
-                raise DataSizeError(
+        if all([True if x != None else False for x in other_attribute_names]):
+            if not len(other_attribute_names) == len(other_attribute_data):
+                raise ValueError(
                     "incorrect data - check size of additional attributes"
                 )
 
             for i, attr in enumerate(other_attribute_names):
-                set_or_create_attr(
-                    group[name], str(attr), other_attribute_data[i]
-                )
+                set_or_create_attr(group[name], attr, other_attribute_data[i])
+
+
+def create_enum_type(
+    dataset: netCDF4.Dataset,
+    datatype: str,
+    datatype_name: str,
+    enum_dict: dict,
+):
+    """
+        create_enum_type Creates a new compound data type named datatype_name from the numpy dtype object datatype.
+
+    Note: If the new compound data type contains other compound data types (i.e. it is a 'nested' compound type, where not all of the elements are homogeneous numeric data types), then the 'inner' compound types must be created first.
+
+        Parameters
+        ----------
+        group : netCDF4.Group
+            input group
+        datatype : _type_
+            _description_
+        datatype_name : _type_
+            _description_
+        enum_dict : _type_
+            _description_
+    """
+    new_type = dataset.createEnumType(datatype, datatype_name, enum_dict)
+    return new_type
