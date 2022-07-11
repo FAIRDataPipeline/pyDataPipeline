@@ -1,0 +1,20 @@
+run_metadata:
+  description: Write netCDF file
+  local_data_registry_url: http://127.0.0.1:8000/api/
+  remote_data_registry_url: https://data.scrc.uk/api/
+  default_input_namespace: testing
+  default_output_namespace: testing
+  write_data_store: tmp
+  local_repo: ./
+  script: |-
+        python3 py.test
+  public: true
+  latest_commit: 221bfe8b52bbfb3b2dbdc23037b7dd94b49aaa70
+  remote_repo: https://github.com/FAIRDataPipeline/pyDataPipeline
+
+write:
+- data_product: test/netCDF
+  description: test netCDF file with simple data
+  file_type: netCDF
+  use:
+    version: 0.0.1

@@ -5,13 +5,16 @@ import os
 import random
 import uuid
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 # from typing import BinaryIO, Union
 from urllib.parse import urlsplit
 
+import netCDF4
 import requests
 import yaml
+
+from data_pipeline_api.exceptions import AttributeSizeError, DataSizeError
 
 
 def get_first_entry(entries: list) -> dict:
@@ -68,7 +71,7 @@ def get_entry(
 
     if url[-1] != "/":
         url += "/"
-    url += endpoint + "/?"
+    url += f"{endpoint}/?"
     _query = [f"{k}={v}" for k, v in query.items()]
     url += "&".join(_query)
     response = requests.get(url, headers=headers)
@@ -103,7 +106,7 @@ def get_entity(
 
     if url[-1] != "/":
         url += "/"
-    url += endpoint + "/" + str(id)
+    url += f"{endpoint}/{id}"
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError(
@@ -123,11 +126,11 @@ def extract_id(url: str) -> str:
     Returns:
         |   str: id derrived from the url
     """
-
     split_url_path = urlsplit(url).path.split("/")
-    if not split_url_path:
+    output = [s for s in split_url_path if s != ""]
+    if not output:
         raise IndexError(f"Unable to extract ID from registry URL: {url}")
-    return [s for s in split_url_path if s != ""][-1]
+    return output[-1]
 
 
 def post_entry(
@@ -162,7 +165,7 @@ def post_entry(
         return existing_entry[0]
 
     if response.status_code != 201:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(f"Server responded with: {str(response.status_code)}")
 
     return response.json()
 
@@ -187,7 +190,7 @@ def patch_entry(
 
     response = requests.patch(url, data_json, headers=headers)
     if response.status_code != 200:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(f"Server responded with: {str(response.status_code)}")
 
     return response.json()
 
@@ -204,9 +207,9 @@ def get_headers(
     Returns:
         |   dict: a dictionary of appropriate headers to be added to a request
     """
-    headers = {"Accept": "application/json; version=" + api_version}
+    headers = {"Accept": f"application/json; version={api_version}"}
     if token:
-        headers["Authorization"] = "token " + token
+        headers["Authorization"] = f"token {token}"
     if request_type == "post":
         headers["Content-Type"] = "application/json"
     return headers
@@ -371,7 +374,8 @@ def get_handle_index_from_path(handle: dict, path: str) -> Optional[Any]:
 
 
 # flake8: noqa C901
-def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
+def register_issues(token: str, handle: dict) -> dict:
+    # sourcery skip: low-code-quality
     """
     Internal function, should only be called from finalise.
     """
@@ -387,7 +391,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
         severity = None
         for i in issues:
             if issues[i]["group"] == group:
-                type = issues[i]["type"]
+                issue_type = issues[i]["type"]
                 issue = issues[i]["issue"]
                 severity = issues[i]["severity"]
                 index = issues[i]["index"]
@@ -398,12 +402,12 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
 
                 component_url = None
                 object_id = None
-                if type == "config":
+                if issue_type == "config":
                     object_id = handle["model_config"]
-                elif type == "github_repo":
+                elif issue_type == "github_repo":
                     object_id = handle["code_repo"]
 
-                elif type == "submission_script":
+                elif issue_type == "submission_script":
                     object_id = handle["submission_script"]
                 if object_id:
                     component_url = get_entry(
@@ -450,7 +454,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
                         api_version=api_version,
                     )[0]["url"]
 
-                    object = get_entry(
+                    data_object = get_entry(
                         url=api_url,
                         endpoint="data_product",
                         query={
@@ -460,7 +464,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
                         },
                         api_version=api_version,
                     )[0]["object"]
-                    object_id = extract_id(object)
+                    object_id = extract_id(data_object)
                     if component:
                         component_url = get_entry(
                             url=api_url,
@@ -481,7 +485,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
                     component_list.append(component_url)
 
         # Register the issue:
-        logging.info("Registering issue: {}".format(group))
+        logging.info(f"Registering issue: {group}")
         current_issue = post_entry(
             url=api_url,
             endpoint="issue",
@@ -494,3 +498,450 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
             api_version=api_version,
         )
     return current_issue
+
+
+def create_group(root_group: netCDF4.Group, group_name: str) -> None:
+    """
+    create_group
+    creates a group inside a netcdf file
+
+    Parameters
+    ----------
+    root_group : netCDF4.Group
+        root group, the new group will be a child of this one
+    group_name : str
+        name of the child group
+    """
+    # no need to check if group_name exists as createGroup is idempotent
+    _ = root_group.createGroup(group_name)
+
+
+def create_nested_groups(root_group: netCDF4.Group, path: str) -> None:
+    """
+    create_nested_groups
+    creates nested groups inside a netcdf file
+
+    Parameters
+    ----------
+    root_group : netCDF4.Group
+        root group, the new group will be a child of this one
+    path : str
+        nested groups in the form first/second/third/
+    """
+
+    groups = [grp for grp in path.split("/") if grp != ""]
+    for group in groups:
+        current = group
+        create_group(root_group, current)
+        root_group = root_group[current]
+
+
+def create_variable_in_group(
+    group: netCDF4.Group,
+    variables_name: str,
+    variable_data: Any,
+    variable_type: str = "f",
+) -> None:
+    """
+    create_variable_in_group
+    creates a variable inside a group, i.e. x=[1,2,3]
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : str
+        name of the variable
+    variable_data : Any
+        data
+    variable_type : str, optional
+        data type of the data, by default "f"
+    """
+    if variables_name in group.variables.keys():
+        raise ValueError("variable already exists")
+
+    var_dim = "dim"
+    size = len(variable_data)
+    xdim = group.createDimension(var_dim, size)
+    xdim_v = group.createVariable(variables_name, variable_type, xdim.name)
+    xdim_v[:] = variable_data
+
+
+def extract_create_1d_variables_in_group(
+    variable_xname, variable_bdata, group, variable_xname_type
+):
+    var_dim = f"{variable_xname}_dim"
+    size = len(variable_bdata)
+    if var_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {var_dim} already exists inside {group}"
+        )
+    xdim = group.createDimension(var_dim, size)
+    xdim_v = group.createVariable(
+        variable_xname, variable_xname_type, xdim.name
+    )
+    return xdim_v, xdim
+
+
+def create_1d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_bdata: Any,
+    data: list,
+    data_types: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+) -> None:
+    """
+    create_1d_variables_in_group
+    given a list of variables in the form data=f(x) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent componentdecimals
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+         name of the x component, by default "X"
+    variable_xname_type : str, optional
+         type of the x component, by default "f"
+    """
+    xdim_v, xdim = extract_create_1d_variables_in_group(
+        variable_xname, variable_bdata, group, variable_xname_type
+    )
+    xdim_v[:] = variable_bdata
+
+    for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
+        data_v = group.createVariable(name, data_types[i], xdim.name)
+        data_v[:] = data[i]
+
+
+def create_2d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_xdata: Any,
+    variable_ydata: Any,
+    data: list,
+    data_types: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+    variable_yname: str = "Y",
+    variable_yname_type: str = "f",
+) -> None:
+    """
+    create_2d_variables_in_group
+    given a list of variables in the form data=f(x,y) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent component
+    variable_ydata : Any
+        y indipendent component
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+        name of the x component, by default "X"
+    variable_xname_type : str, optional
+        type of the x component, by default "f"
+    variable_yname : str, optional
+        name of the y component, by default "Y"
+    variable_yname_type : str, optional
+        type of the y component, by default "f"
+    """
+    x_dim = f"{variable_xname}_dim"
+    size = len(variable_xdata)
+    if x_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {x_dim} already exists inside {group}"
+        )
+    xdim = group.createDimension(x_dim, size)
+    _ = group.createVariable(variable_xname, variable_xname_type, xdim.name)
+    y_dim = f"{variable_yname}_dim"
+    size = len(variable_ydata)
+    if y_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {y_dim} already exists inside {group}"
+        )
+
+    ydim = group.createDimension(y_dim, size)
+    ydim_v = group.createVariable(
+        variable_yname, variable_yname_type, ydim.name
+    )
+    ydim_v[:] = variable_ydata
+    for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
+        data_v = group.createVariable(
+            name, data_types[i], (xdim.name, ydim.name)
+        )
+        data_v[:] = data[i]
+
+
+def create_3d_variables_in_group(
+    group: netCDF4.Group,
+    variables_name: list,
+    variable_xdata: Any,
+    variable_ydata: Any,
+    variable_zdata: Any,
+    data: list,
+    data_types: list,
+    variable_xname: str = "X",
+    variable_xname_type: str = "f",
+    variable_yname: str = "Y",
+    variable_yname_type: str = "f",
+    variable_zname: str = "Z",
+    variable_zname_type: str = "f",
+) -> None:
+    """
+    create_3d_variables_in_group
+    given a list of variables in the form data=f(x,y,z) store them inside a group
+
+    Parameters
+    ----------
+    group : netCDF4.Group
+        group within the netcdf file where variables will be stored
+    variables_name : list
+        a list of variables to be stored
+    variable_xdata : Any
+        x indipendent component
+    variable_ydata : Any
+        y indipendent component
+    variable_zdata : Any
+        z indipendend component
+    data : list
+        list of variables to be stored
+    data_types : list
+        list of types of the data inside the data variables
+    variable_xname : str, optional
+        name of the x component, by default "X"
+    variable_xname_type : str, optional
+        type of the x component, by default "f"
+    variable_yname : str, optional
+        name of the y component, by default "Y"
+    variable_yname_type : str, optional
+        type of the y component, by default "f"
+    variable_zname : str, optional
+        name of the z component, by default "Z"
+    variable_zname_type : str, optional
+     type of the z component, by default "f"
+    """
+    x_dim = f"{variable_xname}_dim"
+    size = len(variable_xdata)
+    if x_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {x_dim} already exists inside {group}"
+        )
+
+    xdim = group.createDimension(x_dim, size)
+    _ = group.createVariable(variable_xname, variable_xname_type, xdim.name)
+
+    y_dim = f"{variable_yname}_dim"
+
+    size = len(variable_ydata)
+    if y_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {y_dim} already exists inside {group}"
+        )
+    ydim = group.createDimension(y_dim, size)
+    ydim_v = group.createVariable(
+        variable_yname, variable_yname_type, ydim.name
+    )
+    ydim_v[:] = variable_ydata
+
+    z_dim = f"{variable_zname}_dim"
+    size = len(variable_zdata)
+    if z_dim in group.dimensions.keys():
+        raise ValueError(
+            f"failed to create dimension. {z_dim} already exists inside {group}"
+        )
+    zdim = group.createDimension(z_dim, size)
+    zdim_v = group.createVariable(
+        variable_zname, variable_zname_type, zdim.name
+    )
+    zdim_v[:] = variable_zdata
+
+    for i, name in enumerate(variables_name):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
+        data_v = group.createVariable(
+            name, data_types[i], (xdim.name, ydim.name, zdim.name)
+        )
+        data_v[:] = data[i]
+
+
+def set_or_create_attr(
+    var: netCDF4._netCDF4.Variable, attr_name: str, attr_data: Any
+) -> None:
+    """
+    set_or_create_attr     setattr only sets existing netCDF4 attributes, any attributes it creates are attached to the python instance (not inside the dataset / file). Instead, you need to create a new attribute; without a method for directly creating attributes, you can use a workaround of creating an arbitrarily named attribute by directly setting it and then renaming it.
+
+    Parameters
+    ----------
+    var : _type_
+        input variable where the attribute will be set
+    attr_name : _type_
+        name of the attribute
+    attr_data : _type_
+        attribute data
+    """
+    """
+
+    """
+    if attr_name in var.ncattrs():
+        var.setncattr(attr_name, attr_data)
+        return
+    var.UnusedNameAttribute = attr_data
+    var.renameAttribute("UnusedNameAttribute", attr_name)
+
+
+def write_dimensions(
+    group: netCDF4.Group,
+    attribute_data: list,
+    attribute_var_name: list,
+    attribute_type: list,
+    title_names: list = [None],
+) -> None:
+
+    data_dim: Tuple = tuple()
+    for dim in range(len(attribute_data)):
+        var_dim = f"{attribute_var_name[dim]}_dim"
+
+        if var_dim in group.dimensions.keys():
+
+            print(
+                f"failed to create dimension. {var_dim} already exists inside {group}"
+            )
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[
+                var_dim
+            ]
+
+        else:
+            vars()[f"{attribute_var_name[dim]}_dim"] = group.createDimension(
+                var_dim, len(attribute_data[dim])
+            )
+
+        data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
+
+
+def write_data_2group(
+    group: netCDF4.Group,
+    data_names: list,
+    attribute_data: list,
+    data: list,
+    data_types: list,
+    attribute_var_name: list,
+    attribute_type: list,
+    other_attribute_names: list = [None],
+    other_attribute_data: list = [None],
+    title_names: list = [None],
+    dimension_names: list = [None],
+) -> None:
+    if len(title_names) == 1 and not title_names[0]:
+        title_names = ["Unknown" for _ in range(len(data))]
+    if len(dimension_names) == 1 and not dimension_names[0]:
+        dimension_names = ["Unknown" for _ in range(len(data))]
+
+    if (
+        not len(attribute_data)
+        == len(attribute_var_name)
+        == len(attribute_type)
+    ):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of data - all attribute inputs must be of same size"
+        )
+    if not len(data) == len(data_names) == len(data_types):
+        raise DataSizeError("Invalid Operation - check size of data")
+    if title_names and len(title_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of title names attribute"
+        )
+    if dimension_names and len(dimension_names) != len(data):
+        raise AttributeSizeError(
+            "Invalid Operation - check size of dimension names attribute"
+        )
+    for value in data:
+        for dim in range(len(value.shape)):
+            if value.shape[dim] != len(attribute_data[dim]):
+                raise ValueError(
+                    f"size of {attribute_var_name[dim]} incompatible with data"
+                )
+
+    data_dim: Tuple = tuple()
+    for dim in range(len(attribute_data)):
+        var_dim = f"{attribute_var_name[dim]}_dim"
+        vars()[f"{attribute_var_name[dim]}_dim"] = group.dimensions[var_dim]
+
+        data_dim = data_dim + (vars()[f"{attribute_var_name[dim]}_dim"].name,)
+    for i, name in enumerate(data_names):
+        if name in group.variables.keys():
+            raise ValueError(
+                f"failed to create variable. {name} already exists inside {group}"
+            )
+        data_v = group.createVariable(name, data_types[i], data_dim)
+        data_v[:] = data[i]
+
+    for i, name in enumerate(data_names):
+        for attr, value in enumerate(attribute_var_name):
+
+            set_or_create_attr(
+                group[name], attribute_var_name[attr], attribute_data[attr]
+            )
+
+        set_or_create_attr(group[name], "title", title_names[i])
+        set_or_create_attr(group[name], "units", dimension_names[i])
+        if all([True if x != None else False for x in other_attribute_names]):
+            if not len(other_attribute_names) == len(other_attribute_data):
+                raise ValueError(
+                    "incorrect data - check size of additional attributes"
+                )
+
+            for i, attr in enumerate(other_attribute_names):
+                set_or_create_attr(group[name], attr, other_attribute_data[i])
+
+
+def create_enum_type(
+    dataset: netCDF4.Dataset,
+    datatype: str,
+    datatype_name: str,
+    enum_dict: dict,
+):
+    """
+        create_enum_type Creates a new compound data type named datatype_name from the numpy dtype object datatype.
+
+    Note: If the new compound data type contains other compound data types (i.e. it is a 'nested' compound type, where not all of the elements are homogeneous numeric data types), then the 'inner' compound types must be created first.
+
+        Parameters
+        ----------
+        group : netCDF4.Group
+            input group
+        datatype : _type_
+            _description_
+        datatype_name : _type_
+            _description_
+        enum_dict : _type_
+            _description_
+    """
+    new_type = dataset.createEnumType(datatype, datatype_name, enum_dict)
+    return new_type

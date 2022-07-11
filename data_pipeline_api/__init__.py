@@ -2,6 +2,10 @@ __all__ = [
     "initialise",
     "link_read",
     "link_write",
+    "resolve_read",
+    "resolve_write",
+    "read_array",
+    "write_array",
     "finalise",
     "raise_issue_by_data_product",
     "raise_issue_by_index",
@@ -14,7 +18,14 @@ __all__ = [
 ]
 
 from .fdp_utils import get_handle_index_from_path
-from .link import link_read, link_write
+from .link import (
+    link_read,
+    link_write,
+    read_array,
+    resolve_read,
+    resolve_write,
+    write_array,
+)
 from .pipeline import finalise, initialise
 from .raise_issue import (
     raise_issue_by_data_product,

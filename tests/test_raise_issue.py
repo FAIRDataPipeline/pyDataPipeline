@@ -4,29 +4,6 @@ import shutil
 import pytest
 
 import data_pipeline_api as pipeline
-import data_pipeline_api.fdp_utils as fdp_utils
-
-
-@pytest.fixture
-def test_dir() -> str:
-    return os.path.join(os.path.dirname(__file__), "ext")
-
-
-@pytest.fixture
-def token() -> str:
-    return fdp_utils.read_token(
-        os.path.join(os.path.expanduser("~"), ".fair/registry/token")
-    )
-
-
-@pytest.fixture
-def script(test_dir: str) -> str:
-    return os.path.join(test_dir, "test_script.sh")
-
-
-@pytest.fixture
-def config(test_dir: str) -> str:
-    return os.path.join(test_dir, "write_csv.yaml")
 
 
 @pytest.mark.pipeline
@@ -64,6 +41,17 @@ def test_raise_issue_by_index(token: str, config: str, script: str) -> None:
     handle = pipeline.initialise(token, config, script)
     link_write = pipeline.link_write(handle, "test/csv")
     index = pipeline.get_handle_index_from_path(handle, link_write)
+    pipeline.raise_issue_by_index(handle, index, "Test Issue", 7)
+    assert handle["issues"]["issue_0"]["use_data_product"] == "test/csv"
+
+
+@pytest.mark.issue
+def test_raise_issue_by_index_read(
+    token: str, read_config: str, script: str
+) -> None:
+    handle = pipeline.initialise(token, read_config, script)
+    link_read = pipeline.link_read(handle, "test/csv")
+    index = pipeline.get_handle_index_from_path(handle, link_read)
     pipeline.raise_issue_by_index(handle, index, "Test Issue", 7)
     assert handle["issues"]["issue_0"]["use_data_product"] == "test/csv"
 
