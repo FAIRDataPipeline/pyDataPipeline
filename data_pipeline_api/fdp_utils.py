@@ -229,6 +229,24 @@ def post_storage_root(
         data["root"] = data["root"] + "/"
     return post_entry(url, "storage_root", data, token, api_version)
 
+def post_file_type(
+    url: str, data: dict, token: str, api_version: str = "1.0.0"
+) -> dict:
+    """
+    Internal wrapper function to return check if a file_type already exists and return it.
+    """
+    if not "extension" in data and data["extension"]:
+        raise ValueError("error file_type name not specified")
+    file_type_exists = get_entry(url= url, 
+        endpoint= "file_type", 
+        query= {"extension": data["extension"]}, 
+        api_version= api_version)
+    if file_type_exists : return file_type_exists[0]
+    return post_entry(url= url,
+        endpoint= "file_type",
+        data= data,
+        token= token,
+        api_version= api_version)
 
 def remove_local_from_root(root: str) -> str:
     """

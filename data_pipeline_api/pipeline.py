@@ -82,11 +82,10 @@ def initialise(token: str, config: str, script: str) -> dict:
     config_location_url = config_location_response["url"]
 
     # Configure Yaml File Type
-    config_filetype_response = fdp_utils.post_entry(
+    config_filetype_response = fdp_utils.post_file_type(
         token=token,
         url=registry_url,
-        endpoint="file_type",
-        data={"name": "yaml", "extension": "yaml"},
+        data={"name": "YAML Document", "extension": "yaml"},
         api_version=api_version,
     )
     config_filetype_url = config_filetype_response["url"]
@@ -174,14 +173,14 @@ def initialise(token: str, config: str, script: str) -> dict:
     )
 
     script_location_url = script_location_response["url"]
+    script_file_type = os.path.basename(script).split(".")[-1]
 
     # TODO: Change to Batch?
     # Create Script File Type
-    script_filetype_response = fdp_utils.post_entry(
+    script_filetype_response = fdp_utils.post_file_type(
         token=token,
         url=registry_url,
-        endpoint="file_type",
-        data={"name": "py", "extension": "py"},
+        data={"name": "python submission script", "extension": script_file_type},
         api_version=api_version,
     )
 
@@ -478,23 +477,11 @@ def finalise(token: str, handle: dict) -> None:
 
             file_type = os.path.basename(new_path).split(".")[-1]
 
-            file_type_exists = fdp_utils.get_entry(
+            file_type_url = fdp_utils.post_file_type(
+                token=token,
                 url=registry_url,
-                endpoint="file_type",
-                query={"extension": file_type},
+                data={"name": file_type, "extension": file_type},
                 api_version=api_version,
-            )
-
-            if file_type_exists:
-                entry = fdp_utils.get_first_entry(file_type_exists)
-                file_type_url = entry["url"]
-            else:
-                file_type_url = fdp_utils.post_entry(
-                    token=token,
-                    url=registry_url,
-                    endpoint="file_type",
-                    data={"name": file_type, "extension": file_type},
-                    api_version=api_version,
                 )["url"]
 
             data_product_exists = fdp_utils.get_entry(
