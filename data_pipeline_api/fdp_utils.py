@@ -225,8 +225,8 @@ def post_storage_root(
     """
     if "local" in data and data["local"]:
         data["root"] = "file://" + data["root"]
-    if data["root"][-1] != "/":
-        data["root"] = data["root"] + "/"
+    if data["root"][-1] != os.sep:
+        data["root"] = data["root"] + os.sep
     return post_entry(url, "storage_root", data, token, api_version)
 
 def post_file_type(
