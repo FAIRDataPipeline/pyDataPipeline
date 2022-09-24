@@ -425,6 +425,6 @@ def test_patch_entry_non_200(url: str, token: str) -> None:
 
 def test_post_storage_root_with_local(url: str, token: str) -> None:
     storage_root = fdp_utils.post_storage_root(
-        token=token, url=url, data={"root": "/test/test", "local": True}
+        token=token, url=url, data={"root": f'{os.sep}test{os.sep}test', "local": True}
     )
-    assert storage_root["root"] == "file:///test/test/"
+    assert storage_root["root"] == f'file://{os.sep}test{os.sep}test{os.sep}'
