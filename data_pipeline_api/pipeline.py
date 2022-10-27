@@ -156,23 +156,33 @@ def initialise(token: str, config: str, script: str) -> dict:
     _ = config_storageroot_id
     script_hash = fdp_utils.get_file_hash(script)
 
-    # Create Script Storage Location
-    script_storage_data = {
-        "path": script.replace(run_metadata["write_data_store"], ""),
-        "hash": script_hash,
-        "public": True,
-        "storage_root": script_storageroot_url,
-    }
-
-    script_location_response = fdp_utils.post_entry(
-        token=token,
-        url=registry_url,
-        endpoint="storage_location",
-        data=script_storage_data,
-        api_version=api_version,
+    script_location_exists = fdp_utils.get_entry(
+        registry_url,
+        "storage_location",
+        query={
+            "hash": script_hash
+        }
     )
+    if script_location_exists:
+        script_location_url = script_location_exists[0]["url"]
+    else:
+        # Create Script Storage Location
+        script_storage_data = {
+            "path": script.replace(run_metadata["write_data_store"], ""),
+            "hash": script_hash,
+            "public": True,
+            "storage_root": script_storageroot_url,
+        }
 
-    script_location_url = script_location_response["url"]
+        script_location_response = fdp_utils.post_entry(
+            token=token,
+            url=registry_url,
+            endpoint="storage_location",
+            data=script_storage_data,
+            api_version=api_version,
+        )
+
+        script_location_url = script_location_response["url"]
     script_file_type = os.path.basename(script).split(".")[-1]
 
     # TODO: Change to Batch?
