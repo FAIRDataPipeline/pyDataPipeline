@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest,ubuntu-20.04,macos-latest]
-        python: ["3.7"] #,"3.8", "3.9"]
+        python: ["3.7" ,"3.8", "3.9"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -26,22 +26,6 @@ jobs:
               brew install graphviz
           fi
         shell: bash
-      - name: Install local registry
-        run: |
-          if [ "$RUNNER_OS" != "Windows" ]; then
-              curl -fsSL https://data.scrc.uk/static/localregistry.sh | /bin/bash -s -- -b main
-          fi
-        shell: bash
-      - name: install local registry on windows
-        shell: cmd
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install wget
-          md %userprofile%\.fair
-          cd /d %userprofile%\.fair
-          echo %CD%
-          wget -O install_registry.bat https://data.scrc.uk/static/localregistry.bat
-          install_registry.bat
       - name: Install Required
         run: brew install memcached
         if: matrix.os == 'macos-latest'
@@ -61,11 +45,12 @@ jobs:
         run: |
           poetry install
           pip3 install fair-cli
+          fair registry install
           pip3 install ../pySimpleModel
           fair init --ci
           fair registry start
-          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
-          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+          fair pull --local data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run --local data_pipeline_api/ext/SEIRSconfig.yaml
 
           poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
         if: matrix.os == 'windows-latest'
@@ -75,11 +60,12 @@ jobs:
           poetry install
           source .venv/bin/activate
           pip install fair-cli
+          fair registry install
           pip install ../pySimpleModel
           fair init --ci
           fair registry start
-          fair pull data_pipeline_api/ext/SEIRSconfig.yaml
-          fair run data_pipeline_api/ext/SEIRSconfig.yaml
+          fair pull --local data_pipeline_api/ext/SEIRSconfig.yaml
+          fair run --local data_pipeline_api/ext/SEIRSconfig.yaml
 
           python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
       - uses: codecov/codecov-action@v2
