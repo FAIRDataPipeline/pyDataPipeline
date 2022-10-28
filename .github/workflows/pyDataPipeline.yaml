@@ -8,6 +8,9 @@ jobs:
       matrix:
         os: [windows-latest,ubuntu-20.04,macos-latest]
         python: ["3.8", "3.9", "3.10"]
+    defaults:
+      run:
+        shell: bash
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
