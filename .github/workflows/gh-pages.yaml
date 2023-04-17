@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
     - uses: actions/setup-python@v4
       with:
@@ -15,5 +17,4 @@ jobs:
       uses: sphinx-notes/pages@v3
       with:
         documentation_path: docs
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
