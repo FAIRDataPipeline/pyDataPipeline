@@ -14,8 +14,8 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
           architecture: "x64"
@@ -38,7 +38,7 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       - name: Checkout pySimpleModel
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: FAIRDataPipeline/pySimpleModel
           path: pySimpleModel
@@ -71,7 +71,7 @@ jobs:
           fair run --local data_pipeline_api/ext/SEIRSconfig.yaml
 
           python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
