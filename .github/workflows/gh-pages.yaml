@@ -14,7 +14,7 @@ jobs:
     - name: Build and Commit
       uses: sphinx-notes/pages@v3
       with:
-        documentation_path: doc
+        documentation_path: docs
     - name: Push changes
       uses: EndBug/add-and-commit@v9
       with:
