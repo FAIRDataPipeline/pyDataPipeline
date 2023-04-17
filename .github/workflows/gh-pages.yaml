@@ -7,8 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: "3.9"
         architecture: "x64"
@@ -21,11 +21,12 @@ jobs:
             pip3 install sphinx-rtd-theme
             pip3 install .
     - name: Build and Commit
-      uses: sphinx-notes/pages@master
+      uses: sphinx-notes/pages@v3
       with:
         documentation_path: doc
     - name: Push changes
-      uses: ad-m/github-push-action@master
+      uses: EndBug/add-and-commit@v9
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
+        default_author: github_actions
+        new_branch: gh-pages
+        push: true
