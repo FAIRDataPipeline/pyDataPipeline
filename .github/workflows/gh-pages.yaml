@@ -13,7 +13,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-    - name: Build and Commit
+    - id: deployment
       uses: sphinx-notes/pages@v3
       with:
         documentation_path: docs
