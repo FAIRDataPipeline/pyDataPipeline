@@ -6,6 +6,7 @@ import yaml
 
 from data_pipeline_api import fdp_utils
 
+WRITING_STR = "Writing {} to local registry"
 
 def initialise(token: str, config: str, script: str) -> dict:
     """Reads in token, config file and script, creates necessary registry items
@@ -149,7 +150,7 @@ def initialise(token: str, config: str, script: str) -> dict:
 
     config_object_url = config_object["url"]
 
-    logging.info("Writing {} to local registry".format(filename))
+    logging.info(WRITING_STR.format(filename))
 
     # Check if script exists in storage_location
     script_storageroot_url = config_storageroot_url
@@ -185,7 +186,6 @@ def initialise(token: str, config: str, script: str) -> dict:
         script_location_url = script_location_response["url"]
     script_file_type = os.path.basename(script).split(".")[-1]
 
-    # TODO: Change to Batch?
     # Create Script File Type
     script_filetype_response = fdp_utils.post_file_type(
         token=token,
@@ -212,7 +212,7 @@ def initialise(token: str, config: str, script: str) -> dict:
 
     script_object_url = script_object["url"]
 
-    logging.info("Writing {} to local registry".format(script))
+    logging.info(WRITING_STR.format(script))
 
     # Create new remote storage root
     repo_storageroot_url = fdp_utils.post_storage_root(
@@ -271,7 +271,7 @@ def initialise(token: str, config: str, script: str) -> dict:
 
     coderepo_object_url = coderepo_object_response["url"]
 
-    logging.info("Writing {} to local registry".format(repo_name))
+    logging.info(WRITING_STR.format(repo_name))
 
     # Register new code run
 
@@ -343,7 +343,6 @@ def finalise(token: str, handle: dict) -> None:
         |           component_url: component url
         |           data_product_url: data product url
     """
-    # token = fdp_utils.read_token(token)
     registry_url = handle["yaml"]["run_metadata"]["local_data_registry_url"]
     datastore = handle["yaml"]["run_metadata"]["write_data_store"]
     api_version = handle["yaml"]["run_metadata"]["api_version"]
@@ -399,13 +398,13 @@ def finalise(token: str, handle: dict) -> None:
                     api_version=api_version,
                 )["url"]
 
-            hash = fdp_utils.get_file_hash(handle["output"][output]["path"])
+            file_hash = fdp_utils.get_file_hash(handle["output"][output]["path"])
 
             storage_exists = fdp_utils.get_entry(
                 url=registry_url,
                 endpoint="storage_location",
                 query={
-                    "hash": hash,
+                    "hash": file_hash,
                     "public": handle["output"][output]["public"],
                     "storage_root": datastore_root_id,
                 },
@@ -433,7 +432,6 @@ def finalise(token: str, handle: dict) -> None:
                                 directory
                             )
                         )
-                        pass
                     directory = os.path.split(directory)[0]
                     i += 1
                     if i > 4:
@@ -461,7 +459,7 @@ def finalise(token: str, handle: dict) -> None:
                     handle["output"][output]["path"]
                 )
                 extension = tmp_filename.split(sep=".")[-1]
-                new_filename = ".".join([hash, extension])
+                new_filename = ".".join([file_hash, extension])
                 data_product = handle["output"][output]["data_product"]
                 namespace = handle["output"][output]["use_namespace"]
                 new_path = os.path.join(
@@ -478,7 +476,7 @@ def finalise(token: str, handle: dict) -> None:
                     endpoint="storage_location",
                     data={
                         "path": new_storage_location,
-                        "hash": hash,
+                        "hash": file_hash,
                         "public": handle["output"][output]["public"],
                         "storage_root": datastore_root_url,
                     },
@@ -575,7 +573,7 @@ def finalise(token: str, handle: dict) -> None:
             handle["output"][output]["data_product_url"] = data_product_url
 
             logging.info(
-                "Writing {} to local registry".format(
+                WRITING_STR.format(
                     handle["output"][output]["use_data_product"]
                 )
             )

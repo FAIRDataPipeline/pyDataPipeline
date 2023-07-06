@@ -9,6 +9,7 @@ from _pytest.fixtures import FixtureRequest
 
 import data_pipeline_api.fdp_utils as fdp_utils
 
+TEST_ROOT = "https://test.com"
 
 @pytest.fixture
 def test_dir() -> str:
@@ -37,8 +38,7 @@ def test_is_file_exists(test_dir: str) -> None:
     "file_path",
     [
         "file_not_found",
-        "",
-        # None
+        ""
     ],
 )
 def test_is_file_not_exists(file_path: str) -> None:
@@ -57,9 +57,7 @@ def test_is_yaml(file_path: str, request: FixtureRequest) -> None:
     "file_path",
     [
         "file_not_found",
-        "",
-        # None,
-        # os.path.join(test_dir, 'test.csv')
+        ""
     ],
 )
 def test_is_yaml_not(file_path: str) -> None:
@@ -78,9 +76,7 @@ def test_is_valid_yaml(file_path: str, request: FixtureRequest) -> None:
     "file_path",
     [
         "file_not_found",
-        "",
-        # None,
-        # os.path.join(test_dir, 'test.csv')
+        ""
     ],
 )
 def test_is_valid_yaml_not(file_path: str) -> None:
@@ -201,7 +197,7 @@ def test_post_entry(token: str, url: str) -> None:
     storage_root = fdp_utils.post_entry(
         token=token,
         url=url,
-        data={"root": "https://test.com"},
+        data={"root": TEST_ROOT},
         endpoint="storage_root",
     )
     assert type(storage_root) == dict
@@ -212,7 +208,7 @@ def test_post_entry_409(token: str, url: str) -> None:
     storage_root = fdp_utils.post_entry(
         token=token,
         url=url,
-        data={"root": "https://test.com"},
+        data={"root": TEST_ROOT},
         endpoint="storage_root",
     )
     assert type(storage_root) == dict
@@ -241,7 +237,7 @@ def test_post_entry_500(token: str, url: str) -> None:
         fdp_utils.post_entry(
             token=token,
             url=url,
-            data={"root": "https://test.com"},
+            data={"root": TEST_ROOT},
             endpoint="non_existant",
         )
 
@@ -299,7 +295,7 @@ def test_wrong_api_version(token: str, url: str) -> None:
         fdp_utils.post_entry(
             token=token,
             url=url,
-            data={"root": "https://test.com"},
+            data={"root": TEST_ROOT},
             endpoint="storage_root",
             api_version="2.2.2",
         )
@@ -311,7 +307,7 @@ def test_wrong_api_version_get(token: str, url: str) -> None:
         fdp_utils.get_entry(
             token=token,
             url=url,
-            query={"root": "https://test.com"},
+            query={"root": TEST_ROOT},
             endpoint="storage_root",
             api_version="3.0.0",
         )

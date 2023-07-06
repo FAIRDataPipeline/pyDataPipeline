@@ -123,7 +123,8 @@ def link_read(handle: dict, data_product: str) -> str:
     api_version = handle["yaml"]["run_metadata"]["api_version"]
 
     if "namespace" in use:
-        namespace = use["namespace"]
+        if use["namespace"]:
+            namespace = use["namespace"]
 
     # Get namespace url and extract id
     namespace_url = fdp_utils.get_entry(
@@ -136,7 +137,8 @@ def link_read(handle: dict, data_product: str) -> str:
     namespace_id = fdp_utils.extract_id(namespace_url)
 
     if "data_product" in use:
-        data_product = use["data_product"]
+        if use["data_product"]:
+            data_product = use["data_product"]
 
     version = use["version"] if "version" in use else "0.0.1"
 
