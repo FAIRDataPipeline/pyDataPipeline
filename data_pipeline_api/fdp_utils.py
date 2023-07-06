@@ -7,12 +7,13 @@ import uuid
 from datetime import datetime
 from typing import Any, Optional
 
-# from typing import BinaryIO, Union
 from urllib.parse import urlsplit
 
 import requests
 import yaml
 
+FILE_PREFIX = "file://"
+SERVER_RESPONSE_STR = "Server responded with: "
 
 def get_first_entry(entries: list) -> dict:
     """
@@ -74,7 +75,7 @@ def get_entry(
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError(
-            "Server responded with: "
+            SERVER_RESPONSE_STR
             + str(response.status_code)
             + " Query = "
             + url
@@ -107,7 +108,7 @@ def get_entity(
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise ValueError(
-            "Server responded with: "
+            SERVER_RESPONSE_STR
             + str(response.status_code)
             + " Query = "
             + url
@@ -162,7 +163,7 @@ def post_entry(
         return existing_entry[0]
 
     if response.status_code != 201:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(SERVER_RESPONSE_STR + str(response.status_code))
 
     return response.json()
 
@@ -187,7 +188,7 @@ def patch_entry(
 
     response = requests.patch(url, data_json, headers=headers)
     if response.status_code != 200:
-        raise ValueError("Server responded with: " + str(response.status_code))
+        raise ValueError(SERVER_RESPONSE_STR + str(response.status_code))
 
     return response.json()
 
@@ -224,7 +225,7 @@ def post_storage_root(
         |   dict: repsonse from the local registy
     """
     if "local" in data and data["local"]:
-        data["root"] = "file://" + data["root"]
+        data["root"] = FILE_PREFIX + data["root"]
         if data["root"][-1] != os.sep:
             data["root"] = data["root"] + os.sep
     elif data["root"][-1] != "/":
@@ -237,7 +238,7 @@ def post_file_type(
     """
     Internal wrapper function to return check if a file_type already exists and return it.
     """
-    if not "extension" in data and data["extension"]:
+    if "extension" not in data and data["extension"]:
         raise ValueError("error file_type name not specified")
     file_type_exists = get_entry(url= url, 
         endpoint= "file_type", 
@@ -258,8 +259,8 @@ def remove_local_from_root(root: str) -> str:
     Returns:
         |   str: the root without file://
     """
-    if "file://" in root:
-        root = root.replace("file://", "")
+    if FILE_PREFIX in root:
+        root = root.replace(FILE_PREFIX, "")
 
     return root
 
@@ -290,7 +291,6 @@ def get_file_hash(
     """
     with open(path, "rb") as data:
         _data = data.read()
-    # data = data.encode('utf-8')
     hashed = hashlib.sha1(_data)
 
     return hashed.hexdigest()
@@ -407,7 +407,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
         severity = None
         for i in issues:
             if issues[i]["group"] == group:
-                type = issues[i]["type"]
+                issue_type = issues[i]["type"]
                 issue = issues[i]["issue"]
                 severity = issues[i]["severity"]
                 index = issues[i]["index"]
@@ -418,12 +418,12 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
 
                 component_url = None
                 object_id = None
-                if type == "config":
+                if issue_type == "config":
                     object_id = handle["model_config"]
-                elif type == "github_repo":
+                elif issue_type == "github_repo":
                     object_id = handle["code_repo"]
 
-                elif type == "submission_script":
+                elif issue_type == "submission_script":
                     object_id = handle["submission_script"]
                 if object_id:
                     component_url = get_entry(
@@ -470,7 +470,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
                         api_version=api_version,
                     )[0]["url"]
 
-                    object = get_entry(
+                    object_entry = get_entry(
                         url=api_url,
                         endpoint="data_product",
                         query={
@@ -480,7 +480,7 @@ def register_issues(token: str, handle: dict) -> dict:  # sourcery no-metrics
                         },
                         api_version=api_version,
                     )[0]["object"]
-                    object_id = extract_id(object)
+                    object_id = extract_id(object_entry)
                     if component:
                         component_url = get_entry(
                             url=api_url,
