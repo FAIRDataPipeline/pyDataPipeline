@@ -1,5 +1,6 @@
 # pyDataPipeline
 
+[![PyPI](https://img.shields.io/pypi/v/data-pipeline-api)](https://pypi.org/project/data-pipeline-api/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/data-pipeline-api)](https://pypi.org/project/data-pipeline-api/)
 [![pyDataPipeline](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml/badge.svg?branch=dev)](https://github.com/FAIRDataPipeline/pyDataPipeline/actions/workflows/pyDataPipeline.yaml)
 [![codecov](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline/branch/dev/graph/badge.svg?token=Eax5AmrDxx)](https://codecov.io/gh/FAIRDataPipeline/pyDataPipeline)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5562602.svg)](https://doi.org/10.5281/zenodo.5562602)
