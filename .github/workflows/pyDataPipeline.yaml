@@ -19,19 +19,6 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           architecture: "x64"
-      - name: Install graphviz
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install graphviz
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-              choco install graphviz
-          elif [ "$RUNNER_OS" == "Darwin" ]; then
-              brew install graphviz
-          fi
-        shell: bash
-      - name: Install Required
-        run: brew install memcached
-        if: matrix.os == 'macos-latest'
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
