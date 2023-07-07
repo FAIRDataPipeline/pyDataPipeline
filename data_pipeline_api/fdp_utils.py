@@ -238,8 +238,9 @@ def post_file_type(
     """
     Internal wrapper function to return check if a file_type already exists and return it.
     """
-    if "extension" not in data and data["extension"]:
-        raise ValueError("error file_type name not specified")
+    if "extension" not in data:
+            if not data["extension"]:
+                raise ValueError("error file_type name not specified")
     file_type_exists = get_entry(url= url, 
         endpoint= "file_type", 
         query= {"extension": data["extension"]}, 
