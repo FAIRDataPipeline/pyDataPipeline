@@ -405,7 +405,7 @@ def finalise(token: str, handle: dict) -> None:
                 endpoint="storage_location",
                 query={
                     "hash": file_hash,
-                    "public": str(handle["output"][output]["public"]).tolower(),
+                    "public": str(handle["output"][output]["public"]).lower(),
                     "storage_root": datastore_root_id,
                 },
                 api_version=api_version,
@@ -477,7 +477,7 @@ def finalise(token: str, handle: dict) -> None:
                     data={
                         "path": new_storage_location,
                         "hash": file_hash,
-                        "public": str(handle["output"][output]["public"]).tolower(),
+                        "public": str(handle["output"][output]["public"]).lower(),
                         "storage_root": datastore_root_url,
                     },
                     api_version=api_version,
