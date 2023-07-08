@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data_pipeline_api"
-version = "0.7.12"
+version = "0.7.13"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
     "Ryan J Field <ryan.field@glasgow.ac.uk>",
@@ -35,7 +35,6 @@ python = ">=3.8,<4.0"
 requests = "^2.23.0"
 matplotlib = "^3.5.1"
 scipy = "^1.7.3"
-h5py = "^3.6.0"
 PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
