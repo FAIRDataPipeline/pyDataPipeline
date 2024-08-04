@@ -6,16 +6,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest,ubuntu-20.04,macos-latest]
-        python: ["3.8", "3.9", "3.10", "3.x"]
+        os: [windows-latest,ubuntu-latest,macos-latest]
+        python: ["3.9", "3.10", "3.x"]
     defaults:
       run:
         shell: bash
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
           architecture: "x64"
@@ -25,7 +25,7 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       - name: Checkout pySimpleModel
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: FAIRDataPipeline/pySimpleModel
           path: pySimpleModel
@@ -58,10 +58,10 @@ jobs:
           fair run --local data_pipeline_api/ext/SEIRSconfig.yaml
 
           python3 -m poetry run pytest --cov=data_pipeline_api  --cov-report=xml --cov-report=term -s tests/
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           fail_ci_if_error: false
           verbose: true
-        if: matrix.python == '3.9' && matrix.os == 'ubuntu-20.04'
+        if: matrix.python == '3.9' && matrix.os == 'ubuntu-latest'
