@@ -1,0 +1,77 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "type": "SoftwareSourceCode",
+    "applicationCategory": "Software",
+    "author": [
+        {
+            "id": "https://orcid.org/0000-0002-4424-9890",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "University of Glasgow"
+            },
+            "email": "ryan.field@glasgow.ac.uk",
+            "familyName": "Field",
+            "givenName": "Ryan"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-4971-2346",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "The University of Sheffield"
+            },
+            "familyName": "Reddyhoff",
+            "givenName": "Dennis"
+        },
+        {
+            "id": "_:author_3",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "The University of Sheffield"
+            },
+            "familyName": "Turner",
+            "givenName": "Robert"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-6773-1049",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "United Kingdom Atomic Energy Authority"
+            },
+            "familyName": "Zarebski",
+            "givenName": "Kristian"
+        }
+    ],
+    "codeRepository": "git+https://github.com/FAIRDataPipeline/pyDataPipeline.git",
+    "dateCreated": "2021-06-29",
+    "dateModified": "2024-08-05",
+    "datePublished": "2021-10-04",
+    "description": "Python implementation of the data pipeline API for the FAIR Data Pipeline.",
+    "downloadUrl": "https://github.com/FAIRDataPipeline/pyDataPipeline/archive/refs/tags/v0.8.0.tar.gz",
+    "identifier": "10.5281/zenodo.5548002",
+    "isPartOf": "https://www.fairdatapipeline.org",
+    "keywords": [
+        "FAIR",
+        "Data Pipeline",
+        "API"
+    ],
+    "license": "https://spdx.org/licenses/GPL-3.0-or-later",
+    "name": "pyDataPipeline",
+    "operatingSystem": [
+        "Linux",
+        "Windows",
+        "MacOS"
+    ],
+    "programmingLanguage": "Python 3",
+    "schema:releaseNotes": "Full change log: https://github.com/FAIRDataPipeline/pyDataPipeline/compare/v0.7.13...v0.8.0",
+    "version": "0.8.0",
+    "contIntegration": "https://github.com/FAIRDataPipeline/pyDataPipeline/actions",
+    "codemeta:continuousIntegration": {
+        "id": "https://github.com/FAIRDataPipeline/pyDataPipeline/actions"
+    },
+    "developmentStatus": "active",
+    "issueTracker": "https://github.com/FAIRDataPipeline/pyDataPipeline/issues"
+}
