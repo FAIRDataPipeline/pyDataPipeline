@@ -1,5 +1,9 @@
 name: Python FAIR Data Pipeline
-on: [push, workflow_dispatch]
+on: 
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1" # Run Every Monday at 9AM
 jobs:
   test:
     name: Test ${{ matrix.os }} (Python ${{ matrix.python }})
