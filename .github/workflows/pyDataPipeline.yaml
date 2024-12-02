@@ -32,6 +32,7 @@ jobs:
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
         run: |
+          poetry cache clear pypi --all
           poetry install
           pip3 install fair-cli
           fair registry install
