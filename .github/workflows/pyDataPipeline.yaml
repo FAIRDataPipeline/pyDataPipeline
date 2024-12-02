@@ -5,6 +5,7 @@ jobs:
     name: Test ${{ matrix.os }} (Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest,ubuntu-latest,macos-latest]
         python: ["3.9", "3.10", "3.x"]
