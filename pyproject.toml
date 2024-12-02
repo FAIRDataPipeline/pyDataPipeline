@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data_pipeline_api"
-version = "0.8.0"
+version = "0.9.0"
 description = "Python api to interact with the Fair Data Pipeline"
 authors = [
     "Ryan J Field <ryan.field@glasgow.ac.uk>",
@@ -36,7 +36,7 @@ requests = "^2.23.0"
 PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.0.0"
+pytest = "^8.3.4"
 black = "*"
 mypy = "*"
 flake8 = "*"
@@ -44,7 +44,7 @@ poetry = "^1.1.12"
 pytest-mock = "*"
 pytest-dependency = "*"
 pytest-cov = "*"
-pre-commit = "^2.17.0"
+pre-commit = "^4.0.1"
 isort = "^5.10.1"
 Sphinx = "*"
 sphinx-rtd-theme = "*"
