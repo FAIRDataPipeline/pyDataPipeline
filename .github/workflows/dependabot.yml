@@ -12,6 +12,7 @@ updates:
       time: "00:00"
     reviewers:
       - "RyanJField"
+      - "bruvio"
     commit-message:
       prefix: "pip"
       include: "scope"
