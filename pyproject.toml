@@ -36,7 +36,7 @@ requests = "^2.23.0"
 PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.0.0"
+pytest = "^8.3.4"
 black = "*"
 mypy = "*"
 flake8 = "*"
