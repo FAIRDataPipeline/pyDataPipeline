@@ -34,7 +34,7 @@ keywords = [
 python = ">=3.9,<4.0"
 requests = "^2.23.0"
 matplotlib = "3.*"
-scipy = "^1.7.3"
+scipy = "^1"
 PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
