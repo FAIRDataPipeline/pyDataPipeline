@@ -1,10 +1,15 @@
 name: Python FAIR Data Pipeline
-on: [push, workflow_dispatch]
+on: 
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1" # Run Every Monday at 9AM
 jobs:
   test:
     name: Test ${{ matrix.os }} (Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest,ubuntu-latest,macos-latest]
         python: ["3.9", "3.10", "3.x"]
@@ -32,6 +37,7 @@ jobs:
         run: mv pySimpleModel ../pySimpleModel
       - name: Run Tests on Windows
         run: |
+          poetry cache clear pypi --all
           poetry install
           pip3 install fair-cli
           fair registry install
