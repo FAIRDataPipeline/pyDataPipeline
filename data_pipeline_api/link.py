@@ -216,3 +216,41 @@ def link_read(handle: dict, data_product: str) -> str:
         handle["input"]["input_0"] = input_dict
 
     return path
+
+def link_read_wildcard(handle: dict, data_product: str) -> list:
+    """Reads 'read' information in config file, updates handle with relevant
+    metadata and returns path to write data product to.
+
+    Args:
+        |   data_product: Specified name of data product in config.
+
+
+    Returns:
+
+    """
+    if not data_product[-1] == "*":
+        raise ValueError(
+            "Error: Wildcard must be used to read multiple data products"
+        )
+    
+    # Check if data product is in config yaml
+    read_list = [
+        i[1]["data_product"] for i in enumerate(handle["yaml"]["read"])
+    ]
+
+    data_products = []
+    # Get the data product names from the config file
+    for i in enumerate(handle["yaml"]["read"]):
+        if data_product[-1] in i[1]["data_product"]:
+            data_products.append(i[1]["data_product"])
+    if len(data_products) == 0:
+        raise ValueError(
+            "Error: No data products found with wildcard in config"
+        )
+    data_product_paths = []
+    for data_product in data_products:
+        data_product_paths.append(link_read(handle, data_product))
+    return data_product_paths
+            
+
+    
