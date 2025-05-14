@@ -1,0 +1,38 @@
+read:
+- data_product: SEIRS_model/parameters
+  description: Static parameters of the model
+  use:
+    data_product: SEIRS_model/parameters
+    namespace: PSU
+    version: 1.0.0
+run_metadata:
+  default_input_namespace: rfield
+  default_output_namespace: ryanjfield
+  description: SEIRS Model python
+  latest_commit: ddcbb77a75b941b56417802bce20f2d9a7f32b26
+  local_data_registry_url: http://127.0.0.1:8000/api/
+  local_repo: /Users/ryanfield/Dev/pySimpleModel
+  public: true
+  remote_data_registry_url: https://data.fairdatapipeline.org/api/
+  remote_repo: https://github.com/FAIRDataPipeline/pySimpleModel
+  script: python simpleModel/ext/SEIRSModelRun.py
+  write_data_store: /Users/ryanfield/.fair/data/
+write:
+- data_product: SEIRS_model/results/model_output/python
+  description: SEIRS model results
+  file_type: csv
+  public: true
+  use:
+    data_product: SEIRS_model/results/model_output/python
+    namespace: ryanjfield
+    symlink: false
+    version: 0.0.1
+- data_product: SEIRS_model/results/figure/python
+  description: SEIRS output plot
+  file_type: png
+  public: true
+  use:
+    data_product: SEIRS_model/results/figure/python
+    namespace: ryanjfield
+    symlink: false
+    version: 0.0.1

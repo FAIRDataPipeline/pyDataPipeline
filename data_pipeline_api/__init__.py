@@ -1,6 +1,8 @@
 __all__ = [
     "initialise",
     "link_read",
+    "link_read_wildcard",
+    "link_read_wildcard_folder",
     "link_write",
     "finalise",
     "raise_issue_by_data_product",
@@ -14,7 +16,7 @@ __all__ = [
 ]
 
 from .fdp_utils import get_handle_index_from_path
-from .link import link_read, link_write
+from .link import link_read, link_write, link_read_wildcard, link_read_wildcard_folder
 from .pipeline import finalise, initialise
 from .raise_issue import (
     raise_issue_by_data_product,

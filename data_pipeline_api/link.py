@@ -1,5 +1,9 @@
 import logging
 import os
+from pathlib import Path
+import shutil
+import tempfile
+import atexit
 
 from data_pipeline_api import fdp_utils
 
@@ -217,6 +221,7 @@ def link_read(handle: dict, data_product: str) -> str:
 
     return path
 
+
 def link_read_wildcard(handle: dict, data_product: str) -> list:
     """Reads 'read' information in config file, updates handle with relevant
     metadata and returns path to write data product to.
@@ -232,16 +237,11 @@ def link_read_wildcard(handle: dict, data_product: str) -> list:
         raise ValueError(
             "Error: Wildcard must be used to read multiple data products"
         )
-    
-    # Check if data product is in config yaml
-    read_list = [
-        i[1]["data_product"] for i in enumerate(handle["yaml"]["read"])
-    ]
 
     data_products = []
     # Get the data product names from the config file
     for i in enumerate(handle["yaml"]["read"]):
-        if data_product[-1] in i[1]["data_product"]:
+        if data_product[:-1] in i[1]["data_product"]:
             data_products.append(i[1]["data_product"])
     if len(data_products) == 0:
         raise ValueError(
@@ -251,6 +251,31 @@ def link_read_wildcard(handle: dict, data_product: str) -> list:
     for data_product in data_products:
         data_product_paths.append(link_read(handle, data_product))
     return data_product_paths
-            
 
-    
+
+def link_read_wildcard_folder(handle: dict, data_product: str) -> str:
+    """Reads 'read' information in config file, updates handle with relevant
+    metadata and returns path to write data product to.
+
+    Args:
+        |   data_product: Specified name of data product in config.
+
+
+    Returns:
+
+    """
+    _folder = tempfile.mkdtemp()
+    for data_product_path in link_read_wildcard(handle, data_product):
+        _extension = Path(data_product_path).suffix
+        tmp_name = "dat-" + fdp_utils.random_hash() + _extension
+        os.symlink(Path(data_product_path), os.path.join(_folder, tmp_name))
+    # Register cleanup function to remove the temporary directory
+    atexit.register(_cleanup_tempdir, _folder)
+    return _folder
+
+def _cleanup_tempdir(tempdir: str) -> None:
+    """Cleanup function to remove the temporary directory."""
+    try:
+        shutil.rmtree(tempdir)
+    except Exception as e:
+        logging.warning(f"Error removing temporary directory: {e}")
