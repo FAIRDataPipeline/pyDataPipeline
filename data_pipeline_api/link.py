@@ -81,6 +81,30 @@ def link_write(handle: dict, data_product: str) -> str:
 
     return path
 
+def link_write_wildcard_folder(handle: dict, data_product: str) -> str:
+    """Reads write information in config file, updates handle with relevant
+    metadata and returns path to write data product to.
+
+    Args:
+        |   data_product: Specified name of data product in config.
+
+    Returns:
+    """
+    if not data_product[-1] == "*":
+        raise ValueError(
+            "Error: Wildcard must be used to write multiple data products"
+        )
+
+    data_products = []
+    # Get the data product names from the config file
+    for i in enumerate(handle["yaml"]["write"]):
+        if data_product[:-1] in i[1]["data_product"]:
+            data_products.append(i[1]["data_product"])
+    if len(data_products) == 0:
+        raise ValueError(
+            "Error: No data products found with wildcard in config"
+        )
+
 
 def link_read(handle: dict, data_product: str) -> str:
     """Reads 'read' information in config file, updates handle with relevant
