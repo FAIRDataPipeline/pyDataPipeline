@@ -81,6 +81,7 @@ def link_write(handle: dict, data_product: str) -> str:
 
     return path
 
+
 def link_write_wildcard_folder(handle: dict, data_product: str) -> str:
     """Reads write information in config file, updates handle with relevant
     metadata and returns path to write data product to.
@@ -296,6 +297,7 @@ def link_read_wildcard_folder(handle: dict, data_product: str) -> str:
     # Register cleanup function to remove the temporary directory
     atexit.register(_cleanup_tempdir, _folder)
     return _folder
+
 
 def _cleanup_tempdir(tempdir: str) -> None:
     """Cleanup function to remove the temporary directory."""
