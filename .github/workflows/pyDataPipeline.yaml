@@ -2,7 +2,7 @@ name: Python FAIR Data Pipeline
 on: 
   push:
     branches:
-      '**'
+      - '**'
   workflow_dispatch:
   schedule:
     - cron: "0 9 * * 1" # Run Every Monday at 9AM
