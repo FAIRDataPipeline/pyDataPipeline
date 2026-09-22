@@ -373,11 +373,11 @@ def finalise(token: str, handle: dict) -> None:
     if "output" in handle:
         for output in handle["output"]:
 
-            if "${RUN_ID}" in handle["output"][output]["use_data_product"]:
+            if "${{RUN_ID}}" in handle["output"][output]["use_data_product"]:
                 handle["output"][output]["use_data_product"] = handle[
                     "output"
                 ][output]["use_data_product"].replace(
-                    "${RUN_ID}", handle["code_run_uuid"]
+                    "${{RUN_ID}}", handle["code_run_uuid"]
                 )
             write_namespace = fdp_utils.get_entry(
                 url=registry_url,
