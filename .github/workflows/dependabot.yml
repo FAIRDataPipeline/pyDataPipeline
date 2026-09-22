@@ -5,15 +5,14 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "pip"
+    directory: "/"
     schedule:
       interval: "daily"
       time: "00:00"
     reviewers:
       - "RyanJField"
     commit-message:
-      prefix: "pip"
-      include: "scope"
+      prefix: "pip(deps)" # Manually included the scope here instead
     open-pull-requests-limit: 5
     target-branch: "dev"
