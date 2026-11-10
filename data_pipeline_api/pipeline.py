@@ -347,6 +347,47 @@ def finalise(token: str, handle: dict) -> None:
     datastore = handle["yaml"]["run_metadata"]["write_data_store"]
     api_version = handle["yaml"]["run_metadata"]["api_version"]
 
+    # Refuse outputs whose data product version is already registered before
+    # anything is posted or moved: the registry allows one producing code run
+    # per object, so the existing object cannot be claimed by this run
+    for output in handle.get("output", {}):
+        if "${{RUN_ID}}" in handle["output"][output]["use_data_product"]:
+            handle["output"][output]["use_data_product"] = handle["output"][
+                output
+            ]["use_data_product"].replace("${{RUN_ID}}", handle["code_run_uuid"])
+
+        namespace_name = handle["output"][output]["use_namespace"]
+        data_product_name = handle["output"][output]["use_data_product"]
+        version = handle["output"][output]["use_version"]
+
+        existing_namespace = fdp_utils.get_entry(
+            url=registry_url,
+            endpoint="namespace",
+            query={"name": namespace_name},
+            api_version=api_version,
+        )
+        if not existing_namespace:
+            continue
+
+        data_product_exists = fdp_utils.get_entry(
+            url=registry_url,
+            endpoint="data_product",
+            query={
+                "name": data_product_name,
+                "version": version,
+                "namespace": fdp_utils.get_first_entry(existing_namespace)[
+                    "url"
+                ],
+            },
+            api_version=api_version,
+        )
+        if data_product_exists:
+            raise ValueError(
+                f"Data product {namespace_name}:{data_product_name}@{version} "
+                "already exists; bump the version in the write block of your "
+                "config"
+            )
+
     datastore = fdp_utils.remove_local_from_root(datastore)
     datastore_root = fdp_utils.get_entry(
         url=registry_url,
@@ -372,13 +413,6 @@ def finalise(token: str, handle: dict) -> None:
 
     if "output" in handle:
         for output in handle["output"]:
-
-            if "${{RUN_ID}}" in handle["output"][output]["use_data_product"]:
-                handle["output"][output]["use_data_product"] = handle[
-                    "output"
-                ][output]["use_data_product"].replace(
-                    "${{RUN_ID}}", handle["code_run_uuid"]
-                )
             write_namespace = fdp_utils.get_entry(
                 url=registry_url,
                 endpoint="namespace",
@@ -492,82 +526,56 @@ def finalise(token: str, handle: dict) -> None:
                 api_version=api_version,
                 )["url"]
 
-            data_product_exists = fdp_utils.get_entry(
+            object_url = fdp_utils.post_entry(
+                token=token,
+                url=registry_url,
+                endpoint="object",
+                data={
+                    "description": handle["output"][output][
+                        "data_product_description"
+                    ],
+                    "storage_location": storage_location_url,
+                    "authors": [handle["author"]],
+                    "file_type": file_type_url,
+                },
+                api_version=api_version,
+            )["url"]
+
+            component_url = None
+
+            if handle["output"][output]["use_component"]:
+                component_url = fdp_utils.post_entry(
+                    token=token,
+                    url=registry_url,
+                    endpoint="object_component",
+                    data={
+                        "object": object_url,
+                        "name": handle["output"][output]["use_component"],
+                    },
+                    api_version=api_version,
+                )["url"]
+            else:
+                component_url = fdp_utils.get_entry(
+                    url=registry_url,
+                    endpoint="object_component",
+                    query={
+                        "object": fdp_utils.extract_id(object_url),
+                    },
+                    api_version=api_version,
+                )[0]["url"]
+
+            data_product_url = fdp_utils.post_entry(
+                token=token,
                 url=registry_url,
                 endpoint="data_product",
-                query={
+                data={
                     "name": handle["output"][output]["use_data_product"],
                     "version": handle["output"][output]["use_version"],
+                    "object": object_url,
                     "namespace": write_namespace_url,
                 },
                 api_version=api_version,
-            )
-
-            if data_product_exists:
-                data_product_exists_dict = fdp_utils.get_first_entry(
-                    data_product_exists
-                )
-                data_product_url = data_product_exists_dict["url"]
-                object_url = data_product_exists_dict["object"]
-                obj = fdp_utils.get_entity(
-                    url=registry_url,
-                    endpoint="object",
-                    id=int(fdp_utils.extract_id(object_url)),
-                    api_version=api_version,
-                )
-                component_url = obj["components"][0]
-
-            else:
-                object_url = fdp_utils.post_entry(
-                    token=token,
-                    url=registry_url,
-                    endpoint="object",
-                    data={
-                        "description": handle["output"][output][
-                            "data_product_description"
-                        ],
-                        "storage_location": storage_location_url,
-                        "authors": [handle["author"]],
-                        "file_type": file_type_url,
-                    },
-                    api_version=api_version,
-                )["url"]
-
-                component_url = None
-
-                if handle["output"][output]["use_component"]:
-                    component_url = fdp_utils.post_entry(
-                        token=token,
-                        url=registry_url,
-                        endpoint="object_component",
-                        data={
-                            "object": object_url,
-                            "name": handle["output"][output]["use_component"],
-                        },
-                        api_version=api_version,
-                    )["url"]
-                else:
-                    component_url = fdp_utils.get_entry(
-                        url=registry_url,
-                        endpoint="object_component",
-                        query={
-                            "object": fdp_utils.extract_id(object_url),
-                        },
-                        api_version=api_version,
-                    )[0]["url"]
-
-                data_product_url = fdp_utils.post_entry(
-                    token=token,
-                    url=registry_url,
-                    endpoint="data_product",
-                    data={
-                        "name": handle["output"][output]["use_data_product"],
-                        "version": handle["output"][output]["use_version"],
-                        "object": object_url,
-                        "namespace": write_namespace_url,
-                    },
-                    api_version=api_version,
-                )["url"]
+            )["url"]
 
             handle["output"][output]["component_url"] = component_url
             handle["output"][output]["data_product_url"] = data_product_url
