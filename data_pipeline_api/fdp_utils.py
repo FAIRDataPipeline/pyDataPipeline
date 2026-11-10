@@ -163,7 +163,9 @@ def post_entry(
         return existing_entry[0]
 
     if response.status_code != 201:
-        raise ValueError(SERVER_RESPONSE_STR + str(response.status_code))
+        raise ValueError(
+            f"{SERVER_RESPONSE_STR}{response.status_code}: {response.text}"
+        )
 
     return response.json()
 
@@ -188,7 +190,9 @@ def patch_entry(
 
     response = requests.patch(url, data_json, headers=headers)
     if response.status_code != 200:
-        raise ValueError(SERVER_RESPONSE_STR + str(response.status_code))
+        raise ValueError(
+            f"{SERVER_RESPONSE_STR}{response.status_code}: {response.text}"
+        )
 
     return response.json()
 

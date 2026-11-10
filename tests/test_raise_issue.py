@@ -130,7 +130,9 @@ def test_link_read_data_product_exists(
     tmp_csv = os.path.join(test_dir, "test.csv")
     link_write = pipeline.link_write(handle, "test/csv")
     shutil.copy(tmp_csv, link_write)
-    pipeline.finalise(token, handle)
+    # test_link_read has already registered testing:test/csv@0.0.1
+    with pytest.raises(ValueError, match="already exists"):
+        pipeline.finalise(token, handle)
     assert len(handle["yaml"]["write"]) == 1
     assert handle["yaml"]["write"][0] == {
         "data_product": "test/csv",
